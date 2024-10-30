@@ -1,0 +1,192 @@
+<style>
+  input:focus,
+  textarea:focus,
+  select:focus {
+      outline-color: #000000;
+  }
+
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0px;
+      padding: 10px;
+  }
+
+  h1 {
+      color: #063269;
+      font-size: 18px;
+      margin-bottom: 15px;
+  }
+
+  button {
+      background-color: #261073;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+  }
+
+  button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+  }
+
+  .radio-group {
+      margin-bottom: 15px;
+  }
+
+  .radio-group label {
+      display: block;
+      margin-bottom: 5px;
+  }
+
+  .date-selector {
+      margin-bottom: 15px;
+  }
+
+  .date-selector label {
+      display: block;
+      margin-bottom: 5px;
+  }
+
+  .date-selector input {
+      width: 95%;
+      padding: 5px;
+      margin-bottom: 10px;
+  }
+
+  .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+  }
+
+  .error {
+      background-color: #ffebee;
+      color: #c62828;
+  }
+
+  .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+  }
+
+  .progress {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #261073;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-left: 10px;
+  }
+
+  @keyframes spin {
+      to {
+          transform: rotate(360deg);
+      }
+  }
+
+  .tabs {
+      display: flex;
+      margin-bottom: 15px;
+  }
+
+  .tab {
+      padding: 10px;
+      cursor: pointer;
+      border: 1px solid #dbd2ff;
+      background-color: #f2efff;
+  }
+
+  .tab.active {
+      background-color: #ffffff;
+      border-bottom: none;
+  }
+
+  .tab-content {
+      display: none;
+  }
+
+  .tab-content.active {
+      display: block;
+  }
+
+  .select-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+  }
+
+  .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+  }
+
+  .searchInput {
+      width: 95%;
+      padding: 5px 0px 5px 5px;
+      padding-right: 25px;
+  }
+
+  .clearButton {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #999;
+  }
+
+  .clearButton:hover {
+      color: #333;
+  }
+
+  .optionsList {
+      display: none;
+      position: absolute;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      background-color: white;
+      z-index: 1000;
+  }
+
+  .option,
+  .specialOption {
+      padding: 5px;
+      cursor: pointer;
+  }
+
+  .specialOption {
+      border-bottom: 1px solid #063269;
+  }
+
+  .option:hover,
+  .option.highlighted {
+      background-color: #dbd2ff;
+  }
+
+  .specialOption:hover,
+  .specialOption.highlighted {
+      background-color: #dbd2ff;
+  }
+
+  #submitButton {
+      margin-top: 10px;
+      padding: 5px 10px;
+  }
+
+</style>

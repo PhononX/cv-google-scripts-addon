@@ -1,0 +1,78 @@
+<script>
+let voiceMemosProgress = false;
+let conversionsProgress = false;
+
+function validateDatesVoiceMemos() {
+    const startDate = new Date(document.getElementById('startDateVM').value);
+    const endDate = new Date(document.getElementById('endDateVM').value);
+
+    const today = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 0);
+    today.setHours(0, 0, 0, 0);  // Set time to midnight for accurate comparison
+
+    hideMessage('messageVoiceMemos');
+
+    if (startDate > endDate) {
+        showMessage("Error: Start date cannot be later than end date.", "error", 'messageVoiceMemos');
+        return false;
+    }
+
+    if (startDate > today) {
+        showMessage("Error: Start date cannot be later than today.", "error", 'messageVoiceMemos');
+        return false;
+    }
+
+    return true;
+}
+
+function setAllButtonsState() {
+    setExportButtonState();
+    setExportVoiceMemosButtonState();
+}
+
+function setExportVoiceMemosButtonState() {
+    const exportButton = document.getElementById('exportVoiceMemosButton');
+    exportButton.disabled = voiceMemosProgress || conversionsProgress || !validateDatesVoiceMemos();
+}
+
+document.getElementById('exportVoiceMemosButton').addEventListener('click', () => {
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => input.disabled = true);
+    hideMessage('messageVoiceMemos');
+    voiceMemosProgress = true;
+    setAllButtonsState();
+
+    const startDateVM = document.getElementById('startDateVM').value;
+    const endDateVM = document.getElementById('endDateVM').value;
+
+    google.script.run
+        .withSuccessHandler(onVoiceMemosExportSuccess)
+        .withFailureHandler(onVoiceMemosExportFailure)
+        .getVoiceMemos(startDateVM, endDateVM);
+});
+
+function onVoiceMemosExportSuccess(response) {
+    voiceMemosProgress = false;
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'messageVoiceMemos');
+        }
+    } else {
+        showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'messageVoiceMemos');
+    }
+    disableButtonsInputs(false);
+}
+
+function onVoiceMemosExportFailure(error) {
+    voiceMemosProgress = false;
+    showMessage('Failed to export. ' + error, 'error', 'messageVoiceMemos');
+    disableButtonsInputs(false);
+}
+
+document.getElementById('startDateVM').addEventListener('change', setExportVoiceMemosButtonState);
+document.getElementById('endDateVM').addEventListener('change', setExportVoiceMemosButtonState);
+  </script>

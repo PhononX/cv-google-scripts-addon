@@ -1,0 +1,198 @@
+<script>
+  function showScreen(screenId) {
+    document.getElementById('screen0').style.display = 'none';
+    document.getElementById('screen1').style.display = screenId === 'screen1' ? 'block' : 'none';
+    document.getElementById('screen2').style.display = screenId === 'screen2' ? 'block' : 'none';
+    if (screenId === 'screen1') {
+        document.getElementById('signInButton').style.display = 'inline-block';
+        document.getElementById('progressText').style.display = 'none';
+    }
+}
+
+function showMessage(message, type, divMessageId) {
+    const messageElement = document.getElementById(divMessageId);
+    messageElement.textContent = message;
+    messageElement.className = `message ${type}`;
+    messageElement.style.display = 'block';
+    messageElement.style.whiteSpace = 'pre-wrap';
+}
+
+function hideMessage(divMessageId) {
+    document.getElementById(divMessageId).style.display = 'none';
+}
+
+function setExportButtonState() {
+    const exportButton = document.getElementById('exportButton');
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    exportButton.disabled = !selectedWorkspaceId || !selectedConversationKey || !validateDates() || voiceMemosProgress || conversionsProgress;
+}
+
+function validateDates() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+
+    const daysDifference = Math.ceil((endDate - startDate) / (1000 * 3600 * 24));
+    if (daysDifference > 29) {
+        showMessage("Error: Difference between start_date and end_date must be less than 30 days.", "error", 'messageConversations');
+        return false;
+    }
+
+    const today = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 0);
+    today.setHours(0, 0, 0, 0);  // Set time to midnight for accurate comparison
+
+    hideMessage('messageConversations');
+
+    if (startDate > endDate) {
+        showMessage("Error: Start date cannot be later than end date.", "error", 'messageConversations');
+        return false;
+    }
+
+    if (startDate > today) {
+        showMessage("Error: Start date cannot be later than today.", "error", 'messageConversations');
+        return false;
+    }
+
+    return true;
+}
+
+function populateWorkspacesConversation(workspaces, conversations) {
+    categories = workspaces;
+    items = conversations;
+    setupSelect(searchInput1, optionsList1, clearButton1, categories);
+    setupSelect(searchInput2, optionsList2, clearButton2, []);
+}
+
+function checkAccess() {
+  console.log('check access')
+    google.script.run
+        .withSuccessHandler(onCheckAccessSuccess)
+        .withFailureHandler(onCheckAccessFailure)
+        .getWorkspacesAndConversationsGW();
+}
+
+document.getElementById('signInButton').addEventListener('click', () => {
+    const authUrl = document.getElementById('authUrl').value;
+    if (authUrl === ''){
+      // showMessage('Failed to get authUrl.', 'error', 'messageUnexpectedError');
+      checkAccess();
+    }else{
+      window.open(authUrl, '_blank');
+      document.getElementById('signInButton').style.display = 'none';
+      document.getElementById('progressText').style.display = 'inline-block';
+      checkAccess();
+    }
+
+    // const checkAccess = () => {
+    //     google.script.run
+    //         .withSuccessHandler(onCheckAccessSuccess)
+    //         .withFailureHandler(onCheckAccessFailure)
+    //         .getWorkspacesAndConversations();
+    // };
+
+    
+});
+
+function onCheckAccessSuccess(response) {
+    if (response.hasAccess) {
+        populateWorkspacesConversation(response.workspaces, response.items);
+        // console.error('Not error 1-3');
+        showScreen('screen2');
+    } else if (response.authUrl) {
+        // Open the auth URL in a new tab
+        //window.open(response.authUrl, '_blank');
+        document.getElementById('authUrl').value = response.authUrl;
+        setTimeout(checkAccess, 3000);
+    } else {
+        setTimeout(checkAccess, 3000);
+    }
+}
+
+function onCheckAccessFailure(error) {
+    // console.error('Error checking access:', error);
+    showMessage('Failed to check access. Please try again later.', 'error', 'messageAccess');
+    document.getElementById('signInButton').style.display = 'inline-block';
+    document.getElementById('progressText').style.display = 'none';
+}
+
+document.getElementById('exportButton').addEventListener('click', () => {
+    hideMessage('messageConversations');
+    conversionsProgress = true;
+    setExportVoiceMemosButtonState();
+    const inputs = document.querySelectorAll('input');
+    const exportButton = document.getElementById('exportButton');
+
+    inputs.forEach(input => input.disabled = true);
+    exportButton.disabled = true;
+
+    const selectedConversation = selectedConversationKey;
+
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    google.script.run
+        .withSuccessHandler(onExportSuccess)
+        .withFailureHandler(onExportFailure)
+        .exportConversations(selectedConversation, selectedLabel, startDate, endDate);
+});
+
+function onExportSuccess(response) {
+    conversionsProgress = false;
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            showScreen('screen1');
+            //showMessage(response.message, 'error', 'messageAccess');
+        } else {
+            showMessage(response.message, 'error', 'messageConversations');
+        }
+    } else {
+        showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'messageConversations');
+    }
+    disableButtonsInputs(false);
+}
+
+function disableButtonsInputs(value) {
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => input.disabled = value);
+
+    const exportButton = document.getElementById('exportButton');
+    exportButton.disabled = value;
+    const exportVoiceMemosButton = document.getElementById('exportVoiceMemosButton');
+    exportVoiceMemosButton.disabled = value;
+}
+
+function onExportFailure(error) {
+    conversionsProgress = false;
+    //setExportVoiceMemosButtonState();
+    // console.error('Error exporting conversations:', error);
+    showMessage('Failed to export. ' + error, 'error', 'messageConversations');
+
+    // const inputs = document.querySelectorAll('input');
+    // inputs.forEach(input => input.disabled = false);
+    //setExportButtonState();
+    disableButtonsInputs(false);
+}
+
+document.getElementById('startDate').addEventListener('change', setExportButtonState);
+document.getElementById('endDate').addEventListener('change', setExportButtonState);
+
+
+
+const test = preWorkspacesConversations;
+if (test.hasAccess === true) {
+    populateWorkspacesConversation(test.workspaces, test.items);
+    document.getElementById('signInButton').style.display = 'inline-block';
+    document.getElementById('progressText').style.display = 'none';
+    showScreen('screen2');
+} else {
+    //document.getElementById("authUrl").value = test.authUrl;
+    if (!test.authUrl){
+      showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+    }else{
+      document.getElementById('authUrl').value = test.authUrl;
+    }
+    showScreen('screen1');
+}
+</script>
