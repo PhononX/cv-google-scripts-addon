@@ -66,7 +66,6 @@ function populateWorkspacesConversation(workspaces, conversations) {
 }
 
 function checkAccess() {
-  console.log('check access')
     google.script.run
         .withSuccessHandler(onCheckAccessSuccess)
         .withFailureHandler(onCheckAccessFailure)
@@ -76,33 +75,20 @@ function checkAccess() {
 document.getElementById('signInButton').addEventListener('click', () => {
     const authUrl = document.getElementById('authUrl').value;
     if (authUrl === ''){
-      // showMessage('Failed to get authUrl.', 'error', 'messageUnexpectedError');
       checkAccess();
     }else{
       window.open(authUrl, '_blank');
       document.getElementById('signInButton').style.display = 'none';
       document.getElementById('progressText').style.display = 'inline-block';
       checkAccess();
-    }
-
-    // const checkAccess = () => {
-    //     google.script.run
-    //         .withSuccessHandler(onCheckAccessSuccess)
-    //         .withFailureHandler(onCheckAccessFailure)
-    //         .getWorkspacesAndConversations();
-    // };
-
-    
+    } 
 });
 
 function onCheckAccessSuccess(response) {
     if (response.hasAccess) {
         populateWorkspacesConversation(response.workspaces, response.items);
-        // console.error('Not error 1-3');
         showScreen('screen2');
     } else if (response.authUrl) {
-        // Open the auth URL in a new tab
-        //window.open(response.authUrl, '_blank');
         document.getElementById('authUrl').value = response.authUrl;
         setTimeout(checkAccess, 3000);
     } else {
@@ -111,7 +97,6 @@ function onCheckAccessSuccess(response) {
 }
 
 function onCheckAccessFailure(error) {
-    // console.error('Error checking access:', error);
     showMessage('Failed to check access. Please try again later.', 'error', 'messageAccess');
     document.getElementById('signInButton').style.display = 'inline-block';
     document.getElementById('progressText').style.display = 'none';
@@ -143,7 +128,6 @@ function onExportSuccess(response) {
     if (response.status === 'error') {
         if (!response.hasAccess) {
             showScreen('screen1');
-            //showMessage(response.message, 'error', 'messageAccess');
         } else {
             showMessage(response.message, 'error', 'messageConversations');
         }
@@ -159,25 +143,19 @@ function disableButtonsInputs(value) {
 
     const exportButton = document.getElementById('exportButton');
     exportButton.disabled = value;
+
     const exportVoiceMemosButton = document.getElementById('exportVoiceMemosButton');
     exportVoiceMemosButton.disabled = value;
 }
 
 function onExportFailure(error) {
     conversionsProgress = false;
-    //setExportVoiceMemosButtonState();
-    // console.error('Error exporting conversations:', error);
     showMessage('Failed to export. ' + error, 'error', 'messageConversations');
-
-    // const inputs = document.querySelectorAll('input');
-    // inputs.forEach(input => input.disabled = false);
-    //setExportButtonState();
     disableButtonsInputs(false);
 }
 
 document.getElementById('startDate').addEventListener('change', setExportButtonState);
 document.getElementById('endDate').addEventListener('change', setExportButtonState);
-
 
 
 const test = preWorkspacesConversations;
@@ -187,9 +165,8 @@ if (test.hasAccess === true) {
     document.getElementById('progressText').style.display = 'none';
     showScreen('screen2');
 } else {
-    //document.getElementById("authUrl").value = test.authUrl;
     if (!test.authUrl){
-      showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+      showMessage('Failed to get authUrl.', 'error', 'messageUnexpectedError');
     }else{
       document.getElementById('authUrl').value = test.authUrl;
     }

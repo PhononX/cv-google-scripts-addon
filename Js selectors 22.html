@@ -75,29 +75,6 @@ let updatedQuery;
     return results;
 }
 
-
-
-function createOptionsListOLD(inputElement, optionsListElement, options) {
-    optionsListElement.innerHTML = '';
-    filteredOptions = options;
-    options.forEach((option, index) => {
-        const div = document.createElement('div');
-        if (inputElement === searchInput1) {
-            div.textContent = option.workspaceName;
-        } else if (inputElement === searchInput2) {
-            div.textContent = option;
-        } else {
-            // div.textContent = Object.values(option)[0];
-            div.textContent = option.name;
-        }
-        // div.className = 'option';
-        div.className = inputElement === searchInput1 && option.special === true ? 'specialOption' : 'option';
-        div.dataset.index = index;
-        div.onclick = () => selectOption(inputElement, optionsListElement, option);
-        optionsListElement.appendChild(div);
-    });
-}
-
 function createOptionsList(inputElement, optionsListElement, options) {
     optionsListElement.innerHTML = '';
     filteredOptions = options;
@@ -118,23 +95,6 @@ function createOptionsList(inputElement, optionsListElement, options) {
         optionsListElement.appendChild(div);
     });
     optionsListElement.style.display = options.length > 0 ? 'block' : 'none';
-}
-
-function filterOptionsOLD(inputElement, optionsListElement, options) {
-    const query = inputElement.value.toLowerCase();
-    filteredOptions = options.filter(option => {
-        let textToMatch;
-        if (inputElement === searchInput1) {
-            textToMatch = option.workspaceName;
-        } else if (inputElement === searchInput2) {
-            textToMatch = option;
-        } else {
-            textToMatch = Object.values(option)[0];
-        }
-        return textToMatch.toLowerCase().includes(query);
-    });
-    createOptionsList(inputElement, optionsListElement, filteredOptions);
-    highlightedIndex = -1;
 }
 
 function filterOptions(inputElement, optionsListElement, options) {
@@ -162,25 +122,6 @@ function filterOptions(inputElement, optionsListElement, options) {
     highlightedIndex = -1;
 }
 
-function selectOptionOLD(inputElement, optionsListElement, option) {
-    if (inputElement === searchInput1) {
-        selectedWorkspaceId = option.workspaceId;
-        inputElement.value = option.workspaceName;
-        updateConversationTypeSelect(option.workspaceId);
-    } else if (inputElement === searchInput2) {
-        selectedConversationType = option;
-        inputElement.value = option;
-        updateConversationSelect(selectedWorkspaceId, option);
-    } else {
-        selectedConversationKey = option.id;
-        inputElement.value = option.name;
-        selectedLabel = option.name;
-    }
-    optionsListElement.style.display = 'none';
-    setExportButtonState();
-}
-
-// Modify the selectOption function to handle the fourth selector
 function selectOption(inputElement, optionsListElement, option) {
     if (inputElement === searchInput4) {
         // Find the workspace
@@ -200,9 +141,6 @@ function selectOption(inputElement, optionsListElement, option) {
             searchInput3.value = option.name;
             searchInput3.disabled = false;
             selectedLabel = option.name;
-            
-            // Update the conversation type options
-            //updateConversationTypeSelect(option.workspace_id);
             
             // Clear the fourth selector
             inputElement.value = '';
@@ -224,20 +162,6 @@ function selectOption(inputElement, optionsListElement, option) {
     setExportButtonState();
 }
 
-// Add specific event listeners for the fourth selector
-// searchInput4.addEventListener('input', () => {
-//   console.log('input');
-//     const results = findConversations(searchInput4.value);
-//     const options = results.map(result => ({
-//         ...result,
-//         name: result.displayName // Use the display name that includes workspace
-//     }));
-//     console.log('options');
-//     console.log(options);
-//     filterOptions(searchInput4, optionsList4, options);
-//     optionsList4.style.display = 'block';
-// });
-
 // Update the fourth selector event listener
 searchInput4.addEventListener('input', () => {
     if (searchInput4.value.trim() === '') {
@@ -251,21 +175,9 @@ searchInput4.addEventListener('input', () => {
         ...result,
         displayName: `${result.name} - ${categories.find(cat => cat.workspaceId === result.workspace_id)?.workspaceName || result.workspace_id}`
     }));
-    
-    // filterOptions(searchInput4, optionsList4, options);
+
     setupSelect4th(searchInput4, optionsList4, clearButton4, options);
 });
-
-// searchInput4.addEventListener('focus', () => {
-//     console.log('focus');
-//     const results = findConversations(searchInput4.value);
-//     const options = results.map(result => ({
-//         ...result,
-//         name: result.displayName
-//     }));
-//     createOptionsList(searchInput4, optionsList4, options);
-//     optionsList4.style.display = 'block';
-// });
 
 // Add to the clearInput function
 function clearInput(inputElement, optionsListElement) {
@@ -295,39 +207,7 @@ function clearInput(inputElement, optionsListElement) {
     setExportButtonState();
 }
 
-function clearInputOLD(inputElement, optionsListElement) {
-    inputElement.value = '';
-    // optionsListElement.style.display = 'none';
-    inputElement.focus();
-    if (inputElement === searchInput1) {
-        selectedWorkspaceId = '';
-        selectedConversationType = '';
-        selectedConversationKey = '';
-        searchInput2.value = '';
-        searchInput3.value = '';
-        searchInput2.disabled = true;
-        searchInput3.disabled = true;
-        optionsList2.innerHTML = '';
-        optionsList3.innerHTML = '';
-    } else if (inputElement === searchInput2) {
-        selectedConversationType = '';
-        selectedConversationKey = '';
-        searchInput3.value = '';
-        updateConversationSelect(selectedWorkspaceId, '');
-    } else {
-        selectedConversationKey = '';
-    }
-    highlightedIndex = -1;
-    setExportButtonState();
-}
-
 function updateConversationTypeSelect(workspaceId) {
-    // if (workspaceId === 'GUEST_WORKSPACE') {
-    //   searchInput2.disabled = true;
-    //   clearButton2.style.display = 'none';
-    //   searchInput2.value = 'Unknown Conversation Types';
-    //   selectedConversationType = '';
-    // } else {
     searchInput2.disabled = false;
     clearButton2.style.display = 'block';
     searchInput2.value = '';
@@ -336,7 +216,6 @@ function updateConversationTypeSelect(workspaceId) {
     selectedConversationKey = '';
     const types = [...new Set(items[workspaceId].map(item => typeNames[item.type]))];
     createOptionsList(searchInput2, optionsList2, types);
-    // }
     updateConversationSelect(workspaceId, '');
 }
 
@@ -352,32 +231,6 @@ function updateConversationSelect(workspaceId, conversationType) {
     createOptionsList(searchInput3, optionsList3, filteredConversations);
 }
 
-function handleKeyboardNavigation(event, inputElement, optionsListElement) {
-    const options = optionsListElement.querySelectorAll('.option');
-
-    if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        highlightedIndex = (highlightedIndex + 1) % options.length;
-    } else if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        highlightedIndex = (highlightedIndex - 1 + options.length) % options.length;
-    } else if (event.key === 'Enter' && highlightedIndex !== -1) {
-        event.preventDefault();
-        const selectedOption = filteredOptions[highlightedIndex];
-        selectOption(inputElement, optionsListElement, selectedOption);
-        return;
-    } else {
-        return;
-    }
-
-    options.forEach((option, index) => {
-        option.classList.toggle('highlighted', index === highlightedIndex);
-    });
-
-    if (highlightedIndex !== -1) {
-        options[highlightedIndex].scrollIntoView({ block: 'nearest' });
-    }
-}
 
 function setupSelect(inputElement, optionsListElement, clearButtonElement, options) {
     inputElement.addEventListener('focus', () => {
@@ -414,12 +267,6 @@ function setupSelect(inputElement, optionsListElement, clearButtonElement, optio
         optionsListElement.style.display = 'block';
     });
 
-    // inputElement.addEventListener('keydown', (event) => {
-    //     if (['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) {
-    //         handleKeyboardNavigation(event, inputElement, optionsListElement);
-    //     }
-    // });
-
     clearButtonElement.addEventListener('click', () => clearInput(inputElement, optionsListElement));
 
     document.addEventListener('click', (e) => {
@@ -431,42 +278,9 @@ function setupSelect(inputElement, optionsListElement, clearButtonElement, optio
 }
 
 function setupSelect4th(inputElement, optionsListElement, clearButtonElement, options) {
-  createOptionsList(inputElement, optionsListElement, options);
-    // inputElement.addEventListener('focus', () => {
-    //     if (inputElement === searchInput2 && selectedWorkspaceId) {
-    //         const types = [...new Set(items[selectedWorkspaceId].map(item => typeNames[item.type]))];
-    //         createOptionsList(inputElement, optionsListElement, types);
-    //     } else if (inputElement === searchInput3 && selectedWorkspaceId) {
-    //         let filteredConversations = items[selectedWorkspaceId];
-    //         if (selectedConversationType) {
-    //             const typeKey = Object.keys(typeNames).find(key => typeNames[key] === selectedConversationType);
-    //             filteredConversations = filteredConversations.filter(conv => conv.type === typeKey);
-    //         }
-    //         createOptionsList(inputElement, optionsListElement, filteredConversations);
-    //     } else {
-    //         createOptionsList(inputElement, optionsListElement, options);
-    //     }
-    //     optionsListElement.style.display = 'block';
-    // });
+    createOptionsList(inputElement, optionsListElement, options);
 
-    // inputElement.addEventListener('input', () => {
-    //     if (inputElement === searchInput2 && selectedWorkspaceId) {
-    //         const types = [...new Set(items[selectedWorkspaceId].map(item => typeNames[item.type]))];
-    //         filterOptions(inputElement, optionsListElement, types);
-    //     } else if (inputElement === searchInput3 && selectedWorkspaceId) {
-    //         let filteredConversations = items[selectedWorkspaceId];
-    //         if (selectedConversationType) {
-    //             const typeKey = Object.keys(typeNames).find(key => typeNames[key] === selectedConversationType);
-    //             filteredConversations = filteredConversations.filter(conv => conv.type === typeKey);
-    //         }
-    //         filterOptions(inputElement, optionsListElement, filteredConversations);
-    //     } else {
-    //         filterOptions(inputElement, optionsListElement, options);
-    //     }
-    //     optionsListElement.style.display = 'block';
-    // });
-
-optionsListElement.style.display = 'block';
+    optionsListElement.style.display = 'block';
     clearButtonElement.addEventListener('click', () => clearInput(inputElement, optionsListElement));
 
     document.addEventListener('click', (e) => {
@@ -480,8 +294,7 @@ optionsListElement.style.display = 'block';
 setupSelect(searchInput1, optionsList1, clearButton1, categories);
 setupSelect(searchInput2, optionsList2, clearButton2, []);
 setupSelect(searchInput3, optionsList3, clearButton3, []);
-// Add to the existing setupSelect function calls
-//setupSelect(searchInput4, optionsList4, clearButton4, []);
+
 
 searchInput2.disabled = true;
 searchInput3.disabled = true;

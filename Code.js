@@ -1,21 +1,10 @@
 function onOpen() {
   const googleSheet = SpreadsheetApp.getUi();
   googleSheet.createMenu('Carbon Voice')
-    // The first version
-    .addItem('Conversation Export 2', 'exportSidebar2')
-    // Plus 4th selector
-    .addItem('Conversation Export 3', 'exportSidebar3')
-    // 'I\'m a Workspace Guest' version -> Guest workspaces are separate 
     .addItem('Conversation Export', 'exportSidebar')
     .addToUi();
 }
 
-function exportSidebar2() {
-  openUniversalSidebar('Fast sidebar', 'Carbon Voice Conversation Export 2');
-}
-function exportSidebar3() {
-  openUniversalSidebar('Fast sidebar 2', 'Carbon Voice Conversation Export 3');
-}
 function exportSidebar() {
   openUniversalSidebar('Fast sidebar GW', 'Carbon Voice Conversation Export');
 }
