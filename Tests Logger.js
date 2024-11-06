@@ -45,3 +45,17 @@ function getListOfPresentations() {
   Logger.log(result);
   return result;
 }
+
+function testShowTokens(){
+  Logger.log(PropertiesService.getUserProperties().getProperties());
+}
+
+function setPastExpiresAtDate(){
+  const userProperty = PropertiesService.getUserProperties();
+  const str = userProperty.getProperty('oauth2.carbonVoice');
+  const json = JSON.parse(str);
+  Logger.log(json);
+  json.expiresAt = 1730476404;
+    Logger.log(json);
+    userProperty.setProperty('oauth2.carbonVoice', JSON.stringify(json));
+}

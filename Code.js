@@ -84,9 +84,11 @@ function makeCarbonVoiceRequest(method, endpoint, payload = null, queryParams = 
 function reset() {
   const service = getCarbonVoiceService();
   service.reset();
+  PropertiesService.getUserProperties().deleteProperty('oauth2.carbonVoice');
 }
 
 function getAuthUrl() {
+  const service = getCarbonVoiceService();
   const authorizationUrl = service.getAuthorizationUrl();
   return authorizationUrl;
 }
