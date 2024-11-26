@@ -1,0 +1,115 @@
+<script>
+  function showScreen(screenId) {
+    document.getElementById('screen0').style.display = 'none';
+    document.getElementById('screen1').style.display = screenId === 'screen1' ? 'block' : 'none';
+    document.getElementById('screen2').style.display = screenId === 'screen2' ? 'block' : 'none';
+    if (screenId === 'screen1') {
+        document.getElementById('signInButton').style.display = 'inline-block';
+        document.getElementById('progressText').style.display = 'none';
+    }
+}
+
+function showMessage(message, type, divMessageId) {
+    const messageElement = document.getElementById(divMessageId);
+    messageElement.textContent = message;
+    messageElement.className = `message ${type}`;
+    messageElement.style.display = 'block';
+    messageElement.style.whiteSpace = 'pre-wrap';
+}
+
+function hideMessage(divMessageId) {
+    document.getElementById(divMessageId).style.display = 'none';
+}
+
+
+function checkAccess() {
+      const checkbox = document.getElementById('keep-signed-in');
+      const keepMeSigned = checkbox.checked;
+    google.script.run
+        .withSuccessHandler(onCheckAccessSuccess)
+        .withFailureHandler(onCheckAccessFailure)
+        .getListOfPresentations(keepMeSigned);
+}
+
+document.getElementById('signInButton').addEventListener('click', () => {
+    const authUrl = document.getElementById('authUrl').value;
+    if (authUrl === ''){
+      showMessage('Failed to get authUrl.', 'error', 'messageUnexpectedError');
+    }else{
+      window.open(authUrl, '_blank');
+      document.getElementById('signInButton').style.display = 'none';
+      document.getElementById('stayLoggedIn').style.display = 'none';
+      document.getElementById('progressText').style.display = 'inline-block';
+      checkAccess();
+    }
+});
+
+function onCheckAccessSuccess(response) {
+    if (response.hasAccess) {
+        populateOutlines(response.presentations);
+        showScreen('screen2');
+    } else if (response.authUrl) {
+        document.getElementById('authUrl').value = response.authUrl;
+        setTimeout(checkAccess, 3000);
+    } else {
+        setTimeout(checkAccess, 3000);
+    }
+}
+
+function onCheckAccessFailure(error) {
+    showMessage('Failed to check access. Please try again later.', 'error', 'messageAccess');
+    document.getElementById('signInButton').style.display = 'inline-block';
+    document.getElementById('progressText').style.display = 'none';
+}
+
+function onExportSuccess(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'messageConversations');
+        }
+    } else {
+      if (response.message){
+        showMessage(response.message, 'success', 'messageConversations');
+      }
+    }
+    enableAllInteractions();
+}
+
+function onRefreshSuccess(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'messageConversations');
+        }
+    } else {
+      populateOutlines(response.presentations)
+    }
+    enableAllInteractions();
+}
+
+function onExportFailure(error) {
+    showMessage('Failed to export. ' + error, 'error', 'messageConversations');
+    enableAllInteractions();
+}
+
+const test = prePresentations;
+if (test.hasAccess === true) {
+    populateOutlines(test.presentations);
+    document.getElementById('signInButton').style.display = 'inline-block';
+    document.getElementById('progressText').style.display = 'none';
+    showScreen('screen2');
+} else {
+    if (!test.authUrl){
+      showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+    }else{
+      document.getElementById('authUrl').value = test.authUrl;
+    }
+    showScreen('screen1');
+}
+
+</script>

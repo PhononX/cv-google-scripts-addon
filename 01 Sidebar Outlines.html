@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Voice Sidebar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gilroy:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <?!= include('01 Css'); ?>
+  <?!= include('01 Css Outlines Sidebar'); ?>
+  <?!= include('01 Css Svg Icons'); ?>
+  <?!= include('01 Css Refresh Button'); ?>
+</head>
+
+<body>
+  <div id="screen0">
+    <div>
+      <span class="progress"></span>
+    </div>
+  </div>
+
+  <div id="screen1" style="display: none;">
+    <h1>Connect to Carbon Voice</h1>
+    <input type="hidden" id="authUrl" value="">
+    <button id="signInButton">Sign in with Carbon Voice</button>
+    <div id="stayLoggedIn" class="stayLoggedIn">
+      <label for="keep-signed-in">
+         <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!= checkedOrNotMainSidebar() ?>>
+         Keep me signed in
+      </label>
+      <p>If you choose not to enable the "Keep me signed in" option, you will be required to sign in again if you do not
+        use the add-on for 7 or more days.</p>
+      <p>You can always modify this option by following these steps:</p>
+      <ol type="a" class="ol">
+        <li>Go to Extensions - "Carbon Voice" - Settings</li>
+        <li>Turn on/off "Keep me signed in"</li>
+        <li>Click "Save"</li>
+      </ol>
+
+    </div>
+    <div id="progressText" style="display: none;">
+      In progress <span class="progress"></span>
+    </div>
+  </div>
+
+  <div id="screen2" style="display: none;">
+    <div id="conversations" class="tab-content active">
+      <div id="outlines" class="tab-content active"></div>
+      <div id="messageConversations" class="message" style="display: none;"></div>
+    </div>
+    <div id="messageAccess" class="message" style="display: none;"></div>
+  </div>
+
+  <div id="messageUnexpectedError" class="message" style="display: none;"></div>
+
+  <script>
+    const prePresentations = <?!= getListOfPresentationsSidebar(); ?>;
+  </script>
+  <?!= include('01 Js Outlines Sidebar'); ?>
+  <?!= include('01 Js Fast'); ?>
+</body>
+
+</html>

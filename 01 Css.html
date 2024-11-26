@@ -1,0 +1,137 @@
+  <style>
+    input:focus,
+    textarea:focus,
+    select:focus{
+      outline-color: #000000;
+    }
+
+    body {
+      font-family: 'Gilroy', sans-serif;
+      margin: 0px;
+      padding: 10px;
+    }
+
+    h1 {
+      color: #063269;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background-color: #261073;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .progress {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #261073;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .progressButton {
+      display: none;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin: 0px;
+      padding: 0px;
+    }
+
+/* Stay logged in */
+.stayLoggedIn {
+  margin: 15px 0 0 0;
+  padding: 0;
+}
+.stayLoggedIn p {
+  margin: 0;
+  padding: 3px;
+  white-space: pre-wrap;
+  font-size:0.9em
+}
+.stayLoggedIn .ol {
+  margin:0;
+}
+.stayLoggedIn .ol li {
+  font-size:0.9em
+}
+
+.stayLoggedIn input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #261073;
+      ;
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+      margin: 2px 0;
+    }
+
+    .stayLoggedIn input[type="checkbox"]:checked {
+      background-color: #f2efff;
+    }
+
+    .stayLoggedIn input[type="checkbox"]:checked::after {
+      content: '\2713';
+      font-size: 14px;
+      color: #261073;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .stayLoggedIn label {
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+  </style>

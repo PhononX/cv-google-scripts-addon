@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0px;
+      padding: 10px;
+    }
+    h1 {
+      color: #063269;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }      
+.main-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.sub-list {
+  list-style-type: circle;
+  padding-left: 20px;
+}
+
+li {
+  margin: 3px;
+}
+.sub-list li {
+white-space: pre-wrap; 
+}
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .progressButton {
+      display: none;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .action-button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4330b8;
+      color: white;
+    }
+    .action-button:hover {
+      background-color: #261073;
+    }
+
+    .cancel-button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #6f7077;
+      color: white;
+    }
+    .cancel-button:hover {
+      background-color: #5d5e64;
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+/* Stay logged in */
+.stayLoggedIn {
+  margin: 15px 0 0 0;
+  padding: 0;
+}
+.stayLoggedIn p {
+  margin: 0;
+  padding: 3px;
+  white-space: pre-wrap;
+  font-size:0.9em
+}
+.stayLoggedIn .ol {
+  margin:0;
+}
+.stayLoggedIn .ol li {
+  font-size:0.9em
+}
+
+.stayLoggedIn input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #261073;
+      ;
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+      margin: 2px 0;
+    }
+
+    .stayLoggedIn input[type="checkbox"]:checked {
+      background-color: #f2efff;
+    }
+
+    .stayLoggedIn input[type="checkbox"]:checked::after {
+      content: '\2713';
+      font-size: 14px;
+      color: #261073;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .stayLoggedIn label {
+      margin-left: 5px;
+      vertical-align: middle;
+    }        
+    </style>
+
+  </head>
+  <body>
+<h1>Settings</h1>
+    <div id="stayLoggedIn" class="stayLoggedIn">
+      <label for="keep-signed-in">
+         <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!= checkedOrNot ?>>
+         Keep me signed in
+      </label>
+      <p>If you choose not to enable the "Keep me signed in" option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
+    </div>
+      <div id="errorMessage" class="message error" style="display: none;"></div>
+      <button class="action-button" id="okButton">Save  <span class="progressButton" id="progress2"></span></button>
+      <button class="cancel-button" id="cancelButton" onclick="closeDialog()">Cancel</button>
+      
+  <script>
+    const disableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button').forEach(el => {
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '0.6';
+      });
+    };
+
+    const enableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button').forEach(el => {
+        el.style.pointerEvents = 'auto';
+        el.style.opacity = '1';
+
+        // If this is an action button, hide its progress span
+        if (el.classList.contains('action-button')) {
+          const span = el.querySelector('.progressButton');
+          if (span) span.style.display = 'none';
+        }
+      });
+    };
+
+      function disableElements(disable) {
+        if (disable){
+          disableAllInteractions();
+        }else{
+          enableAllInteractions();
+        }
+        document.getElementById("okButton").disabled = disable;
+        document.getElementById("cancelButton").disabled = disable;
+      }
+
+    function closeDialog() {
+      google.script.host.close();
+    }
+
+    function handleError(error) {
+      disableElements(false);
+       const progress = document.getElementById('progress2');
+       progress.style.display = 'none';      
+      document.getElementById("errorMessage").innerText = "An error occurred: " + error.message;
+      document.getElementById("errorMessage").style.display = "block";
+    }  
+
+    function handleSuccess(error) {
+      disableElements(false);
+       const progress = document.getElementById('progress2');
+       progress.style.display = 'none';      
+
+    }  
+
+
+
+    okButton.addEventListener('click', (e) => {
+
+       e.stopPropagation();
+
+       const progress = e.target.querySelector('.progressButton');
+       progress.style.display = 'inline-block';
+       const checkbox = document.getElementById('keep-signed-in');
+       const keepMeSigned = checkbox.checked;
+
+      disableElements(true);
+      google.script.run
+        .withSuccessHandler(handleSuccess)
+        .withFailureHandler(handleError)
+        .changeKeepMeSignedSetting(keepMeSigned);  
+    });      
+  </script>      
+  </body>
+</html>

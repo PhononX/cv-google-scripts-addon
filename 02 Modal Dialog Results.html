@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0px;
+      padding: 10px;
+    }
+
+    h1 {
+      color: #063269;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .main-list {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .sub-list {
+      list-style-type: circle;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 3px;
+    }
+
+    .sub-list li {
+      white-space: pre-wrap;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .progressButton {
+      display: none;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .action-button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4330b8;
+      color: white;
+    }
+
+    .action-button:hover {
+      background-color: #261073;
+    }
+
+    .cancel-button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #6f7077;
+      color: white;
+    }
+
+    .cancel-button:hover {
+      background-color: #5d5e64;
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+  </style>
+
+</head>
+
+<body>
+  <?!= html ?>
+  <div id="errorMessage" class="message error" style="display: none;"></div>
+  <button class="action-button" id="okButton">Create Slides  <span class="progressButton" id="progress2"></span></button>
+  <button class="cancel-button" id="cancelButton" onclick="closeDialog()">Cancel</button>
+
+  <script>
+    const disableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button').forEach(el => {
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '0.6';
+      });
+    };
+
+    const enableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button').forEach(el => {
+        el.style.pointerEvents = 'auto';
+        el.style.opacity = '1';
+
+        // If this is an action button, hide its progress span
+        if (el.classList.contains('action-button')) {
+          const span = el.querySelector('.progressButton');
+          if (span) span.style.display = 'none';
+        }
+      });
+    }; 
+
+    function disableElements(disable) {
+      if (disable){
+        disableAllInteractions();
+      }else{
+        enableAllInteractions();
+      }
+      document.getElementById("okButton").disabled = disable;
+      document.getElementById("cancelButton").disabled = disable;
+    }
+
+    function closeDialog() {
+      google.script.host.close();
+    }
+
+    function handleError(error) {
+      disableElements(false);
+       const progress = document.getElementById('progress2');
+       progress.style.display = 'none';      
+      document.getElementById("errorMessage").innerText = "An error occurred: " + error.message;
+      document.getElementById("errorMessage").style.display = "block";
+    }  
+
+    okButton.addEventListener('click', (e) => {
+       const messageId = '<?!= messageId ?>';
+       const aiResponseId = '<?!= aiResponseId ?>';
+       e.stopPropagation();
+
+       const progress = e.target.querySelector('.progressButton');
+       progress.style.display = 'inline-block';
+       
+      disableElements(true);
+      google.script.run
+        .withSuccessHandler(closeDialog)
+        .withFailureHandler(handleError)
+        .createSlides(messageId, aiResponseId);
+    });      
+  </script>
+</body>
+
+</html>

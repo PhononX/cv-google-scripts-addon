@@ -1,0 +1,59 @@
+    <style>
+.outlines {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.reload-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.reload-icon:hover {
+  background-color: #f2efff;
+}
+
+.svg-icon-reload {
+  width: 18px;
+  height: 16px;
+  /* background-image: url('https://www.gstatic.com/images/icons/material/system/1x/bookmark_grey600_48dp.png'); */
+  background-image: url('data:image/svg+xml;utf8,<svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.48438 1.03906C2.03666 1.03906 2.48438 1.48678 2.48438 2.03906V4.78906H5.23438C5.78666 4.78906 6.23438 5.23678 6.23438 5.78906C6.23438 6.34135 5.78666 6.78906 5.23438 6.78906H1.48438C0.93209 6.78906 0.484375 6.34135 0.484375 5.78906V2.03906C0.484375 1.48678 0.93209 1.03906 1.48438 1.03906Z" fill="%23261073"/><path fill-rule="evenodd" clip-rule="evenodd" d="M5.98671 0.725681C6.94195 0.3296 7.9659 0.125729 9 0.125729C10.0341 0.125729 11.0581 0.3296 12.0133 0.725681C12.9685 1.12176 13.8363 1.70228 14.567 2.43403C14.9572 2.82484 14.9568 3.45801 14.566 3.84825C14.1752 4.23849 13.542 4.23802 13.1518 3.84722C12.6068 3.30149 11.9596 2.86855 11.2473 2.57316C10.5349 2.27777 9.77121 2.12573 9 2.12573C8.22879 2.12573 7.46515 2.27777 6.75275 2.57316C6.04035 2.86855 5.39318 3.30149 4.84825 3.84722L4.84669 3.84877L2.19044 6.49721C1.79934 6.88716 1.16618 6.88623 0.776228 6.49513C0.386279 6.10403 0.387211 5.47086 0.77831 5.08091L3.433 2.43403C3.43327 2.43377 3.43353 2.4335 3.4338 2.43324C4.16432 1.70186 5.03182 1.12162 5.98671 0.725681Z" fill="%23261073"/><path fill-rule="evenodd" clip-rule="evenodd" d="M11.7656 10.2109C11.7656 9.65865 12.2133 9.21094 12.7656 9.21094H16.5156C17.0679 9.21094 17.5156 9.65865 17.5156 10.2109V13.9609C17.5156 14.5132 17.0679 14.9609 16.5156 14.9609C15.9633 14.9609 15.5156 14.5132 15.5156 13.9609V11.2109H12.7656C12.2133 11.2109 11.7656 10.7632 11.7656 10.2109Z" fill="%23261073"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17.2238 9.50487C17.6137 9.89597 17.6128 10.5291 17.2217 10.9191L14.567 13.566C14.5667 13.5663 14.5664 13.5666 14.5661 13.5669C13.8356 14.2982 12.9681 14.8784 12.0133 15.2743C11.0581 15.6704 10.0341 15.8743 9 15.8743C7.9659 15.8743 6.94195 15.6704 5.98671 15.2743C5.03147 14.8782 4.16369 14.2977 3.433 13.566C3.04276 13.1752 3.04323 12.542 3.43403 12.1518C3.82484 11.7615 4.45801 11.762 4.84825 12.1528C5.39318 12.6985 6.04035 13.1314 6.75275 13.4268C7.46515 13.7222 8.22879 13.8743 9 13.8743C9.77121 13.8743 10.5349 13.7222 11.2473 13.4268C11.9596 13.1314 12.6068 12.6985 13.1518 12.1528L13.1533 12.1512L15.8096 9.50279C16.2007 9.11284 16.8338 9.11377 17.2238 9.50487Z" fill="%23261073"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Animation for click */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reload-icon:active .svg-icon-reload {
+  /* animation: spin 0.5s linear; */
+  animation: spin 1s linear infinite; 
+}
+
+/* Optional: you can also add this class via JavaScript for a smoother animation */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+</style>

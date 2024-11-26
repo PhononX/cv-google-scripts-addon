@@ -1,0 +1,209 @@
+<script>
+    const enableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button, .reload-icon').forEach(el => {
+        el.style.pointerEvents = 'auto';
+        el.style.opacity = '1';
+
+        // If this is an action button, hide its progress span
+        if (el.classList.contains('action-button')) {
+          const span = el.querySelector('.progressButton');
+          if (span) span.style.display = 'none';
+        }
+        const reloadBtn = document.getElementById('reload-button');
+        const icon = reloadBtn.querySelector('.svg-icon-reload');
+        icon.classList.remove('spinning');
+      });
+    }; 
+
+    const disableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button, .reload-icon').forEach(el => {
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '0.6';
+      });
+    };
+
+function convertMillisecondsToMinutesSeconds(milliseconds) {
+    // Calculate total seconds
+    const totalSeconds = Math.floor(milliseconds / 1000);
+
+    // Calculate minutes and remaining seconds
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    // Format minutes and seconds to ensure two digits
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+
+    // Return the formatted time
+    return `${formattedMinutes}:${formattedSeconds}`;
+}
+
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    // Helper function to format time
+    function formatTime(date) {
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        return `${hours}:${minutesStr} ${ampm}`;
+    }
+
+    // Check if the date is today or yesterday
+    const isToday = date.toDateString() === now.toDateString();
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (isToday) {
+        return `Today · ${formatTime(date)}`;
+    } else if (isYesterday) {
+        return `Yesterday · ${formatTime(date)}`;
+    } else {
+        // Format the date as "Nov 5"
+        const options = { month: 'short', day: 'numeric' };
+        const formattedDate = date.toLocaleDateString(undefined, options);
+        return `${formattedDate} · ${formatTime(date)}`;
+    }
+}
+
+  function populateOutlines(presentations) {
+  const conversationsDiv = document.getElementById('conversations');
+  const outlinesDiv = document.getElementById('outlines');
+  outlinesDiv.innerHTML = `<div class="button-container">
+    <button class="reload-icon" id="reload-button">
+      <span class="svg-icon-reload"></span>
+    </button>
+  </div>`;
+
+  if (presentations.length === 0){
+    const instruction = document.createElement('div');
+    instruction.innerHTML = '<p>Create a presentation outline in your Carbon Voice account by right-clicking on a voice message, selecting AI Actions, then choosing More AI Magic, and finally, Presentation Outline. Afterward, click the refresh button in the top right corner here.</p>';
+    outlinesDiv.appendChild(instruction);
+  }
+
+const reloadBtn = document.getElementById('reload-button');
+    reloadBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      disableAllInteractions();
+
+  const icon = reloadBtn.querySelector('.svg-icon-reload');
+  icon.classList.add('spinning');
+
+      hideMessage('messageConversations');
+      google.script.run
+          .withSuccessHandler(onRefreshSuccess)
+          .withFailureHandler(onExportFailure)
+          .getListOfPresentations();      
+    });
+
+  const outlineList = document.createElement('div');
+  outlineList.className = 'outline-list';
+  
+  let currentDetailsBlock = null;
+  let currentDetailsBlockParent = null;
+
+  presentations.forEach(presentation => {
+    const formattedDateTime = formatDateTime(presentation.createdAt);
+    presentation.formattedDateTime = formattedDateTime;
+    const item = document.createElement('div');
+    item.className = 'outline-item';
+    item.innerHTML = ` <div class="border-wrapper">   <div class="content-wrapper">
+      <div class="icon voice-memo-icon"></div>
+      <div class="text-content">
+        <h3 class="title">${presentation.name}</h3>
+        <div class="metadata">
+          <div class="date-time">
+            <span>${formattedDateTime}</span>
+          </div>
+          <div class="sound-info">
+            <div class="icon sound-bar-icon"></div>
+            <span>${convertMillisecondsToMinutesSeconds(presentation.durationMs)}</span>
+          </div>
+        </div>
+      </div>
+    </div></div>`;
+
+    // Create details block
+    const detailsBlock = document.createElement('div');
+    detailsBlock.className = 'details-block';
+    detailsBlock.style.display = 'none';
+    // Populate details block
+    detailsBlock.innerHTML = `
+      <button class="action-button results-btn">See Results <span class="progressButton" id="progress2"></span></button>
+      <button class="action-button slides-btn">Create Slides <span class="progressButton" id="progress2"></span></button>
+    `;
+
+    // Add click handlers for buttons
+    const resultsBtn = detailsBlock.querySelector('.results-btn');
+    const slidesBtn = detailsBlock.querySelector('.slides-btn');
+    
+    
+    // const disableAllInteractions = () => {
+    //   document.querySelectorAll('.outline-item, .action-button, .reload-icon').forEach(el => {
+    //     el.style.pointerEvents = 'none';
+    //     el.style.opacity = '0.6';
+    //   });
+    // };
+
+    resultsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+ const progress = e.target.querySelector('.progressButton');
+  progress.style.display = 'inline-flex';
+      disableAllInteractions();
+
+      hideMessage('messageConversations');
+      const height = window.innerHeight;
+      google.script.run
+          .withSuccessHandler(onExportSuccess)
+          .withFailureHandler(onExportFailure)
+          .showResultsScreen(presentation, height);      
+    });
+
+    slidesBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+       const progress = e.target.querySelector('.progressButton');
+       progress.style.display = 'inline-block';
+
+      disableAllInteractions();
+      hideMessage('messageConversations');
+      google.script.run
+          .withSuccessHandler(onExportSuccess)
+          .withFailureHandler(onExportFailure)
+          .createSlides(presentation.message_id, presentation.aiResponseId);      
+    });
+
+    // Add click handler for item
+    item.addEventListener('click', () => {
+      hideMessage('messageConversations');
+      if (currentDetailsBlock && currentDetailsBlock !== detailsBlock) {
+        
+        currentDetailsBlockParent = currentDetailsBlock.parentElement;
+        currentDetailsBlockParent.classList.remove('selectedItem');
+        currentDetailsBlock.style.display = 'none';
+      }
+      
+      if (detailsBlock.style.display === 'none') {
+        detailsBlock.style.display = 'flex';
+        currentDetailsBlock = detailsBlock;
+        item.classList.add('selectedItem');
+      } else {
+        detailsBlock.style.display = 'none';
+        currentDetailsBlock = null;
+        item.classList.remove('selectedItem');
+      }
+    });
+
+    outlineList.appendChild(item);
+    item.appendChild(detailsBlock);
+  });
+
+  outlinesDiv.appendChild(outlineList);
+}
+</script>
