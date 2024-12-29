@@ -1,0 +1,56 @@
+{
+  "timeZone": "Asia/Tbilisi",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.scriptapp",
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  "urlFetchWhitelist": [
+    "https://api.carbonvoice.app/"
+  ],
+  "gmail": {
+    "homepageTrigger": {
+      "runFunction": "onHomepage"
+    },
+    "name": "Carbon Voice",
+    "logoUrl": "https://drive.google.com/uc?export=view&id=1kUXrJrDjwMWEHtNvV4QEfbGt4TbnuZFv",
+    "primaryColor": "#f2efff",
+    "secondaryColor": "#5E4CCE",
+    "universalActions": [
+      {
+        "text": "About Carbon Voice",
+        "openLink": "https://www.getcarbon.app/"
+      },
+      {
+        "text": "Settings",
+        "runFunction": "showSettingsCard"
+      }
+    ],
+    "contextualTriggers": [
+      {
+        "unconditional": {},
+        "onTriggerFunction": "asyncMeetingCardContextSidebar"
+      }
+    ],
+    "composeTrigger": {
+      "selectActions": [
+        {
+          "text": "Carbon Voice",
+          "runFunction": "showVoiceMemosCard"
+        }
+      ]
+    },
+    "openLinkUrlPrefixes": [
+      "https://api.carbonvoice.app",
+      "https://carbonvoice.app"
+    ]
+  },
+  "dependencies": {
+    "enabledAdvancedServices": []
+  }
+}
