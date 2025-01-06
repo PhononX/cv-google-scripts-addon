@@ -10,7 +10,7 @@ function getListOfPresentations(keepMeSigned) {
     return result;
   }
 
-  if (typeof keepMeSigned === 'boolean'){
+  if (typeof keepMeSigned === 'boolean') {
     //Logger.log('Change keepMeSigned');
     changeKeepMeSignedSetting(keepMeSigned);
   }
@@ -50,7 +50,7 @@ function getListOfPresentations(keepMeSigned) {
     });
 
     //const presoTitle = el.ai_response.responses[0].json.presentation_outline[0].title;
-    presentations.push({ aiResponseId: el.ai_response.id, name: messageName, message_id: el.messages[0].message.id, type: el.messages[0].message.type, createdAt: el.messages[0].message.created_at, creatorName: el.messages[0].creator.full_name, durationMs: durationMs});
+    presentations.push({ aiResponseId: el.ai_response.id, name: messageName, message_id: el.messages[0].message.id, type: el.messages[0].message.type, createdAt: el.messages[0].message.created_at, creatorName: el.messages[0].creator.full_name, durationMs: durationMs });
     const lastElNum = presentations.length - 1;
     if (presentations[lastElNum].type === 'channel') {
       presentations[lastElNum].workspaceName = el.messages[0].conversation.workspace_name;
@@ -99,7 +99,14 @@ function createSlides(messageId, aiResponseId) {
 
   const slidesArray = result.json[jsonNum].responses[0].json.presentation_outline;
 
-  const suggestionsSlidesArray = result.json[0].responses[0].json.additional_suggestions;
+  const suggestionsSlidesArray = result.json[jsonNum].responses[0].json.additional_suggestions;
+
+  return generateSlides(presentation, numSlides, slides, slidesArray, suggestionsSlidesArray);
+
+}
+
+function generateSlides(presentation, numSlides, slides, slidesArray, suggestionsSlidesArray) {
+
   // Logger.log(suggestionsSlidesArray);
   if (suggestionsSlidesArray) {
     if (suggestionsSlidesArray.length > 0) {

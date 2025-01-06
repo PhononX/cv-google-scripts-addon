@@ -1,0 +1,140 @@
+<script>
+  function autoResize(textarea) {
+      // First check if the input has content to enable/disable the button
+      checkInput();
+      
+      // Get the hidden div
+      const hiddenDiv = textarea.previousElementSibling;
+      
+      // Copy the content
+      hiddenDiv.textContent = textarea.value + '\n';
+      
+      // Copy the styles
+      const styles = window.getComputedStyle(textarea);
+      hiddenDiv.style.fontFamily = styles.fontFamily;
+      hiddenDiv.style.fontSize = styles.fontSize;
+      hiddenDiv.style.lineHeight = styles.lineHeight;
+      hiddenDiv.style.padding = styles.padding;
+      hiddenDiv.style.border = styles.border;
+      hiddenDiv.style.width = styles.width;
+      
+      // Set textarea height based on content
+      textarea.style.height = hiddenDiv.scrollHeight + 'px';
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+      
+      const selectedTab = document.querySelector(`.tab:nth-child(${tabId === 'myapp' ? '1' : '2'})`);
+      const selectedContent = document.getElementById(tabId);
+      
+      selectedTab.classList.add('active');
+      selectedContent.classList.add('active');
+    }
+
+    function checkInput() {
+      const input = document.getElementById('textInput');
+      const generateBtn = document.getElementById('generateBtn');
+      generateBtn.disabled = !input.value.trim();
+    }
+
+    function generate() {
+      const textInput = document.getElementById('textInput');
+      const generateBtn = document.getElementById('generateBtn');
+      const generating = document.getElementById('generating');
+      const successMessage = document.getElementById('successMessage');
+
+      generateBtn.style.display = 'none';
+      generating.style.display = 'block';
+
+      disableAllInteractions();
+
+      google.script.run
+        .withSuccessHandler(onExportSuccess2)
+        .withFailureHandler(onExportFailure2)
+        .createVoiceMemoRunAiMagic(textInput.value);
+    }
+
+function onExportSuccess2(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'successMessage');
+        }
+    } else {
+      if (response.message){
+        showMessage(response.message, 'success', 'successMessage');
+        const textInput = document.getElementById('textInput');
+        textInput.value = '';
+      }
+    }
+    const generateBtn = document.getElementById('generateBtn');
+    const generating = document.getElementById('generating');
+    generating.style.display = 'none';
+    generateBtn.style.display = 'block';
+    enableAllInteractions();
+}
+
+function onExportFailure2(error) {
+    showMessage('Failed to export. ' + error, 'error', 'successMessage');
+    enableAllInteractions();
+      const generateBtn = document.getElementById('generateBtn');
+      const generating = document.getElementById('generating');
+        generating.style.display = 'none';
+        generateBtn.style.display = 'block';
+}
+
+
+    let lastUpdateTime = new Date();
+
+    function updateLastUpdateText() {
+        const now = new Date();
+        const diff = Math.floor((now - lastUpdateTime) / 1000); // difference in seconds
+
+        let timeText = '';
+        if (diff < 10) {
+            timeText = 'a few sec ago';
+        } else if (diff < 20) {
+            timeText = '10 sec ago';
+        } else if (diff < 30) {
+            timeText = '20 sec ago';
+        } else if (diff < 40) {
+            timeText = '30 sec ago';
+        } else if (diff < 50) {
+            timeText = '40 sec ago';
+        } else if (diff < 60) {
+            timeText = '50 sec ago';
+        } else {
+            const minutes = Math.floor(diff / 60);
+            if (minutes < 60) {
+                timeText = minutes === 1 ? '1 min ago' : `${minutes} min ago`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                if (hours === 1) {
+                    timeText = '1 hour ago';
+                } else if (hours < 24) {
+                    timeText = `${hours} hours ago`;
+                } else {
+                    timeText = '1 day ago';
+                }
+            }
+        }
+        document.querySelector('.last-update').textContent = `Last update: ${timeText}`;
+    }
+
+    // Update the time text every second
+    setInterval(updateLastUpdateText, 1000);
+
+    // Set initial update time when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
+    });
+
+    document.getElementById('textInput').addEventListener('focus', () => {
+      document.getElementById('successMessage').style.display = 'none';
+    });
+</script>

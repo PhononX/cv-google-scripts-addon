@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Voice Sidebar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+  <?!= include('01 Css'); ?>
+  <?!= include('01 Css Outlines Sidebar'); ?>
+  <?!= include('01 Css Svg Icons'); ?>
+  <?!= include('01 Css Refresh Button'); ?>
+  <?!= include('04 Css'); ?>
+  <?!= include('01 Css Instructions'); ?>
+</head>
+
+<body>
+  <div id="screen0">
+    <div>
+      <span class="progress"></span>
+    </div>
+  </div>
+
+  <div id="screen1" style="display: none;" class="screen1">
+    <h1>Connect to Carbon Voice</h1>
+    <input type="hidden" id="authUrl" value="">
+    <button id="signInButton">Sign in with Carbon Voice</button>
+    <div id="stayLoggedIn" class="stayLoggedIn">
+      <label for="keep-signed-in">
+                <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!=checkedOrNotMainSidebar()
+                    ?>>
+                Keep me signed in
+            </label>
+      <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not
+        use the add-on for 7 or more days.</p>
+      <p>You can always modify this option by following these steps:</p>
+      <ol type="a" class="ol">
+        <li>Go to Extensions - “Carbon Voice” - Settings</li>
+        <li>Turn on/off “Keep me signed in”</li>
+        <li>Click “Save”</li>
+      </ol>
+
+    </div>
+    <div id="progressText" style="display: none;">
+      In progress <span class="progress"></span>
+    </div>
+  </div>
+
+  <div id="screen2" style="display: none;">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('myapp')">Carbon Voice</div>
+      <div class="tab" onclick="switchTab('outline')">Text Outline</div>
+    </div>
+
+    <div id="myapp" class="content active">
+      <div id="outlines" class="tab-content active"></div>
+      <div id="messageConversations" class="message" style="display: none;"></div>
+      <div id="messageAccess" class="message" style="display: none;"></div>
+      <div class="footer flat">
+        <div class="last-update">Last update: 3 hours ago</div>
+        <div class="button-container">
+          <button class="reload-button" id="reload-button">
+                        <span class="button-text">Refresh</span>
+                        <span class="svg-icon-reload"></span>
+                    </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="outline" class="content">
+      <div class="text-container">
+        <div class="textarea-wrapper">
+          <div class="hidden-div" aria-hidden="true"></div>
+          <textarea id="textInput" placeholder="Paste your text here" oninput="autoResize(this)"></textarea>
+        </div>
+        <div id="successMessage" style="display: none">
+          <div class="success-message">
+            <div class="success-icon">✓</div>
+            Export completed successfully.<br>10 slides created.
+          </div>
+        </div>
+      </div>
+      <div class="footer rounded-top">
+        <div id="generating" class="generating" style="display: none">
+          Generating Presentation
+          Outline<span class="dots"><span class="dot">.</span><span class="dot">.</span><span
+                            class="dot">.</span></span>
+        </div>
+        <button id="generateBtn" class="button primary" disabled onclick="generate()">Generate
+                    Presentation</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="messageUnexpectedError" class="message" style="display: none;"></div>
+
+  <script>
+    const prePresentations = <?!= getListOfPresentationsSidebar(); ?>;
+  </script>
+  <?!= include('01 Js Outlines Sidebar'); ?>
+  <?!= include('01 Js Fast'); ?>
+  <?!= include('04 Js'); ?>
+</body>
+
+</html>

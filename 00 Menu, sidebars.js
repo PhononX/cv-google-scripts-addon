@@ -7,7 +7,7 @@ function onOpen() {
 }
 
 function exportSidebar() {
-  openUniversalSidebar('01 Sidebar Outlines', 'Presentation Outline');
+  openUniversalSidebar('04 Sidebar Outlines', 'Presentation Outline');
 }
 
 function menuItemSettings() {

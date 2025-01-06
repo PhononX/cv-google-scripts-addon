@@ -1,6 +1,6 @@
 <script>
-    const enableAllInteractions = () => {
-      document.querySelectorAll('.outline-item, .action-button, .reload-icon').forEach(el => {
+  const enableAllInteractions = () => {
+      document.querySelectorAll('.outline-item, .action-button, .reload-button').forEach(el => {
         el.style.pointerEvents = 'auto';
         el.style.opacity = '1';
 
@@ -13,13 +13,38 @@
         const icon = reloadBtn.querySelector('.svg-icon-reload');
         icon.classList.remove('spinning');
       });
+
+      const textInput = document.getElementById('textInput');
+      const generateBtn = document.getElementById('generateBtn');
+      const reloadButton = document.getElementById('reload-button');
+      // const generating = document.getElementById('generating');
+      //   generating.style.display = 'none';
+        // textInput.value = '';
+        textInput.disabled = false;
+        reloadButton.disabled = false;
+        // generateBtn.style.display = 'block';
+        // if (textInput.value === ''){
+        //    generateBtn.disabled = true;
+        // }else{
+        //    generateBtn.disabled = false;
+        // }
+        generateBtn.disabled = textInput.value === ''? true : false;
     }; 
 
     const disableAllInteractions = () => {
-      document.querySelectorAll('.outline-item, .action-button, .reload-icon').forEach(el => {
+      document.querySelectorAll('.outline-item, .action-button, .reload-button').forEach(el => {
         el.style.pointerEvents = 'none';
         el.style.opacity = '0.6';
       });
+
+      const textInput = document.getElementById('textInput');
+      textInput.disabled = true;
+
+      const generateBtn = document.getElementById('generateBtn');
+      generateBtn.disabled = true;
+
+      const reloadButton = document.getElementById('reload-button');
+      reloadButton.disabled = true;
     };
 
 function convertMillisecondsToMinutesSeconds(milliseconds) {
@@ -72,17 +97,45 @@ function formatDateTime(dateString) {
 }
 
   function populateOutlines(presentations) {
-  const conversationsDiv = document.getElementById('conversations');
+  // presentations=[];
   const outlinesDiv = document.getElementById('outlines');
-  outlinesDiv.innerHTML = `<div class="button-container">
-    <button class="reload-icon" id="reload-button">
-      <span class="svg-icon-reload"></span>
-    </button>
-  </div>`;
+    outlinesDiv.innerHTML = '';
+  // outlinesDiv.innerHTML = `<div class="button-container">
+  //   <button class="reload-icon" >
+  //     <span class="svg-icon-reload"></span>
+  //   </button>
+  // </div>`;
 
   if (presentations.length === 0){
+    // const myappDiv = document.getElementById('myapp');
     const instruction = document.createElement('div');
-    instruction.innerHTML = '<p>Create a presentation outline in your Carbon Voice account by right-clicking on a voice message, selecting AI Actions, then choosing More AI Magic, and finally, Presentation Outline. Afterward, click the refresh button in the top right corner here.</p>';
+    instruction.innerHTML = `<h1>No “Presentation Outline” AI&nbsp;Magic results found</h1>
+    To create on:
+    <ol class="instruction-list">
+    <li class="instruction-step">
+      <div class="step-number">1</div>
+      <div class="step-text">Open your Carbon Voice</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">2</div>
+      <div class="step-text">Press & hold on a message or Voice Memo that talks about a presentation</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">3</div>
+      <div class="step-text">Select “AI Magic”</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">4</div>
+      <div class="step-text">Tap on “More AI Magic”</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">5</div>
+      <div class="step-text">Select “Presentation Outline”</div>
+    </li>
+  </ol>
+After the result is created, tap refresh button.`;
+instruction.className = 'instruction';
+    // myappDiv.appendChild(instruction);
     outlinesDiv.appendChild(instruction);
   }
 

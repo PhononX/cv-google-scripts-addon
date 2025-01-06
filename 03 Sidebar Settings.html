@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <base target="_top">
     <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       margin: 0px;
       padding: 10px;
     }
@@ -147,7 +150,7 @@ white-space: pre-wrap;
          <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!= checkedOrNot ?>>
          Keep me signed in
       </label>
-      <p>If you choose not to enable the "Keep me signed in" option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
+      <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
     </div>
       <div id="errorMessage" class="message error" style="display: none;"></div>
       <button class="action-button" id="okButton">Save  <span class="progressButton" id="progress2"></span></button>

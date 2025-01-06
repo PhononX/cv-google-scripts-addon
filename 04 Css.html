@@ -1,0 +1,255 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  h1 {
+    color: #063269;
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight:700;
+  }
+
+.screen1{
+  margin:10px;
+  /* padding:10px; */
+}
+
+.ol li {
+  margin-left:25px;
+}
+
+  body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .tab {
+    width: 50%;
+    padding: 12px 16px;
+    cursor: pointer;
+    color: #5f6368;
+    position: relative;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .tab.active {
+    color: #5E4CCE;
+  }
+
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: #5E4CCE;
+  }
+
+  .content {
+    flex: 1;
+    padding: 10px;
+    margin: 0px;
+    display: none;
+    overflow-y: auto;
+    padding-bottom: 84px;
+  }
+
+  .content.active {
+    display: block;
+  }
+
+  .text-container {
+    min-height: calc(100vh - 200px);
+    position: relative;
+  }
+
+  .textarea-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .hidden-div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    height: auto;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    border: 1px solid #EDEDF3;
+    border-radius: 4px;
+    resize: none;
+    font-size: 16px;
+    color: #3c4043;
+    overflow: hidden;
+  }
+
+  textarea:disabled {
+    background: #f8f9fa;
+    color: #80868b;
+  }
+
+  textarea:focus {
+    border-color: #C3C5CE;
+    outline: none;
+  }
+
+  .footer {
+    padding: 0 16px;
+    background: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  .footer.rounded-top {
+    height: 68px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .footer.flat {
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .last-update {
+    color: #A1A2AB;
+    font-size: 12px;
+  }
+
+  .button {
+    border-radius: 44px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .button.primary {
+    background: #5E4CCE;
+    color: white;
+    width: 90%;
+  }
+
+  .button.primary:disabled {
+    background: #b1a9e2;
+    cursor: not-allowed;
+  }
+
+  .button.primary:hover:not(:disabled) {
+    background: #4330b8;
+  }
+
+  .button.secondary {
+    background: transparent;
+    color: #3c4043;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .refresh-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+
+  .success-message {
+    color: #1e8e3e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  .success-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1e8e3e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .generating {
+    color: #155FBD;
+    font-size: 15px;
+  }
+
+  .dots {
+    display: inline-block;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: .2;
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: .2;
+    }
+  }
+
+  .dot {
+    opacity: .2;
+    animation: pulse 1.4s infinite;
+    display: inline-block;
+  }
+
+  .dot:nth-child(2) {
+    animation-delay: .2s;
+  }
+
+  .dot:nth-child(3) {
+    animation-delay: .4s;
+  }
+</style>

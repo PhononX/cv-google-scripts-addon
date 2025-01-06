@@ -9,6 +9,7 @@
     }
 }
 
+// type: error/success
 function showMessage(message, type, divMessageId) {
     const messageElement = document.getElementById(divMessageId);
     messageElement.textContent = message;
@@ -87,6 +88,8 @@ function onRefreshSuccess(response) {
             showMessage(response.message, 'error', 'messageConversations');
         }
     } else {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
       populateOutlines(response.presentations)
     }
     enableAllInteractions();

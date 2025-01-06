@@ -1,137 +1,149 @@
-  <style>
-    input:focus,
-    textarea:focus,
-    select:focus{
-      outline-color: #000000;
-    }
+<style>
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline-color: #000000;
+  }
 
-    body {
-      font-family: 'Gilroy', sans-serif;
-      margin: 0px;
-      padding: 10px;
-    }
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0px;
+    padding: 10px;
+  }
 
-    h1 {
-      color: #063269;
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+  h1 {
+    color: #063269;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
 
-    button {
-      background-color: #261073;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 14px;
-      margin: 4px 2px;
-      cursor: pointer;
-    }
+  button {
+    background-color: #261073;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
 
-    button:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-    }
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 
-    .message {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 4px;
-      white-space: pre-wrap;
-    }
+  .message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+  }
 
-    .error {
-      background-color: #ffebee;
-      color: #c62828;
-    }
+  .error {
+    background-color: #ffebee;
+    color: #c62828;
+    font-size: 14px;
+    font-weight: 500;
+  }
 
-    .success {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-    }
+  .success {
+    /* background-color: #e8f5e9; */
+    color: #009633;
+    font-size: 14px;
+    font-weight: 500;
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3ZM1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12Z' fill='%23009633'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15.4963 8.13193C15.9759 8.40594 16.1425 9.01679 15.8684 9.49631L12.772 14.9151C11.9891 16.2851 10.0022 16.2514 9.26631 14.8555L8.1156 12.6727C7.85804 12.1841 8.04531 11.5793 8.53386 11.3217C9.02242 11.0642 9.62725 11.2515 9.88481 11.74L11.0355 13.9228L14.132 8.50403C14.406 8.02451 15.0168 7.85792 15.4963 8.13193Z' fill='%23009633'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 30px;
+    /* Adjust based on icon width + desired spacing */
+  }
 
-    .progress {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #261073;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
+  .progress {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #261073;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
+  }
 
-    .progressButton {
-      display: none;
-      width: 10px;
-      height: 10px;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-      vertical-align: middle;
-      margin: 0px;
-      padding: 0px;
-    }
+  .progressButton {
+    display: none;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin: 0px;
+    padding: 0px;
+  }
 
-/* Stay logged in */
-.stayLoggedIn {
-  margin: 15px 0 0 0;
-  padding: 0;
-}
-.stayLoggedIn p {
-  margin: 0;
-  padding: 3px;
-  white-space: pre-wrap;
-  font-size:0.9em
-}
-.stayLoggedIn .ol {
-  margin:0;
-}
-.stayLoggedIn .ol li {
-  font-size:0.9em
-}
+  /* Stay logged in */
+  .stayLoggedIn {
+    margin: 15px 0 0 0;
+    padding: 0;
+  }
 
-.stayLoggedIn input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border: 1px solid #261073;
-      ;
-      border-radius: 1px;
-      outline: none;
-      cursor: pointer;
-      vertical-align: middle;
-      position: relative;
-      margin: 2px 0;
-    }
+  .stayLoggedIn p {
+    margin: 0;
+    padding: 3px;
+    white-space: pre-wrap;
+    font-size: 0.9em
+  }
 
-    .stayLoggedIn input[type="checkbox"]:checked {
-      background-color: #f2efff;
-    }
+  .stayLoggedIn .ol {
+    margin: 0;
+  }
 
-    .stayLoggedIn input[type="checkbox"]:checked::after {
-      content: '\2713';
-      font-size: 14px;
-      color: #261073;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+  .stayLoggedIn .ol li {
+    font-size: 0.9em
+  }
 
-    .stayLoggedIn label {
-      margin-left: 5px;
-      vertical-align: middle;
-    }
-  </style>
+  .stayLoggedIn input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #261073;
+    ;
+    border-radius: 1px;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
+    margin: 2px 0;
+  }
+
+  .stayLoggedIn input[type="checkbox"]:checked {
+    background-color: #f2efff;
+  }
+
+  .stayLoggedIn input[type="checkbox"]:checked::after {
+    content: '\2713';
+    font-size: 14px;
+    color: #261073;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .stayLoggedIn label {
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+</style>
