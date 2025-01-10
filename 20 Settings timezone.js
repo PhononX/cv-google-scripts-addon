@@ -13,22 +13,12 @@ function getTimeZoneValue() {
   const userProperty = PropertiesService.getUserProperties();
   const str = userProperty.getProperty('carbonVoiceSettings');
   if (str == null) {
-    // Logger.log('1')
     timeZone = 'UTC';
   } else {
-    // Logger.log('2')
     const json = JSON.parse(str);
     timeZone = json.timeZone;
-    // if (typeof json.keepMeSigned === "boolean") {
-    //   // Logger.log('3')
-    //   keepMeSigned = json.keepMeSigned;
-    // } else {
-    //   // Logger.log('4')
-    //   keepMeSigned = false;
-    // }
   }
   if (timeZone == null) timeZone = 'UTC';
-  Logger.log(timeZone)
   return timeZone;
 }
 

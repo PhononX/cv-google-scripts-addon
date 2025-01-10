@@ -88,7 +88,7 @@ function openOneVoiceMemoCard(e) {
 
 
   const card = CardService.newCardBuilder()
-  const fixedFooter = getOneVoiceMemoFixedFooter(voiceMemoText, messageId, duration);
+  const fixedFooter = getOneVoiceMemoFixedFooter(voiceMemoText, messageId, name, duration, createdAt);
   card.setFixedFooter(fixedFooter);
 
   const multilineDecoratedText = CardService.newDecoratedText().setOnClickAction(CardService.newAction().setFunctionName("showNewVoiceMemoCard"))
@@ -171,7 +171,7 @@ function aiProfessionalEmailTwoButtonSet(emailObj, text) {
   return CardService.newButtonSet().addButton(buttonPaste).addButton(buttonSeeResults);
 }
 
-function getOneVoiceMemoFixedFooter(voiceMemoText, messageId, duration) {
+function getOneVoiceMemoFixedFooter(voiceMemoText, messageId, name, duration, createdAt) {
   return CardService.newFixedFooter()
     .setSecondaryButton(
       CardService.newTextButton()
@@ -189,7 +189,7 @@ function getOneVoiceMemoFixedFooter(voiceMemoText, messageId, duration) {
         .setIconUrl(shareLinkIconUrlCV400)
         .setOnClickAction(CardService.newAction()
           .setFunctionName('insertVoiceMemo')
-          .setParameters({ messageId: messageId, duration: duration })
+          .setParameters({ messageId: messageId, duration: duration, name: name, createdAt: createdAt})
         )
     );
 }
