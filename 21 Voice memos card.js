@@ -1,5 +1,6 @@
 
-function showVoiceMemosCard() {
+function showVoiceMemosCard(e) {
+  // Logger.log(e)
   try {
     const result = getVoiceMemos();
     if (result.hasAccess === false) {
@@ -73,6 +74,12 @@ function voiceMemosCard(voiceMemos, lastCreatedAt, previousArrayString, userTime
   }
   return card.build();
 }
+
+// function nextVoiceMemos(e) {
+//   const lastCreatedAt = e.parameters.lastCreatedAt;
+//   const lastCreatedAt = e.parameters.lastCreatedAt;
+//   updateVoiceMemosCard(lastCreatedAt);
+// }
 
 function updateVoiceMemosCard(e) {
   const lastCreatedAt = e.parameters.lastCreatedAt;

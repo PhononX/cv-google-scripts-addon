@@ -1,4 +1,4 @@
-function showSettingsCard() {
+function showSettingsCard(e) {
   const card = CardService.newCardBuilder();
   const selectedCheckbox = getKeepMeSignedValue();
   const checkbox = CardService.newSelectionInput()

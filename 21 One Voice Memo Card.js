@@ -91,7 +91,7 @@ function openOneVoiceMemoCard(e) {
   const fixedFooter = getOneVoiceMemoFixedFooter(voiceMemoText, messageId, name, duration, createdAt);
   card.setFixedFooter(fixedFooter);
 
-  const multilineDecoratedText = CardService.newDecoratedText().setOnClickAction(CardService.newAction().setFunctionName("showNewVoiceMemoCard"))
+  const multilineDecoratedText = CardService.newDecoratedText()
     .setStartIcon(CardService.newIconImage().setIconUrl(voiceMemoIconUrl))
     .setText(name)
     .setWrapText(true)

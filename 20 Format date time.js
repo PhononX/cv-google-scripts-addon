@@ -1,6 +1,6 @@
 function formatDateTime(userTimeZone, dateString) {
   const date = new Date(dateString);
-  const formattedDate1 = Utilities.formatDate(date, userTimeZone, 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'',);
+  //const formattedDate1 = Utilities.formatDate(date, userTimeZone, 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'',);
   const now = new Date();
 
   const formatterTime = new Intl.DateTimeFormat('en-US', {

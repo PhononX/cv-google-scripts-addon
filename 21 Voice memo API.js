@@ -46,43 +46,45 @@ function getVoiceMemos(navigationTypeNext, isoDate, previousArrayString) {
   let lastCreatedAt;
 
   const filteredMessages = messages;
-  filteredMessages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  // filteredMessages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   totalMessages += filteredMessages.length;
 
   const userTimeZone = getTimeZoneValue();
 
   filteredMessages.forEach(el => {
-    let voiceMemoName;
-    let voiceMemoText;
-    try {
-      // Logger.log(el);
-      let allT = [];
-      if (el.text_models.length > 0) {
-        if (el.text_models[0].timecodes.length > 0) {
-          allT = el.text_models[0].timecodes.map(el => { return el.t.trim() });
-          voiceMemoText = allT.join(' ');
+    let { voiceMemoName, voiceMemoText } = getVoiceMemoNameAndText(el);
+    /* let voiceMemoName;
+      let voiceMemoText;
+      try {
+        // Logger.log(el);
+        let allT = [];
+        if (el.text_models.length > 0) {
+          if (el.text_models[0].timecodes.length > 0) {
+            allT = el.text_models[0].timecodes.map(el => { return el.t.trim() });
+            voiceMemoText = allT.join(' ');
+          } else {
+            voiceMemoText = el.text_models[0].value;
+          }
+  
         } else {
-          voiceMemoText = el.text_models[0].value;
+          if (el.text_models[0].value) {
+            voiceMemoText = 'error';
+          }
         }
-
-      } else {
-        if (el.text_models[0].value) {
-          voiceMemoText = 'error';
+  
+        // const voiceMemoText = allT.join(' ');
+        voiceMemoName = el.text_models?.[0]?.value;
+        if (voiceMemoName == null || voiceMemoName === '') {
+          voiceMemoName = voiceMemoText;
         }
       }
-
-      // const voiceMemoText = allT.join(' ');
-      voiceMemoName = el.text_models?.[1]?.value;
-      if (voiceMemoName == null) {
-        voiceMemoName = voiceMemoText;
+      catch (e) {
+        // Logger.log(e);
+        voiceMemoName = 'Error while retrieving the voice memo details';
+        voiceMemoText = 'Message id: ' + el.message_id + ' \nError:' + e + ' <b>Please tell us about the error https://cv.chat/contactus</b>';
       }
-    }
-    catch (e) {
-      // Logger.log(e);
-      voiceMemoName = 'Error while retrieving the voice memo details';
-      voiceMemoText = 'Message id: ' + el.message_id + ' \nError:' + e + ' <b>Please tell us about the error https://cv.chat/contactus</b>';
-    }
+      */
     if (counter < maxVoiceMemosPerScreen) {
       voiceMemos.push({ createdAt: formatDateTime(userTimeZone, el.created_at), duration: msToMinSec(el.duration_ms), voiceMemoText: voiceMemoText, name: voiceMemoName, messageId: el.message_id });
       counter++;
@@ -104,4 +106,48 @@ function getVoiceMemos(navigationTypeNext, isoDate, previousArrayString) {
   // Logger.log(voiceMemos);
   // Logger.log(voiceMemos.length);
   return { hasAccess: true, voiceMemos: voiceMemos, lastCreatedAt: lastCreatedAt, previousArrayString: previousArrayString, userTimeZone: userTimeZone, showNext: showNext, showPrevious: showPrevious };
+}
+
+
+function getVoiceMemoNameAndText(el) {
+  let voiceMemoName;
+  let voiceMemoText;
+  let languageId;
+  try {
+    // Logger.log(el);
+    let allT = [];
+    voiceMemoName = el.name;
+    // Logger.log('el.name=' + el.name);
+    if (el.text_models.length > 0) {
+      languageId = el.text_models[0].language_id;
+      // Logger.log(languageId);
+      if (el.text_models[0].timecodes.length > 0) {
+        allT = el.text_models[0].timecodes.map(el => { return el.t.trim() });
+        voiceMemoText = allT.join(' ');
+      } else {
+        voiceMemoText = el.text_models[0].value;
+      }
+    } else {
+      if (el.text_models[0].value) {
+        voiceMemoText = 'error';
+      }
+    }
+
+    if (voiceMemoName == null) {
+      for (let i = 1; i < el.text_models.length; i++) {
+        if (el.text_models[i].language_id === languageId) {
+          voiceMemoName = el.text_models[i].value;
+          break;
+        }
+      }
+      if (voiceMemoName == null) {
+        voiceMemoName = voiceMemoText;
+      }
+    }
+  }
+  catch (e) {
+    voiceMemoName = 'Error while retrieving the voice memo details';
+    voiceMemoText = 'Message id: ' + el.message_id + ' \nError:' + e + ' <b>Please tell us about the error https://cv.chat/contactus</b>';
+  }
+  return { voiceMemoName: voiceMemoName, voiceMemoText: voiceMemoText };
 }
