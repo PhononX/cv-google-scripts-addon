@@ -3,6 +3,8 @@
 ```
 git checkout gsheets-conversation-export
 git checkout gslides-outline
+git checkout gmail-addon
+git checkout gdocs-addon
 ```
 
 00 CLIENT SECRET ID.js
