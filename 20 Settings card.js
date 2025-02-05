@@ -8,7 +8,7 @@ function showSettingsCard(e) {
     .setOnChangeAction(CardService.newAction()
       .setFunctionName('handleCheckboxChange'));
 
-  const currentTimeZone = getTimeZoneValue();
+  const currentTimeZone = getTimeZoneValue(e);
 
   const selectionInput = CardService.newSelectionInput()
     .setOnChangeAction(CardService.newAction()

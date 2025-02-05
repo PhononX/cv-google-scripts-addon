@@ -1,8 +1,7 @@
 
 function showVoiceMemosCard(e) {
-  // Logger.log(e)
   try {
-    const result = getVoiceMemos();
+    const result = getVoiceMemos(e);
     if (result.hasAccess === false) {
       return buildAuthorizationCard(result.authUrl);
     }
@@ -86,7 +85,7 @@ function updateVoiceMemosCard(e) {
   const navigationTypeNext = e.parameters.navigationTypeNext;
   const previousArrayString = e.parameters.previousArrayString;
   try {
-    const result = getVoiceMemos(navigationTypeNext, lastCreatedAt, previousArrayString);
+    const result = getVoiceMemos(e, navigationTypeNext, lastCreatedAt, previousArrayString);
     if (result.hasAccess === false) {
       return buildAuthorizationCard(result.authUrl);
     }

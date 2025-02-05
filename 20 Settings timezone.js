@@ -8,12 +8,19 @@ function handleTimeZoneChange(e) {
     .build();
 }
 
-function getTimeZoneValue() {
+function getTimeZoneValue(event) {
   let timeZone;
   const userProperty = PropertiesService.getUserProperties();
   const str = userProperty.getProperty('carbonVoiceSettings');
   if (str == null) {
-    timeZone = 'UTC';
+    if (event) {
+      timeZone = commonEventObjectTimeZone(event);
+      if (timeZone != 'UTC'){
+        saveTimeZoneValue(timeZone);
+      }
+    } else {
+      timeZone = 'UTC';
+    }
   } else {
     const json = JSON.parse(str);
     timeZone = json.timeZone;

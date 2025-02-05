@@ -15,7 +15,7 @@ function asyncMeetingCardContextSidebar(e) {
   const threadMessages = thread.getMessages();
   const subject = threadMessages[0].getSubject();
   const startDateThread = threadMessages[0].getDate();
-  const userTimeZone = getTimeZoneValue();
+  const userTimeZone = getTimeZoneValue(e);
   const formattedStartDateThread = Utilities.formatDate(startDateThread, userTimeZone, "MMMM d, yyyy, 'at' hh:mm a");
 
   let fromToString = '';

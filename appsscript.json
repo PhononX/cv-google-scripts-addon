@@ -9,47 +9,136 @@
     "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
     "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
     "https://www.googleapis.com/auth/script.locale",
-    "https://www.googleapis.com/auth/userinfo.email"
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/workspace.linkpreview"
   ],
   "urlFetchWhitelist": [
     "https://api.carbonvoice.app/"
   ],
-  "gmail": {
-    "homepageTrigger": {
-      "runFunction": "onHomepage"
-    },
-    "name": "Carbon Voice",
-    "logoUrl": "https://drive.google.com/uc?export=view&id=1kUXrJrDjwMWEHtNvV4QEfbGt4TbnuZFv",
-    "primaryColor": "#f2efff",
-    "secondaryColor": "#5E4CCE",
-    "universalActions": [
-      {
-        "text": "About Carbon Voice",
-        "openLink": "https://www.getcarbon.app/"
-      },
-      {
-        "text": "Settings",
-        "runFunction": "showSettingsCard"
-      }
-    ],
-    "contextualTriggers": [
-      {
-        "unconditional": {},
-        "onTriggerFunction": "asyncMeetingCardContextSidebar"
-      }
-    ],
-    "composeTrigger": {
-      "selectActions": [
+  "addOns": {
+    "common": {
+      "universalActions": [
         {
-          "text": "Carbon Voice",
-          "runFunction": "showVoiceMemosCard"
+          "label": "About Carbon Voice",
+          "openLink": "https://www.getcarbon.app/"
+        },
+        {
+          "label": "Settings",
+          "runFunction": "showSettingsCard"
+        }
+      ],
+      "name": "Carbon Voice",
+      "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/cv-logo-48-purple.png",
+      "layoutProperties": {
+        "primaryColor": "#f2efff",
+        "secondaryColor": "#5E4CCE"
+      },
+      "useLocaleFromApp": true,
+      "homepageTrigger": {
+        "runFunction": "onHomepageLinksPreview"
+      }
+    },
+    "gmail": {
+      "homepageTrigger": {
+        "runFunction": "onHomepage"
+      },
+      "contextualTriggers": [
+        {
+          "unconditional": {},
+          "onTriggerFunction": "asyncMeetingCardContextSidebar"
+        }
+      ],
+      "composeTrigger": {
+        "selectActions": [
+          {
+            "text": "Carbon Voice",
+            "runFunction": "showVoiceMemosCard"
+          }
+        ]
+      },
+      "openLinkUrlPrefixes": [
+        "https://api.carbonvoice.app",
+        "https://carbonvoice.app"
+      ]
+    },
+    "docs": {
+      "linkPreviewTriggers": [
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "s"
+            }
+          ],
+          "runFunction": "previewVoiceMemos",
+          "labelText": "Carbon Voice Memo",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/Voice+Memo+CV400.png"
+        },
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "c"
+            }
+          ],
+          "runFunction": "previewConversations",
+          "labelText": "Carbon Voice Conversation",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/cv-logo-48-purple.png"
         }
       ]
     },
-    "openLinkUrlPrefixes": [
-      "https://api.carbonvoice.app",
-      "https://carbonvoice.app"
-    ]
+    "sheets": {
+      "linkPreviewTriggers": [
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "s"
+            }
+          ],
+          "runFunction": "previewVoiceMemos",
+          "labelText": "Carbon Voice Memo",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/Voice+Memo+CV400.png"
+        },
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "c"
+            }
+          ],
+          "runFunction": "previewConversations",
+          "labelText": "Carbon Voice Conversation",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/cv-logo-48-purple.png"
+        }
+      ]
+    },
+    "slides": {
+      "linkPreviewTriggers": [
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "s"
+            }
+          ],
+          "runFunction": "previewVoiceMemos",
+          "labelText": "Carbon Voice Memo",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/Voice+Memo+CV400.png"
+        },
+        {
+          "patterns": [
+            {
+              "hostPattern": "carbonvoice.app",
+              "pathPrefix": "c"
+            }
+          ],
+          "runFunction": "previewConversations",
+          "labelText": "Carbon Voice Conversation",
+          "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/cv-logo-48-purple.png"
+        }
+      ]
+    }
   },
   "dependencies": {
     "enabledAdvancedServices": []

@@ -1,4 +1,4 @@
-function getVoiceMemos(navigationTypeNext, isoDate, previousArrayString) {
+function getVoiceMemos(e, navigationTypeNext, isoDate, previousArrayString) {
   const maxVoiceMemosPerScreen = 50;
   let showNext = false; showPrevious = true;
   // Parameters in GWorkspace add-ons are always strings
@@ -50,7 +50,7 @@ function getVoiceMemos(navigationTypeNext, isoDate, previousArrayString) {
 
   totalMessages += filteredMessages.length;
 
-  const userTimeZone = getTimeZoneValue();
+  const userTimeZone = getTimeZoneValue(e);
 
   filteredMessages.forEach(el => {
     let { voiceMemoName, voiceMemoText } = getVoiceMemoNameAndText(el);

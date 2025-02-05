@@ -2,6 +2,8 @@ const blankChannelImageUrl = 'https://pxassets.s3.us-east-2.amazonaws.com/images
 
 const instructionGifUrl = 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/instruction.gif';
 
+const playIconCV400Url = 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/Play+icon+purple.png';
+
 // CG300
 const voiceMemoIconUrl = 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/voicememo.png';
 

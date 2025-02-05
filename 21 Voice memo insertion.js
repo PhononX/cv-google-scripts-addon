@@ -42,7 +42,7 @@ function insertVoiceMemo(e) {
                                 <tr>
                                     <!-- Left Icon Cell - Fixed Width -->
                                     <td width="24" style="width: 24px; vertical-align: middle;">
-                                        <a href="${url}"><img src="https://drive.google.com/uc?export=view&id=11O_g-smZ42_a-NwGT8dUr5PdCziQo8tY" alt="Voice Memo Icon" style="width: 24px; height: 24px; display: block;"></a>
+                                        <a href="${url}"><img src="${voiceMemoIconUrl}" alt="Voice Memo Icon" style="width: 24px; height: 24px; display: block;"></a>
                                     </td>
                                     
                                     <!-- Spacing Cell -->
@@ -63,7 +63,7 @@ function insertVoiceMemo(e) {
                                     
                                     <!-- Right Play Icon Cell - Fixed Width -->
                                     <td width="32" style="width: 32px; vertical-align: middle;">
-                                        <a href="${url}"><img src="https://drive.google.com/uc?export=view&id=1fTVpuKC2oB2gvQrDUfO0v1WIhK0MotBM" alt="Play Icon" style="width: 32px; height: 32px; display: block; cursor: pointer;"></a>
+                                        <a href="${url}"><img src="${playIconCV400Url}" alt="Play Icon" style="width: 32px; height: 32px; display: block; cursor: pointer;"></a>
                                     </td>
                                 </tr>
                             </table>
