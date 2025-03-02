@@ -1,0 +1,87 @@
+<div id="panel1" class="panel active">
+  <h3>Conversation to Export</h3>
+  <div class="input-container">
+    <textarea id="conversationId" placeholder="Conversation ID or link"></textarea>
+    <span class="clear-button">✕</span>
+  </div>
+  <div class="info-text">
+    <div class="icon"></div>
+    <span>Press & hold on conversation to get ID.</span>
+  </div>
+  <hr>
+  <div id="initial-content">
+    <h3>Lookup Conversation</h3>
+    <button class="conversation" id="findConversation">Find Conversation</button>
+  </div>
+
+  <div class="found-conversation">
+    <h3>Found Conversation</h3>
+    <div class="conversation-details"></div>
+    <div class="date-container">
+      <input type="date" value="2025-01-01" id="startDateP1">
+      <span>to</span>
+      <input type="date" value="2025-02-01" id="endDateP1">
+    </div>
+    <button class="conversation" id="exportButtonP1">Export Conversation</button>
+  </div>
+</div>
+
+<div id="panel2" class="panel">
+  <button id="goBack" class="goBack">
+    <svg width="5" height="8" viewBox="0 0 5 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M4.47108 0.527293C4.73143 0.787643 4.73143 1.20975 4.47108 1.4701L1.47108 4.4701C1.21073 4.73045 0.788619 4.73045 0.52827 4.4701C0.26792 4.20975 0.26792 3.78764 0.52827 3.52729L3.52827 0.527293C3.78862 0.266944 4.21073 0.266944 4.47108 0.527293Z"
+        fill="#A1A2AB" />
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M0.52827 3.52729C0.788619 3.26694 1.21073 3.26694 1.47108 3.52729L4.47108 6.52729C4.73143 6.78764 4.73143 7.20975 4.47108 7.4701C4.21073 7.73045 3.78862 7.73045 3.52827 7.4701L0.52827 4.4701C0.26792 4.20975 0.26792 3.78764 0.52827 3.52729Z"
+        fill="#A1A2AB" />
+    </svg>
+    Go back</button>
+  <h3>Choose Conversation</h3>
+
+  <!-- Selectors -->
+  <div class="select-container">
+    <div class="input-wrapper">
+      <div class="input-with-icon">
+        <div id="inputIcon1" class="input-icon" style="display: none;"></div>
+        <input type="text" id="searchInput1" class="searchInput" placeholder="Select Workspace..." autocomplete="off">
+      </div>
+      <button type="button" id="clearButton1" class="clearButton" title="Clear">&times;</button>
+    </div>
+    <div id="optionsList1" class="optionsList"></div>
+  </div>
+
+  <div class="select-container">
+    <div class="input-wrapper">
+      <div class="input-with-icon">
+        <div id="inputIcon2" class="input-icon" style="display: none;"></div>
+        <input type="text" id="searchInput2" class="searchInput" placeholder="Select Conversation Type..."
+          autocomplete="off" disabled>
+      </div>
+      <button type="button" id="clearButton2" class="clearButton" title="Clear">&times;</button>
+    </div>
+    <div id="optionsList2" class="optionsList"></div>
+  </div>
+
+  <div class="select-container">
+    <div class="input-wrapper">
+      <div class="input-with-icon">
+        <div id="inputIcon3" class="input-icon" style="display: none;"></div>
+        <input type="text" id="searchInput3" class="searchInput" placeholder="Select Conversation..." autocomplete="off"
+          disabled>
+      </div>
+      <button type="button" id="clearButton3" class="clearButton" title="Clear">&times;</button>
+    </div>
+    <div id="optionsList3" class="optionsList"></div>
+  </div>
+  <!-- End. Selectors -->
+
+
+  <div class="date-container">
+    <input type="date" id="startDate">
+    <span>to</span>
+    <input type="date" id="endDate">
+  </div>
+
+  <button class="conversation" id="exportButton" disabled>Export Conversation</button>
+</div>

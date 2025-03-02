@@ -1,0 +1,378 @@
+<style>
+  /* Panels */
+  h3 {
+    color: #261073;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 20px 0 5px 0;
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .panel.active {
+    display: block;
+  }
+
+  .panel p {
+    margin-top: 5px;
+    color: #261073;
+    font-size: 14px;
+  }
+
+  .input-container {
+    position: relative;
+    margin: 10px 0;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+  }
+
+  /* Conversation ID or link */
+  textarea {
+    width: 100%;
+    height: 30px;
+    padding: 6px 20px 6px 6px;
+    box-sizing: border-box;
+    border: 1px solid #EDEDF3;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: none;
+    overflow-y: hidden;
+    color: #261073;
+  }
+
+  textarea::placeholder {
+    color: #A1A2AB;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #C3C5CE;
+  }
+
+  .clear-button {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    cursor: pointer;
+    display: none;
+    color: #C3C5CE;
+    background: none;
+    border: none;
+    font-size: 18px;
+    z-index: 10;
+  }
+
+  .clear-button:hover {
+    color: #AFB0BA;
+  }
+
+  /* End. Conversation ID or link */
+
+  .info-text {
+    display: flex;
+    align-items: center;
+    color: #A1A2AB;
+    font-size: 12px;
+    line-height: 16px;
+    padding-bottom: 10px;
+  }
+
+  .info-text .icon {
+    width: 14px;
+    height: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.55524 6.68742C7.55524 6.3806 7.30651 6.13187 6.99969 6.13187C6.69286 6.13187 6.44413 6.3806 6.44413 6.68742V9.4652C6.44413 9.77203 6.69286 10.0208 6.99969 10.0208C7.30651 10.0208 7.55524 9.77203 7.55524 9.4652V6.68742Z' fill='%23A1A2AB'/%3E%3Cpath d='M7.5552 4.35425C7.5552 4.66108 7.30647 4.90981 6.99965 4.90981C6.69282 4.90981 6.44409 4.66108 6.44409 4.35425C6.44409 4.04743 6.69282 3.7987 6.99965 3.7987C7.30647 3.7987 7.5552 4.04743 7.5552 4.35425Z' fill='%23A1A2AB'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M6.27743 4.35425C6.27743 3.95538 6.60078 3.63203 6.99965 3.63203C7.39852 3.63203 7.72187 3.95538 7.72187 4.35425C7.72187 4.75313 7.39852 5.07648 6.99965 5.07648C6.60078 5.07648 6.27743 4.75313 6.27743 4.35425ZM6.99965 3.96536C6.78487 3.96536 6.61076 4.13948 6.61076 4.35425C6.61076 4.56903 6.78487 4.74314 6.99965 4.74314C7.21442 4.74314 7.38854 4.56903 7.38854 4.35425C7.38854 4.13948 7.21442 3.96536 6.99965 3.96536ZM6.99969 6.29854C6.78491 6.29854 6.6108 6.47265 6.6108 6.68742V9.4652C6.6108 9.67998 6.78491 9.85409 6.99969 9.85409C7.21447 9.85409 7.38858 9.67998 7.38858 9.4652V6.68742C7.38858 6.47265 7.21447 6.29854 6.99969 6.29854ZM6.27747 6.68742C6.27747 6.28855 6.60082 5.9652 6.99969 5.9652C7.39856 5.9652 7.72191 6.28855 7.72191 6.68742V9.4652C7.72191 9.86407 7.39856 10.1874 6.99969 10.1874C6.60082 10.1874 6.27747 9.86407 6.27747 9.4652V6.68742Z' fill='%23A1A2AB'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M6.99967 12.332C9.94519 12.332 12.333 9.94422 12.333 6.9987C12.333 4.05318 9.94519 1.66536 6.99967 1.66536C4.05416 1.66536 1.66634 4.05318 1.66634 6.9987C1.66634 9.94422 4.05416 12.332 6.99967 12.332ZM6.99967 13.6654C10.6816 13.6654 13.6663 10.6806 13.6663 6.9987C13.6663 3.3168 10.6816 0.332031 6.99967 0.332031C3.31778 0.332031 0.333008 3.3168 0.333008 6.9987C0.333008 10.6806 3.31778 13.6654 6.99967 13.6654Z' fill='%23A1A2AB'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    display: inline-block;
+    margin-right: 5px;
+    flex-shrink: 0;
+  }
+
+  hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid #F6F6FB;
+    height: 1px;
+  }
+
+  /* End. Panels */
+
+  /* Found conversation */
+  .found-conversation {
+    display: none;
+  }
+
+  .row {
+    display: flex;
+    padding: 10px 5px;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .label {
+    color: #A1A2AB;
+    font-size: 12px;
+  }
+
+  .value {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #261073;
+    justify-content: flex-end;
+  }
+
+  .value img {
+    border-radius: 2px;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  /* End. Found conversation */
+
+  /* Dates */
+
+  .date-container {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    justify-content: space-between;
+  }
+
+  .date-container input[type="date"] {
+    max-width: 120px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #EDEDF3;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #261073;
+  }
+
+  .date-container input[type="date"]:focus {
+    outline: none;
+    border-color: #C3C5CE;
+  }
+
+  .date-container span {
+    margin: 0 5px;
+    font-size: 14px;
+    color: #261073;
+  }
+
+  /* End. Dates */
+
+  /* Buttons */
+  button.conversation {
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 10px 0;
+  }
+
+  button.conversation {
+    background: #5E4CCE;
+    color: white;
+  }
+
+  button.conversation:disabled {
+    background: #b1a9e2;
+    cursor: not-allowed;
+  }
+
+  button.conversation:hover:not(:disabled) {
+    background: #4330b8;
+  }
+
+  /* End. Buttons */
+
+  /* Go back button */
+
+  button.goBack {
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 5px 0;
+    color: #A1A2AB;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+
+  button.goBack svg {
+    margin-right: 6px;
+  }
+
+  button.goBack:disabled {
+    background: #b1a9e2;
+    cursor: not-allowed;
+  }
+
+  button.goBack:hover:not(:disabled) {
+    color: #6F7077;
+  }
+
+  button.goBack:hover:not(:disabled) svg path {
+    fill: #6F7077;
+  }
+
+  /* End. Go back button */
+
+  /* Panel 2 */
+  .select-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrapper {
+    display: flex;
+    border: 1px solid #EDEDF3;
+    border-radius: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: white;
+    overflow: hidden;
+  }
+
+  .input-wrapper.arrow-down::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    width: 12px;
+    height: 7px;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.2071 0.292893C11.5976 0.683418 11.5976 1.31658 11.2071 1.70711L6.70711 6.20711C6.31658 6.59763 5.68342 6.59763 5.29289 6.20711C4.90237 5.81658 4.90237 5.18342 5.29289 4.79289L9.79289 0.292893C10.1834 -0.0976309 10.8166 -0.0976309 11.2071 0.292893Z' fill='%23A1A2AB'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M6.70711 6.20711C6.31658 6.59763 5.68342 6.59763 5.29289 6.20711L0.792893 1.70711C0.402369 1.31658 0.402369 0.683417 0.792893 0.292893C1.18342 -0.0976311 1.81658 -0.0976311 2.20711 0.292893L6.70711 4.79289C7.09763 5.18342 7.09763 5.81658 6.70711 6.20711Z' fill='%23A1A2AB'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    color: #999;
+    pointer-events: none;
+  }
+
+  .searchInput {
+    border: none;
+    width: 100%;
+    padding: 5px 0;
+    background: transparent;
+    color: #261073;
+    font-size: 14px;
+  }
+
+  .searchInput::placeholder {
+    color: #261073;
+  }
+
+  .searchInput:disabled {
+    cursor: not-allowed;
+  }
+
+  .searchInput:disabled::placeholder {
+    color: #A1A2AB;
+  }
+
+  .clearButton {
+    border: none;
+    margin-right: 8px;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #999;
+    padding: 3px;
+  }
+
+  .clearButton:hover {
+    color: #333;
+  }
+
+  .optionsList {
+    display: none;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #EDEDF3;
+    background-color: #ffffff;
+    z-index: 1000;
+    top: 100%;
+    margin-top: -1px;
+    border-radius: 8px;
+    scrollbar-width: thin;
+  }
+
+  .option,
+  .specialOption {
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .specialOption {
+    border-bottom: 1px solid #BAA9FF;
+  }
+
+  .option:hover,
+  .option.highlighted {
+    background-color: #F2EFFF;
+  }
+
+  .specialOption:hover,
+  .specialOption.highlighted {
+    background-color: #F2EFFF;
+  }
+
+  /* Icon styles for options */
+  .option-icon,
+  .special-option-icon,
+  .input-icon {
+    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+  }
+
+  .input-with-icon input {
+    border: none;
+    flex-grow: 1;
+    padding: 5px 0;
+  }
+
+  .input-with-icon input:focus {
+    outline: none;
+  }
+
+  .input-with-icon {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding: 5px 10px;
+    background-color: #ffffff;
+  }
+
+  /* End. Panel 2 */
+</style>

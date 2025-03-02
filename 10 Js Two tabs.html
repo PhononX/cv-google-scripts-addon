@@ -1,0 +1,173 @@
+<script>
+    /**
+     * Switches between tabs by updating CSS classes to show/hide content
+     * @param {string} tabId - ID of the tab to switch to ('tab-1' or 'tab-2')
+     */
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+
+        const selectedTab = document.querySelector(`.tab:nth-child(${tabId === 'tab-1' ? '1' : '2'})`);
+        const selectedContent = document.getElementById(tabId);
+
+        selectedTab.classList.add('active');
+        selectedContent.classList.add('active');
+    }
+
+    /**
+     * Shows/hides different screens in the UI based on the screenId
+     * Also manages visibility of sign in button and progress text for screen1
+     * @param {string} screenId - ID of the screen to show ('screen0', 'screen1', or 'screen2')
+     */
+     function showScreen(screenId) {
+        document.getElementById('screen0').style.display = 'none';
+        document.getElementById('screen1').style.display = screenId === 'screen1' ? 'block' : 'none';
+        document.getElementById('screen2').style.display = screenId === 'screen2' ? 'block' : 'none';
+        if (screenId === 'screen1') {
+            document.getElementById('signInButton').style.display = 'inline-block';
+            document.getElementById('stayLoggedIn').style.display = 'inline-block';
+            document.getElementById('progressText').style.display = 'none';
+        }
+    }
+
+    /**
+     * Displays a message in the UI with specified type (error/success)
+     * @param {string} message - The message to display
+     * @param {string} type - Message type ('error' or 'success')
+     * @param {string} divMessageId - ID of the div element to show message in
+     */
+    function showMessage(message, type, divMessageId) {
+        const messageElement = document.getElementById(divMessageId);
+        messageElement.textContent = message;
+        messageElement.className = `message ${type}`;
+        messageElement.style.display = 'block';
+        messageElement.style.whiteSpace = 'pre-wrap';
+    }
+
+    /**
+     * Hides a message div element
+     * @param {string} divMessageId - ID of the message div to hide
+     */
+    function hideMessage(divMessageId) {
+        document.getElementById(divMessageId).style.display = 'none';
+    }
+
+    /**
+     * Creates and displays a modal dialog with error message
+     * Removes any existing error modal before showing new one
+     * @param {string} errorText - The error message to display in the modal
+     */
+    function showErrorModal(errorText) {
+        // Remove any existing error modal
+        const existingModal = document.querySelector('.error-modal-overlay');
+        if (existingModal) {
+            existingModal.remove();
+            document.body.classList.remove('modal-open');
+        }
+
+        // Create modal elements
+        const overlay = document.createElement('div');
+        overlay.className = 'error-modal-overlay';
+
+        const container = document.createElement('div');
+        container.className = 'error-modal-container';
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'error-modal-close';
+        closeButton.innerHTML = '✕';
+
+        const text = document.createElement('p');
+        text.className = 'error-modal-text';
+        text.textContent = errorText;
+
+        // Assemble modal
+        container.appendChild(closeButton);
+        container.appendChild(text);
+        overlay.appendChild(container);
+        document.body.appendChild(overlay);
+
+        // Add modal-open class to body
+        document.body.classList.add('modal-open');
+
+        // Add event listeners
+        const closeModal = () => {
+            overlay.remove();
+            document.body.classList.remove('modal-open');
+        };
+
+        closeButton.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal();
+            }
+        });
+    }
+
+    /**
+     * Checks user access status by calling server-side function
+     * Uses the keep-signed-in checkbox value when checking access
+     */
+    function checkAccess() {
+        const checkbox = document.getElementById('keep-signed-in');
+        const keepMeSigned = checkbox.checked;
+        google.script.run
+            .withSuccessHandler(onCheckAccessSuccess)
+            .withFailureHandler(onCheckAccessFailure)
+            .getWorkspacesAndConversationsGW(keepMeSigned);
+    }
+
+    /**
+     * Handles successful access check response
+     * Shows appropriate screen based on access status or continues checking
+     * @param {Object} response - Server response containing access status
+     */
+    // function onCheckAccessSuccess(response) {
+    //     if (response.hasAccess) {
+    //         populateWorkspacesConversation(response.workspaces, response.items);
+    //         showScreen('screen2');
+    //     } else if (response.authUrl) {
+    //         document.getElementById('authUrl').value = response.authUrl;
+    //         setTimeout(checkAccess, 3000);
+    //     } else {
+    //         setTimeout(checkAccess, 3000);
+    //     }
+    // }
+
+    /**
+     * Handles failed access check
+     * Shows error message and resets UI elements
+     * @param {Error} error - Error object from failed access check
+     */
+    function onCheckAccessFailure(error) {
+        showErrorModal('Failed to check access. Please try again later.');
+        document.getElementById('signInButton').style.display = 'inline-block';
+        document.getElementById('progressText').style.display = 'none';
+    }
+
+    // Add click handler for sign in button to initiate OAuth flow
+    document.getElementById('signInButton').addEventListener('click', () => {
+        const authUrl = document.getElementById('authUrl').value;
+        if (authUrl === '') {
+            showMessage('Failed to get authUrl.', 'error', 'messageUnexpectedError');
+        } else {
+            window.open(authUrl, '_blank');
+            document.getElementById('signInButton').style.display = 'none';
+            document.getElementById('stayLoggedIn').style.display = 'none';
+            document.getElementById('progressText').style.display = 'inline-block';
+            checkAccess();
+        }
+    });
+
+    // Check initial access status and show appropriate screen
+    // if (starterValues.hasAccess === true) {
+    //     populateWorkspacesConversation(starterValues.workspaces, starterValues.items);
+    //     showScreen('screen2');
+    // } else {
+    //     if (!starterValues.authUrl) {
+    //         showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+    //     } else {
+    //         document.getElementById('authUrl').value = starterValues.authUrl;
+    //     }
+    //     showScreen('screen1');
+    // }  
+</script>

@@ -1,0 +1,594 @@
+<script>
+    // Default dates
+    // Get today's date
+    const today = new Date();
+
+    // Get date from 3 days ago
+    const threeDaysAgo = new Date(today);
+    threeDaysAgo.setDate(today.getDate() - 3);
+
+    // Format dates to YYYY-MM-DD for input fields
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const formattedThreeDaysAgo = formatDate(threeDaysAgo);
+    const formattedToday = formatDate(today);
+
+    // Default dates
+    document.getElementById('startDate').value = formattedThreeDaysAgo;
+    document.getElementById('endDate').value = formattedToday;
+    document.getElementById('startDateP1').value = formattedThreeDaysAgo;
+    document.getElementById('endDateP1').value = formattedToday;
+    document.getElementById('startDateVM').value = formattedThreeDaysAgo;
+    document.getElementById('endDateVM').value = formattedToday;
+    // End. Default dates
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const panel1 = document.getElementById('panel1');
+        const panel2 = document.getElementById('panel2');
+        const findConversationBtn = document.getElementById('findConversation');
+        const goBackBtn = document.getElementById('goBack');
+        const conversationIdInput = document.getElementById('conversationId');
+        const clearButton = document.querySelector('.clear-button');
+        const initialContent = document.getElementById('initial-content');
+        const foundConversation = document.querySelector('.found-conversation');
+
+        // panel navigation
+        findConversationBtn.addEventListener('click', () => {
+            panel1.classList.remove('active');
+            panel2.classList.add('active');
+            hideMessage('message-tab-1');
+        });
+
+        goBackBtn.addEventListener('click', () => {
+            panel2.classList.remove('active');
+            panel1.classList.add('active');
+        });
+
+        // Conversation ID input handling
+        conversationIdInput.addEventListener('input', function () {
+            const value = this.value.trim();
+            clearButton.style.display = value ? 'block' : 'none';
+
+            // Auto-resize textarea based on content
+            if (value.length > 30 || value.includes('\n')) {
+                this.style.height = (this.scrollHeight) + 'px';
+            }
+
+            if (value) {
+                // Gets conv ID from link
+                let updatedQuery;
+                const match = value.match(/(?:\/c\/|conversation_id=)([a-zA-Z0-9]+)(?:\/|\&|$)/);
+                if (match) {
+                    updatedQuery = match[1];
+                } else {
+                    updatedQuery = value;
+                }
+                updatedQuery = updatedQuery.toLowerCase();
+                // End. Gets conv ID from link
+
+
+                let found = false;
+                for (let workspaceId in starterValues.items) {
+                    const conversations = starterValues.items[workspaceId];
+                    // if (conv.name.toLowerCase().includes(updatedQuery) || conv.id.toLowerCase() === updatedQuery) {
+                    const conversation = conversations.find(c => c.id === updatedQuery);
+                    if (conversation) {
+                        found = true;
+                        showFoundConversation(conversation);
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    showMessage('The conversation wasn\'t found', 'error', 'message-tab-1');
+                    foundConversation.style.display = 'none';
+                    initialContent.style.display = 'block';
+                }
+            } else {
+                resetPanel1();
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            conversationIdInput.value = '';
+            resetPanel1();
+        });
+
+        function showFoundConversation(conversation) {
+            hideMessage('message-tab-1');
+            initialContent.style.display = 'none';
+            foundConversation.style.display = 'block';
+
+            const workspace = starterValues.workspaces.find(w => w.workspaceId === conversation.workspace_id);
+            selectedWorkspaceId = workspace.workspaceId;
+            selectedConversationKey = conversation.id;
+            selectedLabel = conversation.name;
+            const details = foundConversation.querySelector('.conversation-details');
+            details.innerHTML = `
+        <div class="row">
+            <div class="label">Workspace</div>
+            <div class="value">
+                <img src="${workspace.img}">
+                <span>${workspace.workspaceName}</span>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="label">Conversation Type</div>
+            <div class="value">
+                <span>${typeNames[conversation.type]}</span>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="label">Conversation</div>
+            <div class="value">
+                <img src="${conversation.img}">
+                <span>${conversation.name}</span>
+            </div>
+        </div>
+        `;
+        }
+
+        function resetPanel1() {
+            clearButton.style.display = 'none';
+            hideMessage('message-tab-1');
+            foundConversation.style.display = 'none';
+            initialContent.style.display = 'block';
+        }
+    });
+
+</script>
+
+<!-- Panel 2 -->
+<script>
+    const searchInput1 = document.getElementById('searchInput1');
+    const optionsList1 = document.getElementById('optionsList1');
+    const clearButton1 = document.getElementById('clearButton1');
+    const searchInput2 = document.getElementById('searchInput2');
+    const optionsList2 = document.getElementById('optionsList2');
+    const clearButton2 = document.getElementById('clearButton2');
+    const searchInput3 = document.getElementById('searchInput3');
+    const optionsList3 = document.getElementById('optionsList3');
+    const clearButton3 = document.getElementById('clearButton3');
+
+    let categories = [{
+        workspaceName: "Workspace 1",
+        workspaceId: "1234567891"
+    },
+    {
+        workspaceName: "Workspace 2",
+        workspaceId: "1234567892"
+    }];
+
+    let items = {
+        '1234567891': [{ "c1": "Conversation 1", "type": "directMessage" }, { "c2": "Conversation 2", "type": "directMessage" }, { "c3": "Conversation 3", "type": "namedConversation" }],
+        '1234567892': [{ "c4": "Conversation 4", "type": "namedConversation" }, { "c5": "Conversation 5", "type": "asyncMeeting" }, { "c6": "Conversation 6", "type": "asyncMeeting" }]
+    };
+
+    const typeNames = {
+        "directMessage": "Direct Message",
+        "namedConversation": "Named Conversation",
+        "asyncMeeting": "Async Meeting",
+        "customerConversation": "Customer Conversation"
+    };
+
+    let selectedWorkspaceId = '';
+    let selectedConversationType = '';
+    let selectedConversationKey = '';
+    let selectedLabel = '';
+    let highlightedIndex = -1;
+    let filteredOptions = [];
+
+    function createOptionsList(inputElement, optionsListElement, options) {
+        optionsListElement.innerHTML = '';
+        filteredOptions = options;
+        options.forEach((option, index) => {
+            const div = document.createElement('div');
+
+            // Create icon element
+            const iconElement = document.createElement('div');
+
+            if (inputElement === searchInput1) {
+                iconElement.className = option.special === true ? 'special-option-icon' : 'option-icon';
+                iconElement.style.backgroundImage = `url('${option.img}')`;
+                div.textContent = option.workspaceName;
+            } else if (inputElement === searchInput2) {
+                div.textContent = option;
+            } else {
+                iconElement.className = 'option-icon';
+                iconElement.style.backgroundImage = `url('${option.img}')`;
+                div.textContent = option.name;
+            }
+
+            div.className = inputElement === searchInput1 && option.special === true ? 'specialOption' : 'option';
+            div.dataset.index = index;
+            div.onclick = () => selectOption(inputElement, optionsListElement, option);
+
+            // Add icon to the div if it's not conversation type
+            if (inputElement !== searchInput2) {
+                div.prepend(iconElement);
+            }
+
+            optionsListElement.appendChild(div);
+        });
+        optionsListElement.style.display = options.length > 0 ? 'block' : 'none';
+    }
+
+    function filterOptions(inputElement, optionsListElement, options) {
+        const query = inputElement.value.toLowerCase();
+        let filtered;
+
+        filtered = options.filter(option => {
+            let textToMatch;
+            if (inputElement === searchInput1) {
+                textToMatch = option.workspaceName;
+            } else if (inputElement === searchInput2) {
+                textToMatch = option;
+            } else {
+                textToMatch = option.name;
+            }
+            return textToMatch.toLowerCase().includes(query);
+        });
+
+        filteredOptions = filtered;
+        createOptionsList(inputElement, optionsListElement, filteredOptions);
+        highlightedIndex = -1;
+    }
+
+    function clearInput(inputElement, clearButtonElement, optionsListElement) {
+        const wrapper = inputElement.closest('.input-wrapper');
+        const iconElement = inputElement === searchInput1 ? document.getElementById('inputIcon1') :
+            inputElement === searchInput2 ? document.getElementById('inputIcon2') :
+                document.getElementById('inputIcon3');
+
+        // Hide the icon
+        iconElement.style.display = 'none';
+
+        if (inputElement === searchInput1) {
+            selectedWorkspaceId = '';
+            selectedConversationType = '';
+            selectedConversationKey = '';
+
+            searchInput2.value = '';
+            searchInput3.value = '';
+            searchInput2.disabled = true;
+            searchInput3.disabled = true;
+
+            clearButton2.style.display = 'none';
+            clearButton3.style.display = 'none';
+            searchInput2.closest('.input-wrapper').classList.add('arrow-down');
+            searchInput3.closest('.input-wrapper').classList.add('arrow-down');
+
+            document.getElementById('inputIcon3').style.display = 'none';
+
+            optionsList2.innerHTML = '';
+            optionsList3.innerHTML = '';
+        } else if (inputElement === searchInput2) {
+            selectedConversationType = '';
+            selectedConversationKey = '';
+            searchInput3.value = '';
+            clearButton3.style.display = 'none';
+            searchInput3.closest('.input-wrapper').classList.add('arrow-down');
+            updateConversationSelect(selectedWorkspaceId, '');
+
+            document.getElementById('inputIcon3').style.display = 'none';
+        } else if (inputElement === searchInput3) {
+            selectedConversationKey = '';
+        }
+
+        inputElement.value = '';
+        wrapper.classList.add('arrow-down');
+        clearButtonElement.style.display = 'none';
+        highlightedIndex = -1;
+        setExportButtonStatePanel2();
+    }
+
+    function selectOption(inputElement, optionsListElement, option) {
+        const iconElement = inputElement === searchInput1 ? document.getElementById('inputIcon1') :
+            inputElement === searchInput2 ? document.getElementById('inputIcon2') :
+                document.getElementById('inputIcon3');
+
+        if (inputElement === searchInput1) {
+            selectedWorkspaceId = option.workspaceId;
+            inputElement.value = option.workspaceName;
+            // Set icon for workspace
+            if (option.img) {
+                iconElement.style.backgroundImage = `url('${option.img}')`;
+                iconElement.style.display = 'block';
+            }
+            updateConversationTypeSelect(option.workspaceId);
+            updateButtonVisibility(inputElement, clearButton1);
+        } else if (inputElement === searchInput2) {
+            selectedConversationType = option;
+            inputElement.value = option;
+            // For type selection, we don't have icons so hide it
+            iconElement.style.display = 'none';
+            updateConversationSelect(selectedWorkspaceId, option);
+            updateButtonVisibility(inputElement, clearButton2);
+        } else {
+            selectedConversationKey = option.id;
+            inputElement.value = option.name;
+            selectedLabel = option.name;
+            // Set icon for conversation
+            if (option.img) {
+                iconElement.style.backgroundImage = `url('${option.img}')`;
+                iconElement.style.display = 'block';
+            }
+            updateButtonVisibility(inputElement, clearButton3);
+        }
+        setExportButtonStatePanel2();
+        optionsListElement.style.display = 'none';
+    }
+
+    function updateConversationTypeSelect(workspaceId) {
+        searchInput2.disabled = false;
+        searchInput2.value = '';
+        searchInput3.value = '';
+        selectedConversationType = '';
+        selectedConversationKey = '';
+        const types = [...new Set(items[workspaceId].map(item => typeNames[item.type]))];
+        createOptionsList(searchInput2, optionsList2, types);
+        updateConversationSelect(workspaceId, '');
+        document.getElementById('inputIcon3').style.display = 'none';
+        updateButtonVisibility(searchInput3, clearButton3);
+    }
+
+    function updateConversationSelect(workspaceId, conversationType) {
+        searchInput3.disabled = false;
+        searchInput3.value = '';
+        selectedConversationKey = '';
+        let filteredConversations = items[workspaceId];
+        if (conversationType) {
+            const typeKey = Object.keys(typeNames).find(key => typeNames[key] === conversationType);
+            filteredConversations = filteredConversations.filter(conv => conv.type === typeKey);
+        }
+        createOptionsList(searchInput3, optionsList3, filteredConversations);
+        document.getElementById('inputIcon3').style.display = 'none';
+        updateButtonVisibility(searchInput3, clearButton3);
+    }
+
+    function updateButtonVisibility(input, clearButton) {
+        const wrapper = input.closest('.input-wrapper');
+        if (input.value) {
+            clearButton.style.display = 'block';
+            wrapper.classList.remove('arrow-down');
+        } else {
+            clearButton.style.display = 'none';
+            wrapper.classList.add('arrow-down');
+        }
+    }
+
+    function setupSelect(inputElement, optionsListElement, clearButtonElement, options) {
+        const wrapper = inputElement.closest('.input-wrapper');
+        wrapper.classList.add('arrow-down');
+        clearButtonElement.style.display = 'none';
+
+        inputElement.addEventListener('focus', () => {
+            if (inputElement === searchInput2 && selectedWorkspaceId) {
+                const types = [...new Set(items[selectedWorkspaceId].map(item => typeNames[item.type]))];
+                createOptionsList(inputElement, optionsListElement, types);
+            } else if (inputElement === searchInput3 && selectedWorkspaceId) {
+                let filteredConversations = items[selectedWorkspaceId];
+                if (selectedConversationType) {
+                    const typeKey = Object.keys(typeNames).find(key => typeNames[key] === selectedConversationType);
+                    filteredConversations = filteredConversations.filter(conv => conv.type === typeKey);
+                }
+                createOptionsList(inputElement, optionsListElement, filteredConversations);
+            } else {
+                createOptionsList(inputElement, optionsListElement, options);
+            }
+            optionsListElement.style.display = 'block';
+        });
+
+        inputElement.addEventListener('input', () => {
+            if (inputElement === searchInput2 && selectedWorkspaceId) {
+                const types = [...new Set(items[selectedWorkspaceId].map(item => typeNames[item.type]))];
+                filterOptions(inputElement, optionsListElement, types);
+            } else if (inputElement === searchInput3 && selectedWorkspaceId) {
+                let filteredConversations = items[selectedWorkspaceId];
+                if (selectedConversationType) {
+                    const typeKey = Object.keys(typeNames).find(key => typeNames[key] === selectedConversationType);
+                    filteredConversations = filteredConversations.filter(conv => conv.type === typeKey);
+                }
+                filterOptions(inputElement, optionsListElement, filteredConversations);
+            } else {
+                filterOptions(inputElement, optionsListElement, options);
+            }
+            optionsListElement.style.display = 'block';
+        });
+
+        clearButtonElement.addEventListener('click', () => clearInput(inputElement, clearButtonElement, optionsListElement));
+
+        document.addEventListener('click', (e) => {
+            if (!inputElement.contains(e.target) && !optionsListElement.contains(e.target) && e.target !== clearButtonElement) {
+                optionsListElement.style.display = 'none';
+                highlightedIndex = -1;
+            }
+        });
+    }
+
+    searchInput2.disabled = true;
+    searchInput3.disabled = true;
+
+    function populateWorkspacesConversation(workspaces, conversations) {
+        categories = workspaces;
+        items = conversations;
+        setupSelect(searchInput1, optionsList1, clearButton1, categories);
+        setupSelect(searchInput2, optionsList2, clearButton2, []);
+        setupSelect(searchInput3, optionsList3, clearButton3, []);
+    }
+</script>
+<!-- End. Panel 2 -->
+
+<!-- Buttons, inputs state  -->
+<script>
+    let voiceMemosProgress = false;
+    let conversionsProgress = false;
+
+    function setExportButtonState(startDateId, endDateId, exportButtonId, messageTabId) {
+        const exportButton = document.getElementById(exportButtonId);
+        const validateDatesResult = validateDates(startDateId, endDateId, messageTabId);
+        exportButton.disabled = !selectedWorkspaceId || !selectedConversationKey || !validateDatesResult || voiceMemosProgress || conversionsProgress;
+    }
+
+    function setExportButtonStateVM(startDateId, endDateId, exportButtonId, messageTabId) {
+        const exportButton = document.getElementById(exportButtonId);
+        const validateDatesResult = validateDates(startDateId, endDateId, messageTabId);
+        exportButton.disabled = !validateDatesResult || voiceMemosProgress || conversionsProgress;
+    }
+
+    function validateDates(startDateId, endDateId, messageTabId) {
+        const startDate = new Date(document.getElementById(startDateId).value);
+        const endDate = new Date(document.getElementById(endDateId).value);
+
+        const daysDifference = Math.ceil((endDate - startDate) / (1000 * 3600 * 24));
+        if (daysDifference > 29) {
+            showMessage("Error: Difference between start_date and end_date must be less than 30 days.", "error", messageTabId);
+            return false;
+        }
+
+        const today = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 0);
+        today.setHours(0, 0, 0, 0);  // Set time to midnight for accurate comparison
+
+        hideMessage(messageTabId);
+
+        if (startDate > endDate) {
+            showMessage("Error: Start date cannot be later than end date.", "error", messageTabId);
+            return false;
+        }
+
+        if (startDate > today) {
+            showMessage("Error: Start date cannot be later than today.", "error", messageTabId);
+            return false;
+        }
+
+        return true;
+    }
+
+    function setExportButtonStatePanel1() {
+        setExportButtonState('startDateP1', 'endDateP1', 'exportButtonP1', 'message-tab-1');
+    }
+
+    function setExportButtonStatePanel2() {
+        setExportButtonState('startDate', 'endDate', 'exportButton', 'message-tab-1');
+    }
+
+    function setExportButtonStateVoiceMemos() {
+        setExportButtonStateVM('startDateVM', 'endDateVM', 'exportButtonVM', 'message-tab-2');
+    }
+
+    document.getElementById('startDateP1').addEventListener('change', setExportButtonStatePanel1);
+    document.getElementById('endDateP1').addEventListener('change', setExportButtonStatePanel1);
+
+    document.getElementById('startDate').addEventListener('change', setExportButtonStatePanel2);
+    document.getElementById('endDate').addEventListener('change', setExportButtonStatePanel2);
+
+    document.getElementById('startDateVM').addEventListener('change', setExportButtonStateVoiceMemos);
+    document.getElementById('endDateVM').addEventListener('change', setExportButtonStateVoiceMemos);
+
+</script>
+<!-- End. Buttons, inputs state  -->
+
+<!-- Server-side calls -->
+<script>
+    function disableButtonsInputs(value) {
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => input.disabled = value);
+
+        document.getElementById('conversationId').disabled = value;
+        document.getElementById('findConversation').disabled = value;
+
+        document.getElementById('exportButtonP1').disabled = value;
+        document.getElementById('exportButton').disabled = value;
+        document.getElementById('exportButtonVM').disabled = value;
+    }
+
+    // Voice Memo export
+    document.getElementById('exportButtonVM').addEventListener('click', () => {
+        hideMessage('message-tab-2');
+        disableButtonsInputs(true);
+
+        const startDateVM = document.getElementById('startDateVM').value;
+        const endDateVM = document.getElementById('endDateVM').value;
+
+        google.script.run
+            .withSuccessHandler(onVoiceMemosExportSuccess)
+            .withFailureHandler(onVoiceMemosExportFailure)
+            .getVoiceMemos(startDateVM, endDateVM);
+    });
+
+    function onVoiceMemosExportSuccess(response) {
+        voiceMemosProgress = false;
+        if (response.status === 'error') {
+            if (!response.hasAccess) {
+                document.getElementById('authUrl').value = response.authUrl;
+                showScreen('screen1');
+            } else {
+                showMessage(response.message, 'error', 'message-tab-2');
+            }
+        } else {
+            showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-2');
+        }
+        disableButtonsInputs(false);
+    }
+
+    function onVoiceMemosExportFailure(error) {
+        voiceMemosProgress = false;
+        showMessage('Failed to export. ' + error, 'error', 'message-tab-2');
+        disableButtonsInputs(false);
+    }
+    // End. Voice Memo export
+
+    // Conversation export
+    document.getElementById('exportButton').addEventListener('click', () => {
+        exportConversation('startDate', 'endDate');
+    });
+
+    document.getElementById('exportButtonP1').addEventListener('click', () => {
+        exportConversation('startDateP1', 'endDateP1');
+    });
+
+    function exportConversation(startDateId, endDateId) {
+        conversionsProgress = true;
+        const startDate = document.getElementById(startDateId).value;
+        const endDate = document.getElementById(endDateId).value;
+        disableButtonsInputs(true);
+        google.script.run
+            .withSuccessHandler(onExportSuccess)
+            .withFailureHandler(onExportFailure)
+            .exportConversations(selectedConversationKey, selectedLabel, startDate, endDate);
+    }
+
+    function onExportSuccess(response) {
+        conversionsProgress = false;
+        if (response.status === 'error') {
+            if (!response.hasAccess) {
+                document.getElementById('authUrl').value = response.authUrl;
+                showScreen('screen1');
+            } else {
+                showMessage(response.message, 'error', 'message-tab-1');
+            }
+        } else {
+            showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-1');
+        }
+        disableButtonsInputs(false);
+    }
+
+    function onExportFailure(error) {
+        conversionsProgress = false;
+        showMessage('Failed to export. ' + error, 'error', 'message-tab-1');
+        disableButtonsInputs(false);
+    }
+
+    // End. Conversation export
+
+</script>
+<!-- End. Server-side calls -->

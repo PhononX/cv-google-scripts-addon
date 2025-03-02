@@ -1,12 +1,3 @@
-function getListOfWorkspaces() {
-  const result = makeCarbonVoiceRequest('GET', '/simplified/workspaces/basic-info', null, null);
-  return result;
-}
-
-function getListOfConversations() {
-  const result = makeCarbonVoiceRequest('GET', '/simplified/conversations/all', null, null);
-  return result;
-}
 
 function threeDaysBeforeISO() {
   const today = new Date();
@@ -16,13 +7,34 @@ function threeDaysBeforeISO() {
 }
 
 function exportConversations(selectedConversation, selectedLabel, startDate, endDate) {
-  const queryParams = {
-    page: 1,
-    size: 5,
-    conversation_id: selectedConversation,
-    sort_direction: 'ASC'
-  };
+  return exportConversationsOrVoiceMemos(selectedConversation, selectedLabel, startDate, endDate, 'conversation');
+}
 
+function getVoiceMemos(startDate, endDate) {
+  return exportConversationsOrVoiceMemos(null, 'Voice Memos', startDate, endDate, 'voiceMemo');
+}
+
+function exportConversationsOrVoiceMemos(selectedConversation, selectedLabel, startDate, endDate, typeConvOrVoiceMemo) {
+  let queryParams, insertLinksColumn, textStarter;
+  if (typeConvOrVoiceMemo === 'conversation') {
+    queryParams = {
+      page: 1,
+      size: 50,
+      conversation_id: selectedConversation,
+      sort_direction: 'ASC'
+    };
+    insertLinksColumn = 10;
+    textStarter = 'Message';
+  } else {
+    queryParams = {
+      page: 1,
+      size: 50,
+      sort_direction: 'ASC',
+      type: 'voicememo'
+    };
+    insertLinksColumn = 9;
+    textStarter = 'Voice Memos';
+  }
   if (startDate) {
     queryParams.start_date = startDate + 'T00:00:00.000Z';
   }
@@ -64,7 +76,12 @@ function exportConversations(selectedConversation, selectedLabel, startDate, end
       const { attachmentLinks, attachmentTexts } = collectAttachmentLinks(el.attachments);
       attachmentCellsLinksArray.push(attachmentLinks);
 
-      messagesArray.push([el.id, el.created_at, firstName, lastName, el.creator_id, el.duration_ms, el.audio_url, el.ai_summary, el.parent_message_id, el.transcript, attachmentTexts.join(br), el.link]);
+      if (typeConvOrVoiceMemo === 'conversation') {
+        messagesArray.push([el.id, el.created_at, firstName, lastName, el.creator_id, el.duration_ms, el.audio_url, el.ai_summary, el.parent_message_id, el.transcript, attachmentTexts.join(br), el.link]);
+      } else {
+        messagesArray.push([el.id, el.created_at, firstName, lastName, el.creator_id, el.duration_ms, el.audio_url, el.ai_summary, el.transcript, attachmentTexts.join(br)]);
+      }
+
       const linksArray = extractLinks(el.transcript);
       allCellsLinksArray.push(linksArray);
     });
@@ -76,7 +93,13 @@ function exportConversations(selectedConversation, selectedLabel, startDate, end
       if (sheet == null) {
         const ss = SpreadsheetApp.getActiveSpreadsheet();
         sheet = ss.insertSheet(selectedLabel + ' ' + new Date().toISOString());
-        const headerArray = [['id', 'created_at', 'first_name', 'last_name', 'creator_id', 'duration_ms', 'audio_url', 'ai_summary', 'parent_message_id', 'transcript', 'attachments', 'link']];
+
+        let headerArray
+        if (typeConvOrVoiceMemo === 'conversation') {
+          headerArray = [['id', 'created_at', 'first_name', 'last_name', 'creator_id', 'duration_ms', 'audio_url', 'ai_summary', 'parent_message_id', 'transcript', 'attachments', 'link']];
+        } else {
+          headerArray = [['message_id', 'created_at', 'first_name', 'last_name', 'creator_id', 'duration_ms', 'audio_url', 'ai_summary', 'transcript', 'attachments']];
+        }
         headerNumCols = headerArray[0].length;
         sheet.getRange(1, 1, 1, headerNumCols).setValues(headerArray).setFontWeight('bold').setBackground('#DBD2FF');
       }
@@ -88,16 +111,16 @@ function exportConversations(selectedConversation, selectedLabel, startDate, end
     }
   }
 
-  insertLinks(sheet, allCellsLinksArray, 10);
+  insertLinks(sheet, allCellsLinksArray, insertLinksColumn);
 
   for (let i = 0; i < attachmentCellsLinksArray.length; i++) {
     if (attachmentCellsLinksArray[i].length === 0) {
       continue;
     }
-    insertLink(sheet, attachmentCellsLinksArray[i], i + 2, 11)
+    insertLink(sheet, attachmentCellsLinksArray[i], i + 2, insertLinksColumn + 1)
   }
 
-  let totalMessagesText = 'Message count: ' + totalMessages;
+  let totalMessagesText = textStarter + ' count: ' + totalMessages;
   if (!startDate && !endDate) {
     totalMessagesText += ' (last 3 days)';
   }
@@ -105,6 +128,7 @@ function exportConversations(selectedConversation, selectedLabel, startDate, end
   return { status: 'ok', totalMessagesText: totalMessagesText };
 }
 
+// Gmail!!!
 function getCreatorName(creatorsObj, id) {
   if (!creatorsObj[id]) {
     const result = makeCarbonVoiceRequest('GET', '/simplified/users/' + id, null, null);
@@ -148,6 +172,7 @@ function extractLinks(text) {
   return links;
 }
 
+// Gmail!!!
 function collectAttachmentLinks(attachmentsArray) {
   const links = [];
   const texts = [];
@@ -168,6 +193,19 @@ function collectAttachmentLinks(attachmentsArray) {
     }
   }
   return { attachmentLinks: links, attachmentTexts: texts };
+}
+
+function insertLinks(sheet, allCellsLinksArray, linkColNumber) {
+  for (let i = 0; i < allCellsLinksArray.length; i++) {
+    if (allCellsLinksArray[i].length === 0) {
+      continue;
+    }
+    insertLink(sheet, allCellsLinksArray[i], i + 2, linkColNumber)
+  }
+
+  deleteEmptyRowsCols(sheet, 10, 2);
+
+  sheet.getRange('A:L').setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP);
 }
 
 function insertLink(sheet, links, rowNumber, colNumber) {

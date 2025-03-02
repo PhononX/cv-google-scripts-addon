@@ -1,0 +1,31 @@
+  <script>
+    // Check initial access status and show appropriate screen
+    if (starterValues.hasAccess === true) {
+        populateWorkspacesConversation(starterValues.workspaces, starterValues.items);
+        showScreen('screen2');
+    } else {
+        if (!starterValues.authUrl) {
+            showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+        } else {
+            document.getElementById('authUrl').value = starterValues.authUrl;
+        }
+        showScreen('screen1');
+    }  
+        
+    /**
+     * Handles successful access check response
+     * Shows appropriate screen based on access status or continues checking
+     * @param {Object} response - Server response containing access status
+     */    
+    function onCheckAccessSuccess(response) {
+        if (response.hasAccess) {
+            populateWorkspacesConversation(response.workspaces, response.items);
+            showScreen('screen2');
+        } else if (response.authUrl) {
+            document.getElementById('authUrl').value = response.authUrl;
+            setTimeout(checkAccess, 3000);
+        } else {
+            setTimeout(checkAccess, 3000);
+        }
+    }
+  </script>
