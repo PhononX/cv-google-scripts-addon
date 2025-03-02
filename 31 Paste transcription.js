@@ -16,5 +16,6 @@ function pasteTranscription(voiceMemoText) {
     DocumentApp.getUi().alert(errorText);
     return { status: 'error', hasAccess: true, message: errorText };
   }
-  return { status: 'ok', hasAccess: true, message: 'Export completed successfully.' };
+
+  return { status: 'ok', hasAccess: true, message: 'Pasted successfully.' };
 }

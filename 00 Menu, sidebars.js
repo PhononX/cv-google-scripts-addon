@@ -3,7 +3,6 @@ function onOpen() {
   googleSheet.createMenu('Carbone Voice')
     .addItem('Voice Memos', 'exportSidebar')
     .addItem('Settings', 'menuItemSettings')
-    // .addItem('reset', 'reset')
     .addToUi();
 }
 

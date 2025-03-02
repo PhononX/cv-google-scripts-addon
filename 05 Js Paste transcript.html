@@ -1,0 +1,61 @@
+<script>
+
+function getSelectedVoiceMemoTexts(voiceMemos, selectedMemoIds) {
+  return voiceMemos
+    .filter(memo => selectedMemoIds.has(memo.messageId))
+    .map(memo => memo.voiceMemoText);
+}
+
+// type: error/success
+function showNotification(message, type, divMessageId) {
+    const messageElement = document.getElementById(divMessageId);
+    messageElement.textContent = message;
+    messageElement.className = `menu message ${type}`;
+    messageElement.style.display = 'block';
+    messageElement.style.whiteSpace = 'pre-wrap';
+}
+
+function onSuccessPasteTranscript(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showNotification(response.message, 'error', 'bottomNotification');
+        }
+    } else {
+      if (response.message){     
+        showNotification(response.message, 'success', 'bottomNotification');
+      }
+    }
+    enableAllInteractions();
+}
+
+function onFailurePasteTranscript(error) {
+    showNotification('Failed to export. ' + error, 'error', 'bottomNotification');
+enableAllInteractions();
+}
+
+function handleTranscript() {
+  const newLine = `
+
+`;
+  // console.log('Transcript button clicked');
+      const selectedIds = getSelectedVoiceMemoIds();
+      // console.log(selectedIds);
+
+//       voiceMemos.push({ createdAt: el.created_at, durationMs: el.duration_ms, voiceMemoText: voiceMemoText, name: voiceMemoName, messageId: el.message_id, summary});
+const voiceMemos = voiceMemosAndFoldersSidebar.voiceMemos;
+
+const selectedVoiceMemoTexts = getSelectedVoiceMemoTexts(voiceMemos, selectedMemoIds);
+// console.log(selectedVoiceMemoTexts);
+const textToInsert = selectedVoiceMemoTexts.join(newLine);
+// console.log(textToInsert);
+disableAllInteractions();
+
+      google.script.run
+        .withSuccessHandler(onSuccessPasteTranscript)
+        .withFailureHandler(onFailurePasteTranscript)
+        .pasteTranscription(textToInsert);
+}
+</script>

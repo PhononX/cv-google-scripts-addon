@@ -1,0 +1,28 @@
+<script>
+function populateFolders(folders, foldersAndMemosList, workspaceId){
+  folders.forEach(folder => {
+    const item = document.createElement('div');
+    item.className = 'folder-item';
+    item.innerHTML = `<div class="folder-icon"></div>
+        <div class="folder-content">
+            <h3 class="folder-title">${folder.folderName}</h3>
+            <p class="folder-details">${folder.nestedFoldersCount} Folders<br>${folder.nestedMessagesCount} Voice Memos</p>
+        </div>
+        <span class="angle-bracket">›</span>`;
+
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      disableAllInteractions();
+      hideMessage('messageConversations'); 
+
+      google.script.run
+          .withSuccessHandler(onRefreshSuccess)
+          .withFailureHandler(onExportFailure)     
+          .getVoiceMemosAndFolders(workspaceId, folder.folderId);     
+    });
+
+    foldersAndMemosList.appendChild(item);
+  });
+}
+</script>

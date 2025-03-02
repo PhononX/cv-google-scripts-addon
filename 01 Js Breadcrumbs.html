@@ -1,0 +1,274 @@
+<script>
+  const layer = document.getElementById('hiddenLayer');
+    // Breadcrumbs generator function
+function generateBreadcrumbs(path, folderName, folderId, workspaceId, workspaceName, pageNumber) {
+// console.log('generateBreadcrumbs');
+// console.log(path);
+// console.log(folderName, folderId, workspaceId, workspaceName, pageNumber);
+    // Helper function to calculate total symbol length
+const calculatePathLength = (items, workspaceName) => 
+    items.reduce((total, item) => total + item.folderName.length, 0) + 
+    (workspaceName ? workspaceName.length : 0) + 
+    (items.length -1) * 3;
+
+    // Case 1: Root folder
+    if (folderId === 'root') {
+        return [
+            { 
+                text: workspaceName, 
+                //navigateToAllWorkspaces
+                onClick: (e) => navigateToAllWorkspaces(e), 
+                isClickable: true 
+            },
+            { 
+                text: 'All', 
+                onClick: pageNumber > 0 ? () => alert('Go to page number 0') : null, 
+                isClickable: pageNumber > 0 
+            }
+        ];
+    }
+
+    // Case 2: No path, specific folder
+    if (path.length === 0) {
+        return [
+            { 
+                text: workspaceName, 
+                // onClick: () => alert('Root of current workspace'), 
+                onClick: (e) => navigateToFolder(e, workspaceId),
+                isClickable: true 
+            },
+            { 
+                text: folderName, 
+                // onClick: pageNumber > 0 ? () => alert('Go to page number 0') : null, 
+                onClick: pageNumber > 0 ? (e) => navigateToFolder(e, workspaceId, folderId, 0):null,
+                isClickable: pageNumber > 0 
+            }
+        ];
+    }
+
+path.push({ folderId: folderId, folderName: folderName });
+// console.log('generateBreadcrumbs folderName push');
+// console.log(path);
+
+    // Calculate path length
+    const lengthPathSymbols = calculatePathLength(path, workspaceName);
+    // console.log('lengthPathSymbols='+lengthPathSymbols)
+
+    // Case 3: Short path (<=25 symbols)
+    if (lengthPathSymbols <= 20) {
+        return [
+            { 
+                text: workspaceName, 
+                // onClick: () => alert('All workspaces'), 
+                onClick: (e) => navigateToFolder(e, workspaceId),
+                isClickable: true 
+            },
+            ...path.map((item, index) => ({
+                text: item.folderName,
+                // onClick: () => alert(`Folder: ${item.folderName}, ID: ${item.folderId}`),
+                onClick: (e) => navigateToFolder(e, workspaceId, item.folderId, 0),
+                isClickable: pageNumber > 0 || index < path.length - 1
+            }))
+        ];
+    }
+
+// console.log('5');
+
+    // Case 4: Long path (>25 symbols)
+    const breadcrumbs = [
+        { 
+            text: workspaceName, 
+            // onClick: () => alert('All workspaces'),
+            onClick: (e) => navigateToFolder(e, workspaceId), 
+            isClickable: true 
+        }
+    ];
+
+// console.log('6');
+// Calculate available space
+        const availableLength = 25 - workspaceName.length - 3; // 3 for ' / … / '
+
+        // Find maximum number of folders we can show
+        let currentLength = 0;
+        const foldersToShow = [];
+
+// Array to collect hidden items
+const hiddenItems = [];
+
+// console.log(path);
+// console.log(path);
+let hiddenItemFlag = false;
+// for (let i = path.length - 1; i >= 0; i--) {
+for (let i = path.length - 1; i >= 0; i--) {
+if (hiddenItemFlag===true){
+hiddenItems.unshift(path[i]);
+}else{
+    const folderNameLength = path[i].folderName.length;
+    if (currentLength + folderNameLength <= availableLength) {
+        foldersToShow.unshift(path[i]);
+        currentLength += folderNameLength;
+    } else {
+        // Collect all remaining items as hidden items
+        hiddenItems.unshift(path[i]);
+        hiddenItemFlag = true;
+    }
+}
+}
+
+// console.log('7');
+// console.log(hiddenItems)
+
+// Add ellipsis if there are hidden items
+if (hiddenItems.length > 0) {
+// hiddenItems.push(...foldersToShow);
+
+  layer.innerHTML = ``;
+        hiddenItems.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'folder-item-breadcrumbs';
+            div.textContent = item.folderName;
+            // div.onclick = () => alert(`Folder Name: ${item.folderName}\nFolder ID: ${item.folderId}`);
+            div.onclick = (e) => navigateToFolder(e, workspaceId, item.folderId, 0);
+            
+            if (index === hiddenItems.length - 1) {
+                const checkmark = document.createElement('div');
+                checkmark.className = 'checkmark';
+                div.appendChild(checkmark);
+            }
+            
+            layer.appendChild(div);
+        });
+
+
+
+    breadcrumbs.push({
+        text: '…',
+        onClick: (e) => {
+            // Create a list of hidden items with their details
+            // const hiddenItemsList = hiddenItems.map(item => 
+            //     `Folder: ${item.folderName}, ID: ${item.folderId}`
+            // ).join('\n');
+            // alert(`Hidden Items:\n${hiddenItemsList}`);
+            e.stopPropagation();
+            layer.style.display = 'block';
+            // layer.style.top = (button.offsetTop + button.offsetHeight + 5) + 'px';
+            // layer.style.left = button.offsetLeft + 'px';
+        },
+        isClickable: true
+    });
+    // console.log('8');
+}
+
+        // Add last folders that fit
+        foldersToShow.forEach((item, index) => {
+            breadcrumbs.push({
+                text: item.folderName,
+                onClick: () => alert(`Folder: ${item.folderName}, ID: ${item.folderId}`),
+                isClickable: pageNumber > 0 || index < foldersToShow.length - 1
+            });
+        });
+
+// console.log('9');
+
+    return breadcrumbs;
+}
+
+
+        function renderBreadcrumbs(breadcrumbs) {
+          // console.log('renderBreadcrumbs');
+          // console.log(breadcrumbs);
+            const container = document.getElementById('breadcrumbs-container');
+            container.innerHTML = '';
+
+            breadcrumbs.forEach((item, index) => {
+                // Create breadcrumb item
+                const breadcrumbElement = document.createElement('span');
+                breadcrumbElement.textContent = item.text;
+                breadcrumbElement.classList.add('breadcrumbs-item');
+
+                // Add clickable class and event listener
+                if (item.isClickable) {
+                    breadcrumbElement.classList.add('clickable');
+                    breadcrumbElement.addEventListener('click', item.onClick);
+                }
+
+                // Add to container
+                container.appendChild(breadcrumbElement);
+
+                // Add separator (except for last item)
+                if (index < breadcrumbs.length - 1) {
+                    const separator = document.createElement('span');
+                    separator.textContent = ' / ';
+                    separator.classList.add('breadcrumbs-separator');
+                    container.appendChild(separator);
+                }
+            });
+        }
+
+        // Example usage
+        // const examplePath = [
+        //     { folderId: '677cdf16ff7eabbbb8564782', folderName: 'A' },
+        //     { folderId: '679631cd6a93274032f776fa', folderName: 'B' },
+        //     { folderId: '679631cd6a93274032f776fa', folderName: 'C' },
+        //     // { folderId: '677cdf16ff7eabbbb8564782', folderName: 'Gmail' },
+        //     // { folderId: '679631cd6a93274032f776fa', folderName: 'Test Subfolder1' },
+        //     // { folderId: '679631cd6a93274032f776fa', folderName: 'Test Subfolder2' },
+        //     // { folderId: '679631cd6a93274032f776fa', folderName: 'Test Subfolder3' },
+        //     // { folderId: '679631cd6a93274032f776fa', folderName: 'Test Subfolder4' },
+        //     // { folderId: '679631cd6a93274032f776fa', folderName: 'Test Subfolder5' },
+        // ];
+
+        // const breadcrumbs = generateBreadcrumbs(
+        //     examplePath, 
+        //     'My folder', 
+        //     'f1234567', 
+        //     // 'root', 
+        //     'w123456', 
+        //     'My workspace', 
+        //     1
+        // );
+
+        // renderBreadcrumbs(breadcrumbs);
+
+        document.onclick = (e) => {
+            if (e.target !== layer && !layer.contains(e.target)) {
+                layer.style.display = 'none';
+            }
+        };
+
+function navigateToFolder(e, workspaceId, folderId, pageNumber){
+  {
+    // console.log('navigateToFolder')
+        e.stopPropagation();
+layer.style.display = 'none';
+
+        disableAllInteractions();
+
+        // const icon = reloadBtn.querySelector('.svg-icon-reload');
+        // icon.classList.add('spinning');
+
+        // hideMessage('messageConversations');
+        google.script.run
+            .withSuccessHandler(onRefreshSuccess)
+            .withFailureHandler(onExportFailure)
+            .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber);
+    }
+}
+
+
+function navigateToAllWorkspaces(e){
+  
+    // console.log('navigateToAllWorkspaces')
+        e.stopPropagation();
+layer.style.display = 'none';
+
+        disableAllInteractions();
+
+        google.script.run
+            .withSuccessHandler(loadWorkspacesSuccess)
+            .withFailureHandler(onExportFailure)
+            .getWorkspacesWithVoiceMemos();
+    
+}
+
+</script>

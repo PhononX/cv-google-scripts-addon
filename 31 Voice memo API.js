@@ -64,10 +64,10 @@ function getVoiceMemos(keepMeSigned, navigationTypeNext, isoDate, previousArrayS
   // const userTimeZone = getTimeZoneValue();
 
   filteredMessages.forEach(el => {
-    let { voiceMemoName, voiceMemoText } = getVoiceMemoNameAndText(el);
+    let { voiceMemoName, voiceMemoText, summary} = getVoiceMemoNameAndText(el);
     if (counter < maxVoiceMemosPerScreen) {
       //     presentations.push({ aiResponseId: el.ai_response.id, name: messageName, message_id: el.messages[0].message.id, type: el.messages[0].message.type, createdAt: el.messages[0].message.created_at, creatorName: el.messages[0].creator.full_name, durationMs: durationMs });
-      voiceMemos.push({ createdAt: el.created_at, durationMs: el.duration_ms, voiceMemoText: voiceMemoText, name: voiceMemoName, messageId: el.message_id });
+      voiceMemos.push({ createdAt: el.created_at, durationMs: el.duration_ms, voiceMemoText: voiceMemoText, name: voiceMemoName, messageId: el.message_id, summary});
       counter++;
     }
   });
@@ -84,8 +84,8 @@ function getVoiceMemos(keepMeSigned, navigationTypeNext, isoDate, previousArrayS
 
   previousArrayString = JSON.stringify(previousArray);
 
-  // Logger.log(voiceMemos);
-  // Logger.log(voiceMemos.length);
+  Logger.log(voiceMemos);
+  Logger.log(voiceMemos.length);
   return { hasAccess: true, voiceMemos: voiceMemos, lastCreatedAt: lastCreatedAt, previousArrayString: previousArrayString, showNext: showNext, showPrevious: showPrevious };
 }
 
@@ -93,6 +93,7 @@ function getVoiceMemoNameAndText(el) {
   let voiceMemoName;
   let voiceMemoText;
   let languageId;
+  let summary;
   try {
     // Logger.log(el);
     let allT = [];
@@ -107,6 +108,14 @@ function getVoiceMemoNameAndText(el) {
       } else {
         voiceMemoText = el.text_models[0].value;
       }
+
+      for (let i = 1; i < el.text_models.length; i++) {
+        if (el.text_models[i].language_id === languageId && el.text_models[i].type === 'summary') {
+          summary = el.text_models[i].value;
+          break;
+        }
+      }
+
     } else {
       if (el.text_models[0].value) {
         voiceMemoText = 'error';
@@ -114,13 +123,15 @@ function getVoiceMemoNameAndText(el) {
     }
 
     if (voiceMemoName == null) {
-      for (let i = 1; i < el.text_models.length; i++) {
-        if (el.text_models[i].language_id === languageId) {
-          voiceMemoName = el.text_models[i].value;
-          break;
-        }
-      }
-      if (voiceMemoName == null) {
+      // for (let i = 1; i < el.text_models.length; i++) {
+      //   if (el.text_models[i].language_id === languageId) {
+      //     voiceMemoName = el.text_models[i].value;
+      //     break;
+      //   }
+      // }
+      if (summary){
+        voiceMemoName = summary;
+      }else{
         voiceMemoName = voiceMemoText;
       }
     }
@@ -129,5 +140,5 @@ function getVoiceMemoNameAndText(el) {
     voiceMemoName = 'Error while retrieving the voice memo details';
     voiceMemoText = 'Message id: ' + el.message_id + ' \nError:' + e + ' <b>Please tell us about the error https://cv.chat/contactus</b>';
   }
-  return { voiceMemoName: voiceMemoName, voiceMemoText: voiceMemoText };
+  return { voiceMemoName: voiceMemoName, voiceMemoText: voiceMemoText, summary};
 }

@@ -1,0 +1,32 @@
+<script>
+function createNavigation(showNext, showPrevious, workspaceId, folderId, pageNumber) {
+            const navContainer = document.getElementById('navContainer');
+            navContainer.innerHTML = ''; // Clear existing content
+
+            if (showPrevious) {
+                const previousButton = document.createElement('button');
+                previousButton.className = 'nav-button';
+                previousButton.textContent = 'Previous';
+                previousButton.onclick = () => {
+                    google.script.run
+                        .withSuccessHandler(onRefreshSuccess)
+                        .withFailureHandler(onExportFailure)
+                        .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber - 1);
+                };
+                navContainer.appendChild(previousButton);
+            }
+
+            if (showNext) {
+                const nextButton = document.createElement('button');
+                nextButton.className = 'nav-button';
+                nextButton.textContent = 'Next';
+                nextButton.onclick = () => {
+                    google.script.run
+                        .withSuccessHandler(onRefreshSuccess)
+                        .withFailureHandler(onExportFailure)
+                        .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber + 1);
+                };
+                navContainer.appendChild(nextButton);
+            }
+        }
+</script>

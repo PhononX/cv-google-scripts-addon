@@ -1,0 +1,312 @@
+<div class="container">
+  <div class="section">
+    <h2 class="section-title">AI Action</h2>
+    <div class="dropdown" id="aiActionsDropdown">
+      <button class="dropdown-button" onclick="toggleDropdown('aiActions')">
+          <span id="selectedAction">Bulleted Summary</span>
+          <span class="arrow"></span>
+        </button>
+      <div class="dropdown-content" id="aiActionsContent"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Voice Memo</h2>
+    <div class="dropdown" id="voiceMemosDropdown">
+      <button class="dropdown-button" onclick="toggleDropdown('voiceMemos')">
+          <span id="selectedMemo">Outline for chapter Innovati...</span>
+          <span class="arrow"></span>
+        </button>
+      <div class="dropdown-content" id="voiceMemosContent"></div>
+    </div>
+    <div class="metadata" id="voiceMemoSources">
+      <div class="metadata-row">
+        <!-- Voice memo sources will be populated here -->
+      </div>
+      <div class="metadata-row">
+        <div class="metadata-item" id="timestamp">Yesterday · 3:12 PM</div>
+        <div class="metadata-item" id="duration">01:05</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">AI Results</h2>
+    <div class="result-container" id="resultText">
+      <!-- AI Result text will be populated here -->
+    </div>
+  </div>
+
+  <div id="noResultsMessage" style="display: none;">
+    <p style="text-align: center; color: #666; font-size: 16px;">You've never run the AI Action</p>
+  </div>
+
+</div>
+
+<script>
+    let currentActionId = '66859b7f6928970bb4f1c24a';
+    let currentMemoIndex = 0;
+
+    function initializeDropdowns() {
+      const aiActionsContent = document.getElementById('aiActionsContent');
+      let currentCategory = null;
+      
+      aiActions.forEach((action, index) => {
+        if (currentCategory !== action.categoryNumber && index > 0) {
+          const divider = document.createElement('div');
+          divider.className = 'divider';
+          aiActionsContent.appendChild(divider);
+        }
+        currentCategory = action.categoryNumber;
+
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = action.name;
+        item.onclick = () => selectAction(action.id, action.name);
+        aiActionsContent.appendChild(item);
+      });
+
+  currentActionId = '66859b7f6928970bb4f1c24a';
+  currentMemoIndex = 0;
+  document.getElementById('selectedAction').textContent = "Bulleted Summary";
+  document.getElementById('aiActionsContent').classList.remove('show');
+  
+  if (aiResults[currentActionId]) {
+    updateVoiceMemosDropdown();
+  }
+  updateDisplay();
+
+      // selectAction(aiActions[0].id, aiActions[0].name);
+      // updateVoiceMemosDropdown();
+    }
+
+    function toggleDropdown(type) {
+      const content = document.getElementById(`${type}Content`);
+      const allDropdowns = document.querySelectorAll('.dropdown-content');
+      
+      allDropdowns.forEach(dropdown => {
+        if (dropdown !== content) {
+          dropdown.classList.remove('show');
+        }
+      });
+      
+      content.classList.toggle('show');
+    }
+
+
+
+function getListOfAiResultsSuccess(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'messageConversations');
+        }
+    } else {
+        const id = response.promptId;
+        if (response.aiResultTextAndSourceMessages.length >0 ){
+          aiResults[id] = response.aiResultTextAndSourceMessages;
+        }
+
+        if (aiResults[id]) {
+          updateVoiceMemosDropdown();
+        }
+          updateDisplay();
+    }
+    enableAllInteractions();
+}
+
+
+function selectAction(id, name) {
+  document.getElementById('selectedAction').textContent = name;
+  document.getElementById('aiActionsContent').classList.remove('show');
+
+  currentMemoIndex = 0;
+
+  if (id === currentActionId) {
+    updateVoiceMemosDropdown();
+    updateDisplay();
+    return 0;
+  }
+  currentActionId = id;
+  
+  disableAllInteractions();
+  
+  google.script.run
+      .withSuccessHandler(getListOfAiResultsSuccess)
+      .withFailureHandler(onExportFailureAiResultTab)
+      .getListOfAiResults(id);
+
+}
+
+    function updateVoiceMemosDropdown() {
+      const voiceMemosContent = document.getElementById('voiceMemosContent');
+      voiceMemosContent.innerHTML = '';
+      
+      aiResults[currentActionId].forEach((memo, index) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        // item.textContent = memo['messages'][0].name;
+        item.textContent = memo.aiResultName;
+        item.onclick = () => selectMemo(index);
+        voiceMemosContent.appendChild(item);
+      });
+      
+      // document.getElementById('selectedMemo').textContent = aiResults[currentActionId][currentMemoIndex]['messages'][0].name;
+      document.getElementById('selectedMemo').textContent = aiResults[currentActionId][currentMemoIndex].aiResultName;
+    }
+
+    function selectMemo(index) {
+      currentMemoIndex = index;
+      // document.getElementById('selectedMemo').textContent = aiResults[currentActionId][index]['messages'][0].name;
+      document.getElementById('selectedMemo').textContent = aiResults[currentActionId][index].aiResultName;
+      document.getElementById('voiceMemosContent').classList.remove('show');
+      updateDisplay();
+    }
+
+function updateDisplay() {
+  const successMessage = document.getElementById('successMessage');
+  successMessage.style.display = 'none';
+
+  const contentSection = document.querySelector('.container');
+  const voiceMemosSection = document.querySelector('.section:nth-child(2)');
+  const resultsSection = document.querySelector('.section:nth-child(3)');
+  const noResultsMessage = document.getElementById('noResultsMessage');
+  const generateBtn = document.getElementById('generateBtn');
+
+  // Check if currentActionId exists in aiResults
+  if (!aiResults[currentActionId]) {
+    voiceMemosSection.style.display = 'none';
+    resultsSection.style.display = 'none';
+    noResultsMessage.style.display = 'block';
+    generateBtn.disabled = true;
+    return;
+  }
+
+  // Show sections if there are results
+  voiceMemosSection.style.display = 'block';
+  resultsSection.style.display = 'block';
+  noResultsMessage.style.display = 'none';
+  generateBtn.disabled = false;
+
+  const currentResult = aiResults[currentActionId][currentMemoIndex];
+  const voiceMemoSources = document.getElementById('voiceMemoSources');
+  voiceMemoSources.innerHTML = '';
+
+  // Display all voice memo sources
+  currentResult.messages.forEach((memo, index) => {
+    // console.log(memo)
+    let messageType, voiceMemoIconUrl;
+    // const messageType = memo.type === 'voicememo' ? 'Voice Memo': 'Message';
+    const imageUrl = memo.imageUrl == null ? "https://pxassets.s3.us-east-2.amazonaws.com/images/personal.png" : memo.imageUrl;
+    const formattedDateTime = formatDateTime(memo.createdAt);
+
+if (memo.type === 'voicememo'){
+  messageType = 'Voice Memo';
+  voiceMemoIconUrl = 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/voicememo.png';
+}else{
+  messageType = 'Message';
+  voiceMemoIconUrl = memo.channelUrl == null ? 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/blank.png' : memo.channelUrl;
+  
+}
+
+    const sourceDiv = document.createElement('div');
+    sourceDiv.innerHTML = `
+  <div class="metadata-row">
+    <div class="metadata-item">
+      <img src="${voiceMemoIconUrl}" style="width: 16px; height: 16px; margin: 0 4px;">
+      <span>${messageType} by</span>
+      <img src="${imageUrl}" alt="User" style="width: 16px; height: 16px; margin: 0 4px;">
+      <span>${memo.creator}</span>
+    </div>
+  </div>
+  <div class="metadata-row-2">
+    <div class="metadata-item" id="timestamp">${formattedDateTime}</div>
+    <div class="metadata-item" id="duration">${convertMillisecondsToMinutesSeconds(memo.durationMs)}</div>
+  </div>
+    `;
+    // sourceDiv.innerHTML = `
+    //   <span>Voice Memo ${index + 1} by</span>
+    //   <img src="https://www.gstatic.com/images/icons/material/system/1x/person_grey600_48dp.png"
+    //        alt="User" style="width: 16px; height: 16px; margin: 0 4px;">
+    //   <span>${memo.author}</span>
+    // `;
+    voiceMemoSources.appendChild(sourceDiv);
+    
+    // Add separator if not the last item
+    if (index < currentResult.messages.length - 1) {
+      const separator = document.createElement('span');
+      separator.textContent = '  ';
+      separator.style.margin = '0 8px';
+      voiceMemoSources.appendChild(separator);
+    }
+  });
+
+  // document.getElementById('resultText').textContent = currentResult.aiResultText;
+  document.getElementById('resultText').innerHTML = currentResult.aiResultHtml;
+}
+
+function helperEnablePasteButtonAiResultTab(){
+    const generating = document.getElementById('generating');
+    generating.style.display = 'none';
+
+    const generateBtn = document.getElementById('generateBtn');
+    generateBtn.style.display = 'block';
+
+    enableAllInteractions();  
+}
+
+function onExportSuccessPasteAiResultFromTab(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'successMessage');
+        }
+    } else {
+      if (response.message){
+        showMessage(response.message, 'success', 'successMessage');
+      }
+    }
+    
+    helperEnablePasteButtonAiResultTab()
+}
+
+function onExportFailureAiResultTab(error) {
+    showMessage('Failed to export. ' + error, 'error', 'successMessage');
+
+    helperEnablePasteButtonAiResultTab()
+}
+
+    function pasteAiResultFromTab() {
+      const currentResult = aiResults[currentActionId][currentMemoIndex];
+      const aiResultText = currentResult.aiResultText;
+
+      const generateBtn = document.getElementById('generateBtn');
+      const generating = document.getElementById('generating');
+      const successMessage = document.getElementById('successMessage');
+
+      successMessage.style.display = 'none';
+      generateBtn.style.display = 'none';
+      generating.style.display = 'block';
+
+      disableAllInteractions();
+
+      google.script.run
+        .withSuccessHandler(onExportSuccessPasteAiResultFromTab)
+        .withFailureHandler(onExportFailureAiResultTab)
+        .pasteTranscription(aiResultText);
+    }
+
+    // document.addEventListener('click', (event) => {
+    //   if (!event.target.closest('.dropdown')) {
+    //     document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+    //       dropdown.classList.remove('show');
+    //     });
+    //   }
+    // });
+
+    // window.onload = initializeDropdowns;
+</script>

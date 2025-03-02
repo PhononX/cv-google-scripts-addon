@@ -1,0 +1,88 @@
+<style>
+  .breadcrumbs {
+    color: #A1A2AB;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    margin: 10px 5px;
+    user-select: none;
+  }
+
+  .breadcrumbs-item {
+    cursor: default;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  .breadcrumbs-item.clickable {
+    cursor: pointer;
+    color: #A1A2AB;
+  }
+
+  .breadcrumbs-item.clickable:hover {
+    background-color: #F6F6FB;
+  }
+
+  .breadcrumbs-separator {
+    margin: 0 4px;
+    color: #A1A2AB;
+  }
+
+
+  /* .hidden-layer {
+    margin: 0 5px 0 5px;
+    display: none;
+    position: absolute;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 200px;
+    width: 100% - 10px;
+  } */
+  .hidden-layer {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    padding: 0px 0;
+    width: 95%;
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+  }
+
+  #shortMenu {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    padding: 0px 0;
+    width: 95%;
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+  }
+
+  .folder-item-breadcrumbs {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .folder-item-breadcrumbs:hover {
+    background-color: #F6F6FB;
+  }
+
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%235f6368"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>') no-repeat center;
+    background-size: contain;
+  }
+</style>

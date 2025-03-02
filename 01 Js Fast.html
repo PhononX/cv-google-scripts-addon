@@ -1,11 +1,12 @@
 <script>
-  function showScreen(screenId) {
+function showScreen(screenId) {
     document.getElementById('screen0').style.display = 'none';
     document.getElementById('screen1').style.display = screenId === 'screen1' ? 'block' : 'none';
     document.getElementById('screen2').style.display = screenId === 'screen2' ? 'block' : 'none';
     if (screenId === 'screen1') {
         document.getElementById('signInButton').style.display = 'inline-block';
         document.getElementById('progressText').style.display = 'none';
+        document.getElementById('stayLoggedIn').style.display = 'block';
     }
 }
 
@@ -29,8 +30,8 @@ function checkAccess() {
     google.script.run
         .withSuccessHandler(onCheckAccessSuccess)
         .withFailureHandler(onCheckAccessFailure)
-        // .getListOfPresentations(keepMeSigned);
-        .getVoiceMemos(keepMeSigned);
+        // .getVoiceMemosAndFolders(null, null, null, keepMeSigned);
+        .initialData(keepMeSigned);
 }
 
 document.getElementById('signInButton').addEventListener('click', () => {
@@ -48,7 +49,11 @@ document.getElementById('signInButton').addEventListener('click', () => {
 
 function onCheckAccessSuccess(response) {
     if (response.hasAccess) {
-        populateOutlines(response.voiceMemos);
+        populateOutlines(response);
+        aiActions = response.allPrompts;
+        promptId = response.promptId;
+        aiResults[promptId] = response.aiResultTextAndSourceMessages;
+        initializeDropdowns();
         showScreen('screen2');
     } else if (response.authUrl) {
         document.getElementById('authUrl').value = response.authUrl;
@@ -91,7 +96,24 @@ function onRefreshSuccess(response) {
     } else {
       lastUpdateTime = new Date();
       updateLastUpdateText();
-      populateOutlines(response.voiceMemos)
+      populateOutlines(response);
+    }
+    enableAllInteractions();
+}
+
+
+function loadWorkspacesSuccess(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showMessage(response.message, 'error', 'messageConversations');
+        }
+    } else {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
+      populateWorkspaces(response.allWorkspaces);
     }
     enableAllInteractions();
 }
@@ -101,19 +123,18 @@ function onExportFailure(error) {
     enableAllInteractions();
 }
 
-const test = prePresentations;
-if (test.hasAccess === true) {
-    populateOutlines(test.voiceMemos);
-    document.getElementById('signInButton').style.display = 'inline-block';
-    document.getElementById('progressText').style.display = 'none';
-    showScreen('screen2');
-} else {
-    if (!test.authUrl){
-      showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
-    }else{
-      document.getElementById('authUrl').value = test.authUrl;
-    }
-    showScreen('screen1');
-}
+// if (voiceMemosAndFoldersSidebar.hasAccess === true) {
+//     populateOutlines(voiceMemosAndFoldersSidebar);
+//     document.getElementById('signInButton').style.display = 'inline-block';
+//     document.getElementById('progressText').style.display = 'none';
+//     showScreen('screen2');
+// } else {
+//     if (!voiceMemosAndFoldersSidebar.authUrl){
+//       showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+//     }else{
+//       document.getElementById('authUrl').value = voiceMemosAndFoldersSidebar.authUrl;
+//     }
+//     showScreen('screen1');
+// }
 
 </script>
