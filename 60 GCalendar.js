@@ -81,6 +81,6 @@ function updateCalendarEvent(channelUrl, calendarId, eventId) {
 
   // Update the event with notification control
   Calendar.Events.update(event, calendarId, eventId, {
-    sendUpdates: 'all' // 'all', 'externalOnly', or 'none'
+    sendUpdates: 'none' // 'all', 'externalOnly', or 'none'
   });
 }
