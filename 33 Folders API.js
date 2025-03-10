@@ -22,7 +22,7 @@ function t1() {
   const publicSharedArray = Array.from(publicSharedSet);
 
   // Log the array to view the message_ids
-  Logger.log(JSON.stringify(publicSharedArray));
+  // Logger.log(JSON.stringify(publicSharedArray));
 
   // Alternatively, using the spread operator:
   // Logger.log(JSON.stringify([...publicSharedSet]));
@@ -37,10 +37,10 @@ function testShareableLinksByIds() {
   if (!resultMessagesById.hasAccess) {
     return resultMessagesById;
   }
-  Logger.log(resultMessagesById)
+  // Logger.log(resultMessagesById)
 
   resultMessagesById.json.forEach(el => {
-    Logger.log(el)
+    // Logger.log(el)
   });
 }
 
@@ -96,7 +96,7 @@ function getVoiceMemosAndFolders(workspaceId, folderId, pageNumber, keepMeSigned
   let { visibleFolders, visibleMessageIds, showNext, showPrevious } = detectVisibleItems(folderId, pageNumber, maxItemsPerCard, folders, messageIds);
 
   // Logger.log(visibleFolders);
-  Logger.log(JSON.stringify(visibleMessageIds));
+  // Logger.log(JSON.stringify(visibleMessageIds));
 
   // const userTimeZone = getTimeZoneValue();
   const voiceMemos = [];
@@ -147,8 +147,8 @@ function getVoiceMemosAndFolders(workspaceId, folderId, pageNumber, keepMeSigned
   const workspaceNames = resultWorkspaces.workspaceNames;
   const workspaceName = workspaceNames[workspaceId];
 
-  Logger.log(voiceMemos)
-  Logger.log(path)
+  // Logger.log(voiceMemos)
+  // Logger.log(path)
 
   // Without userTimeZone: userTimeZone, 
   return { hasAccess: true, voiceMemos: voiceMemos, showNext: showNext, showPrevious: showPrevious, workspaceId, folderName, folderId, workspaceName, folders: visibleFolders, pageNumber, path };
@@ -169,7 +169,7 @@ function getWorkspacesWithVoiceMemos() {
     workspaceIds.push(el.workspace_id);
     allWorkspaces.push({ workspaceId: el.workspace_id, nestedFoldersCount: el.total_folders, nestedMessagesCount: el.total_messages });
   });
-  Logger.log(workspaceIds)
+  // Logger.log(workspaceIds)
 
   const payload = {
     "workspace_ids": workspaceIds
@@ -179,7 +179,7 @@ function getWorkspacesWithVoiceMemos() {
   if (!resultWorkspaces.hasAccess) {
     return resultWorkspaces;
   }
-  Logger.log(resultWorkspaces)
+  // Logger.log(resultWorkspaces)
 
   /* 
   [{workspaceImageUrl=https://pxassets.s3.us-east-2.amazonaws.com/images/personal.png, nestedFoldersCount=5.0, nestedMessagesCount=254.0, workspaceId=personal, workspaceName=Personal}, {workspaceImageUrl=https://pxassets.s3.us-east-2.amazonaws.com/images/unknown-workspace.png, nestedFoldersCount=1.0, nestedMessagesCount=1.0, workspaceId=Ls3sXPbCF2IKwVpJ, workspaceName=Test workspace 2}]
@@ -188,7 +188,7 @@ function getWorkspacesWithVoiceMemos() {
   const publicWorkspaces = resultWorkspaces.json.workspaces;
   allWorkspaces.forEach(workspace => {
     for (let i in publicWorkspaces) {
-      Logger.log(publicWorkspaces[i]);
+      // Logger.log(publicWorkspaces[i]);
       if (publicWorkspaces[i]._id === workspace.workspaceId) {
         workspace['workspaceName'] = publicWorkspaces[i].name;
         workspace['workspaceImageUrl'] = publicWorkspaces[i].image_urL;
@@ -197,6 +197,6 @@ function getWorkspacesWithVoiceMemos() {
     }
   });
 
-  Logger.log(allWorkspaces)
+  // Logger.log(allWorkspaces)
   return { hasAccess: true, allWorkspaces }
 }

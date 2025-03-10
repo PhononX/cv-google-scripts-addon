@@ -35,9 +35,9 @@ function pasteLink(messageId) {
     // Get the offset within the element where the cursor is located
     const offset = cursor.getOffset();
 
-    Logger.log(offset);
-    Logger.log(element.asText().getText());
-    Logger.log(element.asText().getText().length);
+    // Logger.log(offset);
+    // Logger.log(element.asText().getText());
+    // Logger.log(element.asText().getText().length);
 
     const textLength = element.asText().getText().length;
 

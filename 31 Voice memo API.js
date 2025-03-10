@@ -84,8 +84,8 @@ function getVoiceMemos(keepMeSigned, navigationTypeNext, isoDate, previousArrayS
 
   previousArrayString = JSON.stringify(previousArray);
 
-  Logger.log(voiceMemos);
-  Logger.log(voiceMemos.length);
+  // Logger.log(voiceMemos);
+  // Logger.log(voiceMemos.length);
   return { hasAccess: true, voiceMemos: voiceMemos, lastCreatedAt: lastCreatedAt, previousArrayString: previousArrayString, showNext: showNext, showPrevious: showPrevious };
 }
 

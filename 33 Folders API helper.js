@@ -45,7 +45,7 @@ function getVoiceMemosOutsideFolders(workspaceId = 'personal') {
         rootFolders.push({ folderName: el.name, folderId: el.id, nestedMessagesCount: el.total_nested_messages_count, nestedFoldersCount: el.total_nested_folders_count })
       });
     }
-    Logger.log(rootFolders)
+    // Logger.log(rootFolders)
     // messages.forEach(el => {
     //   // let { voiceMemoName, voiceMemoText } = getVoiceMemoNameAndText(el);
     //   // Logger.log(voiceMemoName);
@@ -94,7 +94,7 @@ function getFolder(workspaceId, folderId = '679631cd6a93274032f776fa') {
     }
   }
 
-Logger.log(path);
+// Logger.log(path);
 
   const subfolders = [];
   if (result.json.subfolders) {
@@ -151,7 +151,7 @@ function getWorkspacesWithNames() {
   if (!resultWorkspaces.hasAccess) {
     return resultWorkspaces;
   }
-  Logger.log(resultWorkspaces)
+  // Logger.log(resultWorkspaces)
   const workspaceNames = { personal: 'Personal' };
   resultWorkspaces.json.forEach(el => {
     workspaceNames[el.id] = el.name;

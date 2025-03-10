@@ -5,13 +5,13 @@ function runAiMagicApiTest() {
 
 function runAiMagicApi(promptId, messageIds) {
   let aiResultHtml, aiResultText;
-  Logger.log(promptId + ' ' + messageIds);
+  // Logger.log(promptId + ' ' + messageIds);
   const queryParams = {
     message_id: messageIds[0],
     prompt_id: promptId
   };
   const existingResult = makeCarbonVoiceRequest('GET', '/responses', null, queryParams);
-  Logger.log(existingResult);
+  // Logger.log(existingResult);
   if (!existingResult.hasAccess) {
     return existingResult;
   }
@@ -22,13 +22,13 @@ function runAiMagicApi(promptId, messageIds) {
       let flag = true;
       for (let j in messageIds) {
         if (existingAiResults[i].message_ids.includes(messageIds[j]) === false) {
-          Logger.log('false');
+          // Logger.log('false');
           flag = false;
           break;
         }
       }
       if (flag) {
-        Logger.log(existingAiResults[i].responses[0].html);
+        // Logger.log(existingAiResults[i].responses[0].html);
         aiResultHtml = existingAiResults[i].responses[0].html;
         aiResultText = existingAiResults[i].responses[0].text;
         break;
@@ -37,10 +37,10 @@ function runAiMagicApi(promptId, messageIds) {
   }
 
   if (aiResultHtml && aiResultText) {
-    Logger.log('Exists!')
+    // Logger.log('Exists!')
     return { status: 'ok', hasAccess: true, aiResultHtml, aiResultText }
   }else{
-    Logger.log('New!')
+    // Logger.log('New!')
   }
 
   const payload = {
@@ -53,7 +53,7 @@ function runAiMagicApi(promptId, messageIds) {
     return result;
   }
 
-  Logger.log(result);
+  // Logger.log(result);
 
   aiResultHtml = result.json.responses[0].html;
   aiResultText = result.json.responses[0].text;

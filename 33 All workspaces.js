@@ -43,6 +43,6 @@ function getVoiceMemosAllWorkspaces() {
   allWorkspaces.sort((a, b) => {
     return a.workspaceName.localeCompare(b.workspaceName);
   });
-  Logger.log(allWorkspaces);
+  // Logger.log(allWorkspaces);
   return { hasAccess: true, allWorkspaces }
 }
