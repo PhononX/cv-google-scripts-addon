@@ -1,52 +1,13 @@
 <script>
-let selectedMemoIds = new Set();
+  let selectedMemoIds = new Set();
 
-function getSelectedVoiceMemoIds() {
+  function getSelectedVoiceMemoIds() {
     return Array.from(selectedMemoIds);
-}
+  }
 
-function populateOutlines(sidebarData) {
-  voiceMemosAndFoldersSidebar = sidebarData;
-selectedMemoIds = new Set();
-
-const bottomPanel = document.getElementById('bottomPanel');
-bottomPanel.style.display = 'none';
-
-    const { voiceMemos, showNext, showPrevious, workspaceId, folderName, folderId, workspaceName, folders, pageNumber, path } = sidebarData;
-
-    createNavigation(showNext, showPrevious, workspaceId, folderId, pageNumber);
-
-    const presentations = voiceMemos;
-
-    // presentations=[];
-    const outlinesDiv = document.getElementById('outlines');
-    outlinesDiv.innerHTML = ``;
-    //   outlinesDiv.innerHTML = `<div id="breadcrumbs-container" class="breadcrumbs">test</div>
-    // <div id="hiddenLayer" class="hidden-layer"></div>`;
-
-    // console.log('populateOutlines path');
-    // console.log(path);
-    // console.log('1');
-    const breadcrumbs = generateBreadcrumbs(
-        path,
-        folderName,
-        folderId,
-        workspaceId,
-        workspaceName,
-        pageNumber
-    );
-    // console.log('2');
-    renderBreadcrumbs(breadcrumbs);
-
-    /* 
-      <div id="breadcrumbs-container" class="breadcrumbs">l</div>
-      <div id="hiddenLayer" class="hidden-layer"></div>
-    */
-
-
-    if (presentations.length === 0 && folders.length === 0) {
-        const instruction = document.createElement('div');
-        instruction.innerHTML = `<h1>No voice memos found</h1>
+  function createInstruction(outlinesDiv) {
+    const instruction = document.createElement('div');
+    instruction.innerHTML = `<h1>No voice memos found</h1>
     To create one:
     <ol class="instruction-list">
     <li class="instruction-step">
@@ -63,19 +24,52 @@ bottomPanel.style.display = 'none';
     </li>    
   </ol>
 After the voice memo is recorded, tap the refresh button.`;
-        instruction.className = 'instruction';
-        outlinesDiv.appendChild(instruction);
-    }
+    instruction.className = 'instruction';
+    outlinesDiv.appendChild(instruction);
+  }
 
-    let reloadBtn = document.getElementById('reload-button');
-// const newReloadBtn = reloadBtn.cloneNode(true);
-// reloadBtn.parentNode.replaceChild(newReloadBtn, reloadBtn);
+  function populateOutlines(sidebarData) {
+    voiceMemosAndFoldersSidebar = sidebarData;
+    selectedMemoIds = new Set();
 
-   const newReloadBtn = reloadBtn.cloneNode(true);
-   reloadBtn.parentNode.replaceChild(newReloadBtn, reloadBtn);
-   reloadBtn = document.getElementById('reload-button');
-    reloadBtn.addEventListener('click', (e) => {
-      // console.log('workspaceId, folderId, pageNumber', workspaceId, folderId, pageNumber);
+    const bottomPanel = document.getElementById('bottomPanel');
+    bottomPanel.style.display = 'none';
+
+    const { voiceMemos, showNext, showPrevious, workspaceId, folderName, folderId, workspaceName, folders, pageNumber, path } = sidebarData;
+
+    // voiceMemos=[];
+    // folders = [];
+
+    const breadcrumbs = generateBreadcrumbs(
+      path,
+      folderName,
+      folderId,
+      workspaceId,
+      workspaceName,
+      pageNumber
+    );
+    renderBreadcrumbs(breadcrumbs);
+
+    const presentations = voiceMemos;
+
+    const outlinesDiv = document.getElementById('outlines');
+    outlinesDiv.innerHTML = ``;
+
+    if (presentations.length === 0 && folders.length === 0) {
+      createInstruction(outlinesDiv);
+    } else {
+
+      createNavigation(showNext, showPrevious, workspaceId, folderId, pageNumber);
+
+
+      // Reload button
+      let reloadBtn = document.getElementById('reload-button');
+
+      const newReloadBtn = reloadBtn.cloneNode(true);
+      reloadBtn.parentNode.replaceChild(newReloadBtn, reloadBtn);
+      reloadBtn = document.getElementById('reload-button');
+      reloadBtn.addEventListener('click', (e) => {
+        // console.log('workspaceId, folderId, pageNumber', workspaceId, folderId, pageNumber);
         e.stopPropagation();
         disableAllInteractions();
 
@@ -84,20 +78,21 @@ After the voice memo is recorded, tap the refresh button.`;
 
         hideMessage('messageConversations');
         google.script.run
-            .withSuccessHandler(onRefreshSuccess)
-            .withFailureHandler(onExportFailure)
-            .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber);
-    });
+          .withSuccessHandler(onRefreshSuccess)
+          .withFailureHandler(onExportFailure)
+          .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber);
+      });
+      // End. Reload button
 
-    const outlineList = document.createElement('div');
-    outlineList.className = 'outline-list';
+      const outlineList = document.createElement('div');
+      outlineList.className = 'outline-list';
 
-    populateFolders(folders, outlineList, workspaceId);
+      populateFolders(folders, outlineList, workspaceId);
 
-    let currentDetailsBlock = null;
-    let currentDetailsBlockParent = null;
+      let currentDetailsBlock = null;
+      let currentDetailsBlockParent = null;
 
-    presentations.forEach(presentation => {
+      presentations.forEach(presentation => {
         const item = document.createElement('div');
         item.dataset.voiceMemoId = presentation.messageId;
 
@@ -105,7 +100,7 @@ After the voice memo is recorded, tap the refresh button.`;
         presentation.formattedDateTime = formattedDateTime;
 
         const globeOrLockIcon = presentation.public ? 'globe-icon' : 'lock-icon';
-        
+
         item.className = 'outline-item';
         item.innerHTML = ` <div class="border-wrapper">   <div class="content-wrapper">
       <div class="icon voice-memo-icon main-icon"></div>
@@ -124,117 +119,60 @@ After the voice memo is recorded, tap the refresh button.`;
       </div>
     </div></div>`;
 
-      /*  // Create details block
-        const detailsBlock = document.createElement('div');
-        detailsBlock.className = 'details-block';
-        detailsBlock.style.display = 'none';
-        // Populate details block
-        detailsBlock.innerHTML = `
-     
-      <button class="action-button slides-btn">Paste Transcription <span class="progressButton" id="progress2"></span></button>
-    `;
-
-        // Add click handlers for buttons
-        // const resultsBtn = detailsBlock.querySelector('.results-btn');
-        const slidesBtn = detailsBlock.querySelector('.slides-btn');
-
-        slidesBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-            const progress = e.target.querySelector('.progressButton');
-            progress.style.display = 'inline-block';
-
-            disableAllInteractions();
-            hideMessage('messageConversations');
-            google.script.run
-                .withSuccessHandler(onExportSuccess)
-                .withFailureHandler(onExportFailure)
-                // .createSlides(presentation.message_id, presentation.aiResponseId);      
-                .pasteTranscription(presentation.voiceMemoText);
-        });
-*/
-        // Add click handler for item
-       /* item.addEventListener('click', () => {
-            hideMessage('messageConversations');
-            if (currentDetailsBlock && currentDetailsBlock !== detailsBlock) {
-
-                currentDetailsBlockParent = currentDetailsBlock.parentElement;
-                currentDetailsBlockParent.classList.remove('selectedItem');
-                currentDetailsBlock.style.display = 'none';
-            }
-
-            if (detailsBlock.style.display === 'none') {
-                detailsBlock.style.display = 'flex';
-                currentDetailsBlock = detailsBlock;
-                item.classList.add('selectedItem');
-            } else {
-                detailsBlock.style.display = 'none';
-                currentDetailsBlock = null;
-                item.classList.remove('selectedItem');
-            }
-        });*/
-
         const icon = item.querySelector('.main-icon');
-        
-        item.addEventListener('click', () => {
-            const memoId = item.dataset.voiceMemoId;
-            const isCurrentlySelected = selectedMemoIds.has(memoId);
-            
-            if (isCurrentlySelected) {
-                // If this was the only selected item, reset all icons
-                if (selectedMemoIds.size === 1) {
-                    document.querySelectorAll('.outline-item .main-icon').forEach(i => {
-                        i.className = 'icon voice-memo-icon main-icon';
-                    });
-                    selectedMemoIds.clear();
-                } else {
-                    // Otherwise, just unselect this item
-                    icon.className = 'icon checkbox-icon main-icon';
-                    selectedMemoIds.delete(memoId);
-                }
-            } else {
-                // If this is the first selection
-                if (selectedMemoIds.size === 0) {
-                    document.querySelectorAll('.outline-item .main-icon').forEach(i => {
-                        if (i !== icon) {
-                            i.className = 'icon checkbox-icon main-icon';
-                        }
-                    });
-                }
-                icon.className = 'icon selected-checkbox-icon main-icon';
-                selectedMemoIds.add(memoId);
-            }
 
-            // bottomPanel
-            const bottomPanel = document.getElementById('bottomPanel');
-            if (selectedMemoIds.size === 0) {
-              bottomPanel.style.display = 'none';
-            }else{
-              bottomPanel.style.display = 'flex';
-              const pasteLinkButton = document.getElementById('pasteLinkButton');
-              const emptyButton = document.getElementById('emptyButton');
-              if (selectedMemoIds.size > 1) {
-                //empty-icon-button
-                pasteLinkButton.style.display = 'none';
-                emptyButton.style.display = 'flex';
-                // pasteLinkButton.classList.add('empty-icon-button');
-                // pasteLinkButton.classList.remove('icon-button');
-                // pasteLinkButton.onclick='';
-                //onclick="handleLink()"
-              }else{
-                pasteLinkButton.style.display = 'flex';
-                emptyButton.style.display = 'none';
-                // pasteLinkButton.classList.remove('empty-icon-button');
-                // pasteLinkButton.classList.add('icon-button');
-                // pasteLinkButton.onclick="handleLink()";
-              }
+        item.addEventListener('click', () => {
+          const memoId = item.dataset.voiceMemoId;
+          const isCurrentlySelected = selectedMemoIds.has(memoId);
+
+          if (isCurrentlySelected) {
+            // If this was the only selected item, reset all icons
+            if (selectedMemoIds.size === 1) {
+              document.querySelectorAll('.outline-item .main-icon').forEach(i => {
+                i.className = 'icon voice-memo-icon main-icon';
+              });
+              selectedMemoIds.clear();
+            } else {
+              // Otherwise, just unselect this item
+              icon.className = 'icon checkbox-icon main-icon';
+              selectedMemoIds.delete(memoId);
             }
+          } else {
+            // If this is the first selection
+            if (selectedMemoIds.size === 0) {
+              document.querySelectorAll('.outline-item .main-icon').forEach(i => {
+                if (i !== icon) {
+                  i.className = 'icon checkbox-icon main-icon';
+                }
+              });
+            }
+            icon.className = 'icon selected-checkbox-icon main-icon';
+            selectedMemoIds.add(memoId);
+          }
+
+          // bottomPanel
+          const bottomPanel = document.getElementById('bottomPanel');
+          if (selectedMemoIds.size === 0) {
+            bottomPanel.style.display = 'none';
+          } else {
+            bottomPanel.style.display = 'flex';
+            const pasteLinkButton = document.getElementById('pasteLinkButton');
+            const emptyButton = document.getElementById('emptyButton');
+            if (selectedMemoIds.size > 1) {
+              //empty-icon-button
+              pasteLinkButton.style.display = 'none';
+              emptyButton.style.display = 'flex';
+            } else {
+              pasteLinkButton.style.display = 'flex';
+              emptyButton.style.display = 'none';
+            }
+          }
         });
 
         outlineList.appendChild(item);
-        // item.appendChild(detailsBlock);
-    });
+      });
 
-    outlinesDiv.appendChild(outlineList);
-}
+      outlinesDiv.appendChild(outlineList);
+    }
+  }
 </script>

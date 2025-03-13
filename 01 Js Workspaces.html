@@ -1,22 +1,25 @@
 <script>
   function populateWorkspaces(allWorkspaces) {
-
+    // allWorkspaces = [];
     const bottomPanel = document.getElementById('bottomPanel');
     bottomPanel.style.display = 'none';
 
-            const container = document.getElementById('breadcrumbs-container');
-            container.innerHTML = '';
+    const container = document.getElementById('breadcrumbs-container');
+    container.innerHTML = '';
 
     const outlinesDiv = document.getElementById('outlines');
     outlinesDiv.innerHTML = ``;
 
-    const workspacesList = document.createElement('div');
-    workspacesList.className = 'outline-list';
+    if (allWorkspaces.length === 0) {
+      createInstruction(outlinesDiv);
+    } else {
+      const workspacesList = document.createElement('div');
+      workspacesList.className = 'outline-list';
 
-  allWorkspaces.forEach(workspace => {
-    const item = document.createElement('div');
-    item.className = 'folder-item';
-    item.innerHTML = `<div class="folder-icon-workspace">
+      allWorkspaces.forEach(workspace => {
+        const item = document.createElement('div');
+        item.className = 'folder-item';
+        item.innerHTML = `<div class="folder-icon-workspace">
             <img src="${workspace.workspaceImageUrl}">
         </div>
         <div class="folder-content">
@@ -26,20 +29,21 @@
         <span class="angle-bracket">›</span>`;
 
 
-    item.addEventListener('click', (e) => {
-      e.stopPropagation();
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
 
-      disableAllInteractions();
-      hideMessage('messageConversations'); 
+          disableAllInteractions();
+          hideMessage('messageConversations');
 
-      google.script.run
-          .withSuccessHandler(onRefreshSuccess)
-          .withFailureHandler(onExportFailure)     
-          .getVoiceMemosAndFolders(workspace.workspaceId);     
-    });
+          google.script.run
+            .withSuccessHandler(onRefreshSuccess)
+            .withFailureHandler(onExportFailure)
+            .getVoiceMemosAndFolders(workspace.workspaceId);
+        });
 
-    workspacesList.appendChild(item);
-  });
- outlinesDiv.appendChild(workspacesList);
+        workspacesList.appendChild(item);
+      });
+      outlinesDiv.appendChild(workspacesList);
+    }
   }
 </script>

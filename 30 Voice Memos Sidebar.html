@@ -36,10 +36,9 @@
     <button id="signInButton">Sign in with Carbon Voice</button>
     <div id="stayLoggedIn" class="stayLoggedIn">
       <label for="keep-signed-in">
-                <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!=checkedOrNotMainSidebar()
-                    ?>>
-                Keep me signed in
-            </label>
+        <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!=checkedOrNotMainSidebar() ?>>
+        Keep me signed in
+      </label>
       <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not
         use the add-on for 7 or more days.</p>
       <p>You can always modify this option by following these steps:</p>
@@ -57,13 +56,13 @@
 
   <div id="screen2" style="display: none;">
     <div class="tabs">
- <div class="tab active" onclick="switchTab('myapp')">Voice Memos</div>
-<div class="tab" onclick="switchTab('outline')">AI Results</div>
-</div>
+      <div class="tab active" onclick="switchTab('myapp')">Voice Memos</div>
+      <div class="tab" onclick="switchTab('outline')">AI Results</div>
+    </div>
 
     <div id="myapp" class="content active">
-         <div id="breadcrumbs-container" class="breadcrumbs">test</div>
-  <div id="hiddenLayer" class="hidden-layer"></div>
+      <div id="breadcrumbs-container" class="breadcrumbs"></div>
+      <div id="hiddenLayer" class="hidden-layer"></div>
 
       <div id="outlines" class="tab-content active">
       </div>
@@ -74,16 +73,16 @@
         <div class="last-update">Last update: 3 hours ago</div>
         <div class="button-container">
           <button class="reload-button" id="reload-button">
-                        <span class="button-text">Refresh</span>
-                        <span class="svg-icon-reload"></span>
+            <span class="button-text">Refresh</span>
+            <span class="svg-icon-reload"></span>
           </button>
         </div>
 
-      <div id="bottomPanel" class="footer rounded-top" style="display: none;">
-       <?!= include('05 Html Js Bottom panel'); ?>
-       <?!= include('05 Js Paste transcript'); ?>
-       <?!= include('05 Js Paste link'); ?>
-      </div>
+        <div id="bottomPanel" class="footer rounded-top" style="display: none;">
+          <?!= include('05 Html Js Bottom panel'); ?>
+          <?!= include('05 Js Paste transcript'); ?>
+          <?!= include('05 Js Paste link'); ?>
+        </div>
 
       </div>
     </div>
@@ -91,24 +90,25 @@
     <div id="outline" class="content">
 
       <!-- <div class="text-container"> -->
-        <!-- <div class="textarea-wrapper">
+      <!-- <div class="textarea-wrapper">
           <div class="hidden-div" aria-hidden="true"></div>
           <textarea id="textInput" placeholder="Paste your text here" oninput="autoResize(this)"></textarea>
         </div> -->
-        <?!= include('06 Html Js AI Results'); ?>
-   
+      <?!= include('06 Html Js AI Results'); ?>
 
-        <div id="successMessage" style="display: none">
-          <div class="success-message">
-            <div class="success-icon">✓</div>
-            Export completed successfully.<br>10 slides created.
-          </div>
+
+      <div id="successMessage" style="display: none">
+        <div class="success-message">
+          <div class="success-icon">✓</div>
+          Export completed successfully.<br>10 slides created.
         </div>
+      </div>
       <!-- </div> -->
 
       <div class="footer rounded-top">
         <div id="generating" class="generating" style="display: none">
-          Inserting AI Result <span class="dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+          Inserting AI Result <span class="dots"><span class="dot">.</span><span class="dot">.</span><span
+              class="dot">.</span></span>
         </div>
         <button id="generateBtn" class="button primary" disabled onclick="pasteAiResultFromTab()">Paste</button>
       </div>
@@ -118,33 +118,33 @@
 
   <div id="messageUnexpectedError" class="message" style="display: none;"></div>
 
-    <div id="shortMenu" class="menu">
-      <div id="shortMenuContent"></div>
-      <div class="category-divider"></div>
-      <div class="menu-item with-plus" onclick="showFullMenu()">More AI Magic</div>
-    </div>
+  <div id="shortMenu" class="menu">
+    <div id="shortMenuContent"></div>
+    <div class="category-divider"></div>
+    <div class="menu-item with-plus" onclick="showFullMenu()">More AI Magic</div>
+  </div>
 
-    <div id="bottomNotification" class="menu">
-          <div class="success-message">
-            <div class="success-icon">✓</div>
-            Export completed successfully.<br>10 slides created.
-          </div>
+  <div id="bottomNotification" class="menu">
+    <div class="success-message">
+      <div class="success-icon">✓</div>
+      Export completed successfully.<br>10 slides created.
     </div>
+  </div>
 
-    <div id="fullMenu" class="menu">
-      <div class="menu-header">
-        More AI Magic
-        <button class="close-button" onclick="closeFullMenu()">×</button>
-      </div>
-      <div id="menuContent"></div>
+  <div id="fullMenu" class="menu">
+    <div class="menu-header">
+      More AI Magic
+      <button class="close-button" onclick="closeFullMenu()">×</button>
     </div>
+    <div id="menuContent"></div>
+  </div>
 
-    <div id="aiMagicResult" class="menu" style="display: none;"></div>
+  <div id="aiMagicResult" class="menu" style="display: none;"></div>
 
 
   <script>
     let voiceMemosAndFoldersSidebar, aiActions, promptId;
-    const aiResults ={};
+    const aiResults = {};
   </script>
 
   <?!= include('01 Js Folders'); ?>
@@ -154,29 +154,29 @@
   <?!= include('01 Js Bottom navigation'); ?>
   <?!= include('01 Js Workspaces'); ?>
   <?!= include('01 Js Fast'); ?>
-  
+
   <?!= include('04 Js'); ?>
 
 
 
-<script>
+  <script>
     let intialData = <?!= initialDataSidebar(); ?>;
     if (intialData.hasAccess === true) {
-        populateOutlines(intialData);
-        document.getElementById('signInButton').style.display = 'inline-block';
-        document.getElementById('progressText').style.display = 'none';
-        aiActions = intialData.allPrompts;
-        promptId = intialData.promptId;
-        aiResults[promptId] = intialData.aiResultTextAndSourceMessages;
-        initializeDropdowns();
-        showScreen('screen2');
+      populateOutlines(intialData);
+      document.getElementById('signInButton').style.display = 'inline-block';
+      document.getElementById('progressText').style.display = 'none';
+      aiActions = intialData.allPrompts;
+      promptId = intialData.promptId;
+      aiResults[promptId] = intialData.aiResultTextAndSourceMessages;
+      initializeDropdowns();
+      showScreen('screen2');
     } else {
-        if (!intialData.authUrl){
-          showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
-        }else{
-          document.getElementById('authUrl').value = intialData.authUrl;
-        }
-        showScreen('screen1');
+      if (!intialData.authUrl) {
+        showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+      } else {
+        document.getElementById('authUrl').value = intialData.authUrl;
+      }
+      showScreen('screen1');
     }
 
     document.addEventListener('click', (event) => {
