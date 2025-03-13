@@ -50,18 +50,6 @@ After the voice memo is recorded, tap the refresh button.`;
     );
     renderBreadcrumbs(breadcrumbs);
 
-    const presentations = voiceMemos;
-
-    const outlinesDiv = document.getElementById('outlines');
-    outlinesDiv.innerHTML = ``;
-
-    if (presentations.length === 0 && folders.length === 0) {
-      createInstruction(outlinesDiv);
-    } else {
-
-      createNavigation(showNext, showPrevious, workspaceId, folderId, pageNumber);
-
-
       // Reload button
       let reloadBtn = document.getElementById('reload-button');
 
@@ -83,6 +71,40 @@ After the voice memo is recorded, tap the refresh button.`;
           .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber);
       });
       // End. Reload button
+
+    const presentations = voiceMemos;
+
+    const outlinesDiv = document.getElementById('outlines');
+    outlinesDiv.innerHTML = ``;
+
+    if (presentations.length === 0 && folders.length === 0) {
+      createInstruction(outlinesDiv);
+    } else {
+
+      createNavigation(showNext, showPrevious, workspaceId, folderId, pageNumber);
+
+
+      // // Reload button
+      // let reloadBtn = document.getElementById('reload-button');
+
+      // const newReloadBtn = reloadBtn.cloneNode(true);
+      // reloadBtn.parentNode.replaceChild(newReloadBtn, reloadBtn);
+      // reloadBtn = document.getElementById('reload-button');
+      // reloadBtn.addEventListener('click', (e) => {
+      //   // console.log('workspaceId, folderId, pageNumber', workspaceId, folderId, pageNumber);
+      //   e.stopPropagation();
+      //   disableAllInteractions();
+
+      //   const icon = reloadBtn.querySelector('.svg-icon-reload');
+      //   icon.classList.add('spinning');
+
+      //   hideMessage('messageConversations');
+      //   google.script.run
+      //     .withSuccessHandler(onRefreshSuccess)
+      //     .withFailureHandler(onExportFailure)
+      //     .getVoiceMemosAndFolders(workspaceId, folderId, pageNumber);
+      // });
+      // // End. Reload button
 
       const outlineList = document.createElement('div');
       outlineList.className = 'outline-list';
