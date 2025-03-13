@@ -44,7 +44,7 @@
 </div>
 
 <script>
-    let currentActionId = '66859b7f6928970bb4f1c24a';
+  let currentActionId = '66859b7f6928970bb4f1c24a';
     let currentMemoIndex = 0;
 
     function initializeDropdowns() {
@@ -71,7 +71,7 @@
   document.getElementById('selectedAction').textContent = "Bulleted Summary";
   document.getElementById('aiActionsContent').classList.remove('show');
   
-  if (aiResults[currentActionId]) {
+  if (aiResults[currentActionId] && aiResults?.[currentActionId]?.length > 0) {
     updateVoiceMemosDropdown();
   }
   updateDisplay();
@@ -176,7 +176,7 @@ function updateDisplay() {
   const generateBtn = document.getElementById('generateBtn');
 
   // Check if currentActionId exists in aiResults
-  if (!aiResults[currentActionId]) {
+  if (!aiResults[currentActionId] || aiResults?.[currentActionId]?.length === 0) {
     voiceMemosSection.style.display = 'none';
     resultsSection.style.display = 'none';
     noResultsMessage.style.display = 'block';
