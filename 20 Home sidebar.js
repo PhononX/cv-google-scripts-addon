@@ -5,6 +5,8 @@ function getCurrentMessage(event) {
   return GmailApp.getMessageById(messageId);
 }
 
+
+// section.addWidget(CardService.newDivider());
 function onHomepage(e) {
   // Logger.log(e);
   var imageWidget = CardService.newImage()
@@ -13,6 +15,16 @@ function onHomepage(e) {
 
   return CardService.newCardBuilder()
     .addSection(CardService.newCardSection()
+      .addWidget(CardService.newTextParagraph()
+        .setText(`
+        <b><font color="#b01f42">Update Available</font></b>
+
+● Install the new "Carbon Voice" add-on: <a href="https://workspace.google.com/marketplace/app/carbon_voice/65829775758">https://workspace.google.com/marketplace/app/carbon_voice/65829775758</a>
+
+● Uninstall the old "Carbon Voice for Gmail": <a href="https://workspace.google.com/marketplace/app/carbon_voice_for_gmail/762272039581">https://workspace.google.com/marketplace/app/carbon_voice_for_gmail/762272039581</a>
+
+`))
+      .addWidget(CardService.newDivider())
       .addWidget(CardService.newTextParagraph()
         .setText(`
 ● If you want to create a new async meeting, open any email in your inbox. 
