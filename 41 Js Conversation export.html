@@ -416,12 +416,44 @@
     searchInput2.disabled = true;
     searchInput3.disabled = true;
 
+    function createInstruction(parentDiv) {
+        const instruction = document.createElement('div');
+        instruction.innerHTML = `<h1>No conversations found</h1>
+    To create one:
+    <ol class="instruction-list">
+    <li class="instruction-step">
+      <div class="step-number">1</div>
+      <div class="step-text">Open your Carbon Voice</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">2</div>
+      <div class="step-text">Start a conversation</div>
+    </li>
+    <li class="instruction-step">
+      <div class="step-number">3</div>
+      <div class="step-text">Run Extensions - Carbon Voice - Conversation Export</div>
+    </li>    
+  </ol>`;
+        instruction.className = 'instruction';
+        parentDiv.appendChild(instruction);
+    }
+
     function populateWorkspacesConversation(workspaces, conversations) {
         categories = workspaces;
         items = conversations;
-        setupSelect(searchInput1, optionsList1, clearButton1, categories);
-        setupSelect(searchInput2, optionsList2, clearButton2, []);
-        setupSelect(searchInput3, optionsList3, clearButton3, []);
+        // items = {};
+
+        if (Object.keys(items).length === 0) {
+            const panel = document.getElementById("panel1");
+            for (let i = 0; i < panel.children.length; i++) {
+                panel.children[i].style.display = "none";
+            }
+            createInstruction(panel);
+        } else {
+            setupSelect(searchInput1, optionsList1, clearButton1, categories);
+            setupSelect(searchInput2, optionsList2, clearButton2, []);
+            setupSelect(searchInput3, optionsList3, clearButton3, []);
+        }
     }
 </script>
 <!-- End. Panel 2 -->

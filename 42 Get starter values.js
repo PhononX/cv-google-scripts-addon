@@ -33,16 +33,16 @@ function getWorkspacesAndConversationsGW(keepMeSigned) {
   // In /channels/{workspaceguid} responses, workspace 'Personal' has id = 'personal'
   // /channels/{workspaceguid} doesn't know n3hXmlnRBpAUz9WN
 
-// Find the index of the workspace with ID "personal"
-const personalIndex = workspaces.json.findIndex(workspace => workspace.id === "personal");
-// If found, remove it and add it to the beginning
-if (personalIndex !== -1) {
-  // Remove the workspace from its current position
-  const personalWorkspace = workspaces.json.splice(personalIndex, 1)[0];
-  personalWorkspace.special = true;
-  // Add it to the beginning of the array
-  workspaces.json.unshift(personalWorkspace);
-}
+  // Find the index of the workspace with ID "personal"
+  const personalIndex = workspaces.json.findIndex(workspace => workspace.id === "personal");
+  // If found, remove it and add it to the beginning
+  if (personalIndex !== -1) {
+    // Remove the workspace from its current position
+    const personalWorkspace = workspaces.json.splice(personalIndex, 1)[0];
+    personalWorkspace.special = true;
+    // Add it to the beginning of the array
+    workspaces.json.unshift(personalWorkspace);
+  }
 
   // Gets all conversations
   const conversations = getListOfConversations();
@@ -141,9 +141,13 @@ if (personalIndex !== -1) {
   }
 
   // Joins workspaces in correct order: regular, guest, business link
-  workspaces.json[workspaces.json.length - 1].special = true;
+  if (workspaces.json.length > 0) {
+    workspaces.json[workspaces.json.length - 1].special = true;
+  }
   workspaces.json.push(...guestWorkspaces);
-  workspaces.json[workspaces.json.length - 1].special = true;
+  if (workspaces.json.length > 0) {
+    workspaces.json[workspaces.json.length - 1].special = true;
+  }
   workspaces.json.push(...businessLinkWorkspaces);
   // End. Joins workspaces in correct order
 
