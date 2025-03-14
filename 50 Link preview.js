@@ -24,11 +24,11 @@ instructionText = `
 
   let text;
   if (hostApp === 'DOCS') {
-    text = '● If you want to work with voice memos, run Extensions -> Carbon Voice -> Voice Memos\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice/344419447585">install it</a> from Google Workspace Marketplace, then reload current tab.';
+    text = '● If you want to work with voice memos, run Extensions -> Carbon Voice -> Voice Memos\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice_for_editors/393337891493">install it</a> from Google Workspace Marketplace, then reload current tab.';
   } else if (hostApp === 'SLIDES') {
-    text = '● If you want to work with presentation outlines, run Extensions -> Carbon Voice -> Presentation Outline\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice/429860900230">install it</a> from Google Workspace Marketplace, then reload current tab.';
+    text = '● If you want to work with presentation outlines, run Extensions -> Carbon Voice -> Presentation Outline\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice_for_editors/393337891493">install it</a> from Google Workspace Marketplace, then reload current tab.';
   } else if (hostApp === 'SHEETS') {
-    text = '● If you want to export conversations or voice memos, run Extensions -> Carbon Voice -> Conversation Export\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice/698832250823">install it</a> from Google Workspace Marketplace, then reload current tab.';
+    text = '● If you want to export conversations or voice memos, run Extensions -> Carbon Voice -> Conversation Export\n\n● If you don\'t see Carbon Voice in "Extensions" menu, <a href="https://workspace.google.com/marketplace/app/carbon_voice_for_editors/393337891493">install it</a> from Google Workspace Marketplace, then reload current tab.';
   }
 
   if (text) {
