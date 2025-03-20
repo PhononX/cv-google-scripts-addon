@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <base target="_top">
-    <style>
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+  <base target="_top">
+  <style>
     body {
       font-family: 'Inter', sans-serif;
       margin: 0px;
       padding: 10px;
     }
+
     h1 {
-      color: #063269;
-      font-size: 18px;
+      color: #261073;
+      font-size: 16px;
+      font-weight: 600;
       margin-bottom: 15px;
-    }      
-.main-list {
-  list-style-type: disc;
-  padding-left: 20px;
-}
+    }
 
-.sub-list {
-  list-style-type: circle;
-  padding-left: 20px;
-}
+    .main-list {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
 
-li {
-  margin: 3px;
-}
-.sub-list li {
-white-space: pre-wrap; 
-}
+    .sub-list {
+      list-style-type: circle;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 3px;
+    }
+
+    .sub-list li {
+      white-space: pre-wrap;
+    }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
@@ -57,11 +65,12 @@ white-space: pre-wrap;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      background-color: #4330b8;
+      background-color: #5E4CCE;
       color: white;
     }
+
     .action-button:hover {
-      background-color: #261073;
+      background-color: #4330b8;
     }
 
     .cancel-button {
@@ -70,11 +79,12 @@ white-space: pre-wrap;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      background-color: #6f7077;
+      background-color: #A1A2AB;
       color: white;
     }
+
     .cancel-button:hover {
-      background-color: #5d5e64;
+      background-color: #80828A;
     }
 
     .message {
@@ -89,25 +99,28 @@ white-space: pre-wrap;
       color: #c62828;
     }
 
-/* Stay logged in */
-.stayLoggedIn {
-  margin: 15px 0 0 0;
-  padding: 0;
-}
-.stayLoggedIn p {
-  margin: 0;
-  padding: 3px;
-  white-space: pre-wrap;
-  font-size:0.9em
-}
-.stayLoggedIn .ol {
-  margin:0;
-}
-.stayLoggedIn .ol li {
-  font-size:0.9em
-}
+    /* Stay logged in */
+    .stayLoggedIn {
+      margin: 15px 0 0 0;
+      padding: 0;
+    }
 
-.stayLoggedIn input[type="checkbox"] {
+    .stayLoggedIn p {
+      margin: 0;
+      padding: 3px;
+      white-space: pre-wrap;
+      font-size: 0.9em
+    }
+
+    .stayLoggedIn .ol {
+      margin: 0;
+    }
+
+    .stayLoggedIn .ol li {
+      font-size: 0.9em
+    }
+
+    .stayLoggedIn input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
       width: 18px;
@@ -139,23 +152,24 @@ white-space: pre-wrap;
     .stayLoggedIn label {
       margin-left: 5px;
       vertical-align: middle;
-    }        
-    </style>
+    }
+  </style>
 
-  </head>
-  <body>
-<h1>Settings</h1>
-    <div id="stayLoggedIn" class="stayLoggedIn">
-      <label for="keep-signed-in">
-         <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!= checkedOrNot ?>>
-         Keep me signed in
-      </label>
-      <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
-    </div>
-      <div id="errorMessage" class="message error" style="display: none;"></div>
-      <button class="action-button" id="okButton">Save  <span class="progressButton" id="progress2"></span></button>
-      <button class="cancel-button" id="cancelButton" onclick="closeDialog()">Cancel</button>
-      
+</head>
+
+<body>
+  <h1>Settings</h1>
+  <div id="stayLoggedIn" class="stayLoggedIn">
+    <label for="keep-signed-in">
+      <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!=checkedOrNot ?>>
+      Keep me signed in
+    </label>
+    <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
+  </div>
+  <div id="errorMessage" class="message error" style="display: none;"></div>
+  <button class="action-button" id="okButton">Save <span class="progressButton" id="progress2"></span></button>
+  <button class="cancel-button" id="cancelButton" onclick="closeDialog()">Cancel</button>
+
   <script>
     const disableAllInteractions = () => {
       document.querySelectorAll('.outline-item, .action-button').forEach(el => {
@@ -177,15 +191,15 @@ white-space: pre-wrap;
       });
     };
 
-      function disableElements(disable) {
-        if (disable){
-          disableAllInteractions();
-        }else{
-          enableAllInteractions();
-        }
-        document.getElementById("okButton").disabled = disable;
-        document.getElementById("cancelButton").disabled = disable;
+    function disableElements(disable) {
+      if (disable) {
+        disableAllInteractions();
+      } else {
+        enableAllInteractions();
       }
+      document.getElementById("okButton").disabled = disable;
+      document.getElementById("cancelButton").disabled = disable;
+    }
 
     function closeDialog() {
       google.script.host.close();
@@ -193,36 +207,32 @@ white-space: pre-wrap;
 
     function handleError(error) {
       disableElements(false);
-       const progress = document.getElementById('progress2');
-       progress.style.display = 'none';      
+      const progress = document.getElementById('progress2');
+      progress.style.display = 'none';
       document.getElementById("errorMessage").innerText = "An error occurred: " + error.message;
       document.getElementById("errorMessage").style.display = "block";
-    }  
+    }
 
     function handleSuccess(error) {
       disableElements(false);
-       const progress = document.getElementById('progress2');
-       progress.style.display = 'none';      
+      const progress = document.getElementById('progress2');
+      progress.style.display = 'none';
 
-    }  
-
-
-
+    }
+    
     okButton.addEventListener('click', (e) => {
-
-       e.stopPropagation();
-
-       const progress = e.target.querySelector('.progressButton');
-       progress.style.display = 'inline-block';
-       const checkbox = document.getElementById('keep-signed-in');
-       const keepMeSigned = checkbox.checked;
+      e.stopPropagation();
+      const progress = e.target.querySelector('.progressButton');
+      progress.style.display = 'inline-block';
+      const checkbox = document.getElementById('keep-signed-in');
+      const keepMeSigned = checkbox.checked;
 
       disableElements(true);
       google.script.run
         .withSuccessHandler(handleSuccess)
         .withFailureHandler(handleError)
-        .changeKeepMeSignedSetting(keepMeSigned);  
+        .changeKeepMeSignedSetting(keepMeSigned);
     });      
-  </script>      
-  </body>
+  </script>
+</body>
 </html>

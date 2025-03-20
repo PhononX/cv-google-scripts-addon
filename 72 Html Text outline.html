@@ -1,0 +1,21 @@
+      <div class="text-container">
+        <div class="textarea-wrapper">
+          <div class="hidden-div" aria-hidden="true"></div>
+          <textarea id="textInput" placeholder="Paste your text here" oninput="autoResize(this)"></textarea>
+        </div>
+        <div id="successMessage" style="display: none">
+          <div class="success-message">
+            <div class="success-icon">✓</div>
+            Export completed successfully.<br>10 slides created.
+          </div>
+        </div>
+      </div>
+      <div class="footer rounded-top">
+        <div id="generating" class="generating" style="display: none">
+          Generating Presentation
+          Outline<span class="dots"><span class="dot">.</span><span class="dot">.</span><span
+                            class="dot">.</span></span>
+        </div>
+        <button id="generateBtn" class="button primary" disabled onclick="generate()">Generate
+                    Presentation</button>
+      </div>

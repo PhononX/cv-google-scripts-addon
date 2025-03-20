@@ -5,6 +5,7 @@ function getListOfPresentationsSidebar() {
 
 // https://api.carbonvoice.app/responses/prompt/669e61798d82b4c6baac633e/latest-ten
 function getListOfPresentations(keepMeSigned) {
+  // Logger.log(pppppp);
   const result = makeCarbonVoiceRequest('GET', '/responses/prompt/669e61798d82b4c6baac633e/latest-ten', null, null);
   if (!result.hasAccess) {
     return result;
@@ -66,8 +67,6 @@ function getListOfPresentations(keepMeSigned) {
 }
 
 function createSlides(messageId, aiResponseId) {
-  Logger.log(messageId);
-  // Logger.log(selectedLabel);
   const presentation = SlidesApp.getActivePresentation();
 
   // Not empty presentation?

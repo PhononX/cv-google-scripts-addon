@@ -1,0 +1,52 @@
+  <script>
+    // Check initial access status and show appropriate screen
+    if (starterValues.hasAccess === true) {
+        // populateWorkspacesConversation(starterValues.workspaces, starterValues.items);
+        populateOutlines(starterValues.presentations);
+        showScreen('screen2');
+    } else {
+        if (!starterValues.authUrl) {
+            showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
+        } else {
+            document.getElementById('authUrl').value = starterValues.authUrl;
+        }
+        showScreen('screen1');
+    }  
+
+    /**
+     * Checks user access status by calling server-side function
+     * Uses the keep-signed-in checkbox value when checking access
+     */
+    function checkAccess() {
+        const checkbox = document.getElementById('keep-signed-in');
+        const keepMeSigned = checkbox.checked;
+        google.script.run
+            .withSuccessHandler(onCheckAccessSuccess)
+            .withFailureHandler(onCheckAccessFailure)
+            .getListOfPresentations(keepMeSigned);
+    }
+
+    /**
+     * Handles successful access check response
+     * Shows appropriate screen based on access status or continues checking
+     * @param {Object} response - Server response containing access status
+     */    
+    function onCheckAccessSuccess(response) {
+        if (response.hasAccess) {
+            // populateWorkspacesConversation(response.workspaces, response.items);
+            populateOutlines(response.presentations);
+            showScreen('screen2');
+        } else if (response.authUrl) {
+            document.getElementById('authUrl').value = response.authUrl;
+            setTimeout(checkAccess, 3000);
+        } else {
+            setTimeout(checkAccess, 3000);
+        }
+    }
+
+function onCheckAccessFailure(error) {
+    showMessage('Failed to check access. Please try again later.' + error, 'error', 'messageUnexpectedError');
+    document.getElementById('signInButton').style.display = 'inline-block';
+    document.getElementById('progressText').style.display = 'none';
+}    
+  </script>

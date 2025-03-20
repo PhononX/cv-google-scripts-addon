@@ -100,7 +100,7 @@ function showResultsScreen(presentation, height) {
   htmlArray.push('</ul>');
 
   const modalDialogHeigh = height || 300;
-  const template = HtmlService.createTemplateFromFile('02 Modal Dialog Results');
+  const template = HtmlService.createTemplateFromFile('73 Modal Dialog Results');
   template.html = htmlArray.join('');
   template.messageId = presentation.message_id;
   template.aiResponseId = presentation.aiResponseId;

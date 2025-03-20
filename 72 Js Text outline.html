@@ -22,17 +22,6 @@
       textarea.style.height = hiddenDiv.scrollHeight + 'px';
     }
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
-      
-      const selectedTab = document.querySelector(`.tab:nth-child(${tabId === 'myapp' ? '1' : '2'})`);
-      const selectedContent = document.getElementById(tabId);
-      
-      selectedTab.classList.add('active');
-      selectedContent.classList.add('active');
-    }
-
     function checkInput() {
       const input = document.getElementById('textInput');
       const generateBtn = document.getElementById('generateBtn');

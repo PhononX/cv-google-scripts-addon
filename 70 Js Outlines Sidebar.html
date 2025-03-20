@@ -107,10 +107,9 @@ function formatDateTime(dateString) {
   // </div>`;
 
   if (presentations.length === 0){
-    // const myappDiv = document.getElementById('myapp');
     const instruction = document.createElement('div');
     instruction.innerHTML = `<h1>No “Presentation Outline” AI&nbsp;Magic results found</h1>
-    To create on:
+    To create one:
     <ol class="instruction-list">
     <li class="instruction-step">
       <div class="step-number">1</div>
@@ -135,7 +134,6 @@ function formatDateTime(dateString) {
   </ol>
 After the result is created, tap refresh button.`;
 instruction.className = 'instruction';
-    // myappDiv.appendChild(instruction);
     outlinesDiv.appendChild(instruction);
   }
 
@@ -210,7 +208,7 @@ const reloadBtn = document.getElementById('reload-button');
   progress.style.display = 'inline-flex';
       disableAllInteractions();
 
-      hideMessage('messageConversations');
+      hideMessage('message-tab-1');
       const height = window.innerHeight;
       google.script.run
           .withSuccessHandler(onExportSuccess)
@@ -225,7 +223,7 @@ const reloadBtn = document.getElementById('reload-button');
        progress.style.display = 'inline-block';
 
       disableAllInteractions();
-      hideMessage('messageConversations');
+      hideMessage('message-tab-1');
       google.script.run
           .withSuccessHandler(onExportSuccess)
           .withFailureHandler(onExportFailure)
@@ -234,7 +232,7 @@ const reloadBtn = document.getElementById('reload-button');
 
     // Add click handler for item
     item.addEventListener('click', () => {
-      hideMessage('messageConversations');
+      hideMessage('message-tab-1');
       if (currentDetailsBlock && currentDetailsBlock !== detailsBlock) {
         
         currentDetailsBlockParent = currentDetailsBlock.parentElement;
@@ -259,4 +257,49 @@ const reloadBtn = document.getElementById('reload-button');
 
   outlinesDiv.appendChild(outlineList);
 }
+
+//
+
+    function onExportSuccess(response) {
+        conversionsProgress = false;
+        if (response.status === 'error') {
+            if (!response.hasAccess) {
+                document.getElementById('authUrl').value = response.authUrl;
+                showScreen('screen1');
+            } else {
+                // showMessage(response.message, 'error', 'message-tab-1');
+                showErrorModal('Failed! ' + response.message);
+            }
+        } else {
+            showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-1');
+        }
+        // disableButtonsInputs(false);
+        enableAllInteractions();
+    }
+
+function onRefreshSuccess(response) {
+    if (response.status === 'error') {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            // showMessage(response.message, 'error', 'message-tab-1');
+            showErrorModal('Failed! ' + response.message);
+        }
+    } else {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
+      populateOutlines(response.presentations)
+    }
+    enableAllInteractions();
+}
+
+function onExportFailure(error) {
+    // conversionsProgress = false;
+    // showMessage('Failed to export. ' + error, 'error', 'message-tab-1');
+    showErrorModal('Failed! ' + error);
+    // disableButtonsInputs(false);
+    enableAllInteractions();
+}
+//
 </script>
