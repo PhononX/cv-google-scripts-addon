@@ -145,7 +145,7 @@ const reloadBtn = document.getElementById('reload-button');
   const icon = reloadBtn.querySelector('.svg-icon-reload');
   icon.classList.add('spinning');
 
-      hideMessage('messageConversations');
+      hideMessage('message-tab-1');
       google.script.run
           .withSuccessHandler(onRefreshSuccess)
           .withFailureHandler(onExportFailure)
@@ -211,7 +211,7 @@ const reloadBtn = document.getElementById('reload-button');
       hideMessage('message-tab-1');
       const height = window.innerHeight;
       google.script.run
-          .withSuccessHandler(onExportSuccess)
+          .withSuccessHandler(onShowResultsSuccess)
           .withFailureHandler(onExportFailure)
           .showResultsScreen(presentation, height);      
     });
@@ -258,34 +258,63 @@ const reloadBtn = document.getElementById('reload-button');
   outlinesDiv.appendChild(outlineList);
 }
 
+
+function errorCase(response){
+    if (!response.hasAccess) {
+        document.getElementById('authUrl').value = response.authUrl;
+        showScreen('screen1');
+    } else {
+        showErrorModal('Failed! ' + response.message);
+    }
+}
 //
 
     function onExportSuccess(response) {
-        conversionsProgress = false;
         if (response.status === 'error') {
-            if (!response.hasAccess) {
-                document.getElementById('authUrl').value = response.authUrl;
-                showScreen('screen1');
-            } else {
-                // showMessage(response.message, 'error', 'message-tab-1');
-                showErrorModal('Failed! ' + response.message);
-            }
+            errorCase(response);
+            // if (!response.hasAccess) {
+            //     document.getElementById('authUrl').value = response.authUrl;
+            //     showScreen('screen1');
+            // } else {
+            //     // showMessage(response.message, 'error', 'message-tab-1');
+            //     showErrorModal('Failed! ' + response.message);
+            // }
         } else {
-            showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-1');
+            // showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-1');
+            showMessage(response.message, 'success', 'message-tab-1');
         }
+        // disableButtonsInputs(false);
+        enableAllInteractions();
+    }
+
+    function onShowResultsSuccess(response) {
+        if (response.status === 'error') {
+            errorCase(response);
+            // if (!response.hasAccess) {
+            //     document.getElementById('authUrl').value = response.authUrl;
+            //     showScreen('screen1');
+            // } else {
+            //     // showMessage(response.message, 'error', 'message-tab-1');
+            //     showErrorModal('Failed! ' + response.message);
+            // }
+        }
+        //  else {
+        //     showMessage('Export completed successfully.\n' + response.totalMessagesText, 'success', 'message-tab-1');
+        // }
         // disableButtonsInputs(false);
         enableAllInteractions();
     }
 
 function onRefreshSuccess(response) {
     if (response.status === 'error') {
-        if (!response.hasAccess) {
-            document.getElementById('authUrl').value = response.authUrl;
-            showScreen('screen1');
-        } else {
-            // showMessage(response.message, 'error', 'message-tab-1');
-            showErrorModal('Failed! ' + response.message);
-        }
+        errorCase(response);
+        // if (!response.hasAccess) {
+        //     document.getElementById('authUrl').value = response.authUrl;
+        //     showScreen('screen1');
+        // } else {
+        //     // showMessage(response.message, 'error', 'message-tab-1');
+        //     showErrorModal('Failed! ' + response.message);
+        // }
     } else {
       lastUpdateTime = new Date();
       updateLastUpdateText();

@@ -32,7 +32,7 @@
       const textInput = document.getElementById('textInput');
       const generateBtn = document.getElementById('generateBtn');
       const generating = document.getElementById('generating');
-      const successMessage = document.getElementById('successMessage');
+      // const successMessage = document.getElementById('successMessage');
 
       generateBtn.style.display = 'none';
       generating.style.display = 'block';
@@ -47,15 +47,16 @@
 
 function onExportSuccess2(response) {
     if (response.status === 'error') {
-        if (!response.hasAccess) {
-            document.getElementById('authUrl').value = response.authUrl;
-            showScreen('screen1');
-        } else {
-            showMessage(response.message, 'error', 'successMessage');
-        }
+        errorCase(response);
+        // if (!response.hasAccess) {
+        //     document.getElementById('authUrl').value = response.authUrl;
+        //     showScreen('screen1');
+        // } else {
+        //     showMessage(response.message, 'error', 'successMessage');
+        // }
     } else {
       if (response.message){
-        showMessage(response.message, 'success', 'successMessage');
+        showMessage(response.message, 'success', 'message-tab-2');
         const textInput = document.getElementById('textInput');
         textInput.value = '';
       }
@@ -68,7 +69,8 @@ function onExportSuccess2(response) {
 }
 
 function onExportFailure2(error) {
-    showMessage('Failed to export. ' + error, 'error', 'successMessage');
+    // showMessage('Failed to export. ' + error, 'error', 'successMessage');
+    showErrorModal('Failed! ' + error);
     enableAllInteractions();
       const generateBtn = document.getElementById('generateBtn');
       const generating = document.getElementById('generating');
@@ -124,6 +126,6 @@ function onExportFailure2(error) {
     });
 
     document.getElementById('textInput').addEventListener('focus', () => {
-      document.getElementById('successMessage').style.display = 'none';
+      document.getElementById('message-tab-2').style.display = 'none';
     });
 </script>

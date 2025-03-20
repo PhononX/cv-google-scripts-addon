@@ -29,7 +29,6 @@ function getCorrectAiResponseNumber(result, aiResponseId) {
 }
 
 function showResultsScreen(presentation, height) {
-  Logger.log(presentation);
   const queryParams = {
     message_id: presentation.message_id,
     prompt_id: '669e61798d82b4c6baac633e'
@@ -40,7 +39,7 @@ function showResultsScreen(presentation, height) {
     return result;
   }
 
-  Logger.log('result.json.length=' + result.json.length);
+  // Logger.log('result.json.length=' + result.json.length);
 
   const jsonNum = getCorrectAiResponseNumber(result, presentation.aiResponseId);
   // if (result.json.length > 1) {

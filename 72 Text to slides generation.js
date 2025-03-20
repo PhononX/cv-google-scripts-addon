@@ -34,7 +34,8 @@ function getGoogleSlidesFolderId() {
 }
 
 
-function createVoiceMemoRunAiMagic(text = 'Presentation about New Year 2025') {
+function createVoiceMemoRunAiMagic(text) {
+  // throw new Error('test error2');
   const result = getGoogleSlidesFolderId();
   if (!result.hasAccess) {
     return result;
