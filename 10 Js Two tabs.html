@@ -19,7 +19,7 @@
      * Also manages visibility of sign in button and progress text for screen1
      * @param {string} screenId - ID of the screen to show ('screen0', 'screen1', or 'screen2')
      */
-     function showScreen(screenId) {
+    function showScreen(screenId) {
         document.getElementById('screen0').style.display = 'none';
         document.getElementById('screen1').style.display = screenId === 'screen1' ? 'block' : 'none';
         document.getElementById('screen2').style.display = screenId === 'screen2' ? 'block' : 'none';
@@ -78,7 +78,7 @@
 
         const text = document.createElement('p');
         text.className = 'error-modal-text';
-        text.textContent = errorText;
+        text.textContent = errorText ? errorText : 'Failed. Unknown error.';
 
         // Assemble modal
         container.appendChild(closeButton);
@@ -103,35 +103,23 @@
         });
     }
 
-    // /**
-    //  * Checks user access status by calling server-side function
-    //  * Uses the keep-signed-in checkbox value when checking access
-    //  */
-    // function checkAccess() {
-    //     const checkbox = document.getElementById('keep-signed-in');
-    //     const keepMeSigned = checkbox.checked;
-    //     google.script.run
-    //         .withSuccessHandler(onCheckAccessSuccess)
-    //         .withFailureHandler(onCheckAccessFailure)
-    //         .getWorkspacesAndConversationsGW(keepMeSigned);
-    // }
-
     /**
-     * Handles successful access check response
-     * Shows appropriate screen based on access status or continues checking
-     * @param {Object} response - Server response containing access status
+     * Handles error responses from API calls
+     * If user doesn't have access, shows auth screen
+     * Otherwise displays error message in modal
+     * @param {Object} response - Response object from API
+     * @param {boolean} response.hasAccess - Whether user has valid access
+     * @param {string} response.authUrl - OAuth URL for authentication
+     * @param {string} response.message - Error message to display
      */
-    // function onCheckAccessSuccess(response) {
-    //     if (response.hasAccess) {
-    //         populateWorkspacesConversation(response.workspaces, response.items);
-    //         showScreen('screen2');
-    //     } else if (response.authUrl) {
-    //         document.getElementById('authUrl').value = response.authUrl;
-    //         setTimeout(checkAccess, 3000);
-    //     } else {
-    //         setTimeout(checkAccess, 3000);
-    //     }
-    // }
+    function errorCase(response) {
+        if (!response.hasAccess) {
+            document.getElementById('authUrl').value = response.authUrl;
+            showScreen('screen1');
+        } else {
+            showErrorModal(response.message);
+        }
+    }
 
     /**
      * Handles failed access check
@@ -156,18 +144,5 @@
             document.getElementById('progressText').style.display = 'inline-block';
             checkAccess();
         }
-    });
-
-    // Check initial access status and show appropriate screen
-    // if (starterValues.hasAccess === true) {
-    //     populateWorkspacesConversation(starterValues.workspaces, starterValues.items);
-    //     showScreen('screen2');
-    // } else {
-    //     if (!starterValues.authUrl) {
-    //         showMessage('Failed to get authUrl (2).', 'error', 'messageUnexpectedError');
-    //     } else {
-    //         document.getElementById('authUrl').value = starterValues.authUrl;
-    //     }
-    //     showScreen('screen1');
-    // }  
+    }); 
 </script>

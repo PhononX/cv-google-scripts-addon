@@ -35,7 +35,7 @@ function getGoogleSlidesFolderId() {
 
 
 function createVoiceMemoRunAiMagic(text) {
-  // throw new Error('test error2');
+  // throw new Error('Test error');
   const result = getGoogleSlidesFolderId();
   if (!result.hasAccess) {
     return result;
@@ -90,7 +90,7 @@ function aiMagic(messageId, promptId) {
   return result;
 }
 
-function createVoiceMemo(text = 'test text2', folderId = '674342f3b5711ab3a06d757b') {
+function createVoiceMemo(text, folderId) {
   const payload = {
     "transcript": text,
     "is_text_message": true,

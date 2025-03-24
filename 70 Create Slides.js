@@ -5,68 +5,153 @@ function getListOfPresentationsSidebar() {
 
 // https://api.carbonvoice.app/responses/prompt/669e61798d82b4c6baac633e/latest-ten
 function getListOfPresentations(keepMeSigned) {
-  // Logger.log(pppppp);
+
+  if (typeof keepMeSigned === 'boolean') {
+    changeKeepMeSignedSetting(keepMeSigned);
+  }
+
   const result = makeCarbonVoiceRequest('GET', '/responses/prompt/669e61798d82b4c6baac633e/latest-ten', null, null);
   if (!result.hasAccess) {
     return result;
   }
 
-  if (typeof keepMeSigned === 'boolean') {
-    //Logger.log('Change keepMeSigned');
-    changeKeepMeSignedSetting(keepMeSigned);
-  }
-  // else{
-  //   //Logger.log('Don\'t change keepMeSigned');
-  // }
+  const aiResultTextAndSourceMessages = [];
+  let currentUserId;
+  const uniqueMessageIds = new Set();
 
-  const presentations = [];
   result.json.results.forEach(el => {
-    let messageName;
-    let durationMs = 0;
-    // Logger.log('el.ai_response.id = ' + el.ai_response.id);
-    // Logger.log(el.messages);
-    // Logger.log('el.messages.length = ' + el.messages.length);
-    // Logger.log('el.ai_response.responses.length = ' + el.ai_response.responses.length);
-    // Logger.log(el.ai_response.responses[0].json.presentation_outline);
-    // Logger.log(el.ai_response.responses[0].json.presentation_outline[0].title);
-    // Logger.log('el.messages[0].message.name = ' + el.messages[0].message.name);
-    //result.json[0].responses[0].json.presentation_outline;
+    // for (let key in el.ai_response) {
+    //   Logger.log(key);
+    // }
+    try {
+      const messages = [];
+      const creatorsObject = {};
+      const uniqueCreators = new Set();
+      let aiResultName, conversationType, conversationName, conversationImageUrl, workspaceName, workspaceImageUrl, groupType;
+      let durationMs = 0;
 
-    if (el.messages.length === 1) {
-      if (el.messages[0].message.name) {
-        messageName = el.messages[0].message.name
-      } else if (el.messages[0].message.ai_summary) {
-        messageName = el.messages[0].message.ai_summary;
-      } else {
-        // messageName = '2m 37s on 8/19/24'
-        messageName = '-'
+      let aiResultJson = el?.ai_response?.responses?.[0]?.json;
+
+      if (aiResultJson) {
+        // let aiResultText = el.ai_response.responses[0].json[key].join('\n');
+        // Logger.log('el.ai_response.message_ids = ' + el.ai_response.message_ids);
+        // Logger.log('el.ai_response.workspace_id = ' + el.ai_response.workspace_id);
+        // Logger.log('el.ai_response.channel_id = ' + el.ai_response.channel_id);
+        // Logger.log('el.ai_response.id = ' + el.ai_response.id);
+        // Logger.log('el.ai_response = ' + JSON.stringify(el.ai_response));
+        // Logger.log(aiResultText);
+        // Logger.log('el.messages.length = ' + el.messages.length);
+        // Logger.log('el.ai_response.responses.length = ' + el.ai_response.responses.length);
+        // Logger.log(el.ai_response.responses[0].json.presentation_outline);
+        // Logger.log(el.ai_response.responses[0].json.presentation_outline[0].title);
+        // Logger.log('el.messages[0].message.name = ' + el.messages[0].message.name);
+        //result.json[0].responses[0].json.presentation_outline;
+
+        // if (el.messages[0].message.name) {
+        //   messageName = el.messages[0].message.name
+        // } else if (el.messages[0].message.ai_summary) {
+        //   messageName = el.messages[0].message.ai_summary;
+        // } else {
+        //   // messageName = '2m 37s on 8/19/24'
+        //   messageName = '-'
+        // }
+
+        aiResultName = el.ai_response.responses[0].json.presentation_outline[0].title;
+
+        if (el.messages.length > 1) {
+          aiResultName += ' (' + el.messages.length + ')';
+        }
+
+        el.messages.sort((a, b) => new Date(a.message.created_at) - new Date(b.message.created_at));
+
+        el.messages.forEach(message => {
+          let isPrivate, messageType;
+          messageType = message.message.type;
+          groupType = messageType;
+          if (messageType === 'channel') {
+            const creatorId = message.creator.id;
+            const creatorImageUrl = message.creator.image_url ? message.creator.image_url : 'https://pxassets.s3.us-east-2.amazonaws.com/images/personal.png';
+            conversationType = message.conversation.type;
+            conversationName = message.conversation.name;
+            conversationImageUrl = message.conversation.image_url;
+            if (conversationImageUrl == null) {
+              conversationImageUrl = 'https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/blank.png';
+            }
+            workspaceName = message.conversation.workspace_name;
+            workspaceImageUrl = message.conversation.workspace_image_url;
+            isPrivate = message.conversation.is_private;
+
+            if (conversationType === 'directMessage') {
+              if (currentUserId == null) {
+                const result = makeCarbonVoiceRequest('GET', '/whoami', null, null);
+                if (!result.hasAccess) {
+                  return result;
+                }
+                currentUserId = result.json.user.user_guid;
+              }
+              if (creatorId != currentUserId) {
+                if (creatorsObject.hasOwnProperty(creatorId)) {
+                  creatorsObject[creatorId].n++;
+                } else {
+                  creatorsObject[creatorId] = { n: 1, creatorImageUrl }
+                }
+              }
+            }
+
+          } else {
+            uniqueMessageIds.add(message.message.id);
+          }
+
+          uniqueCreators.add(message.creator.full_name);
+          durationMs += message.message.duration_ms;
+          messages.push({ messageName: message.message.name, messageId: message.message.id, creator: message.creator.full_name, imageUrl: message.creator.image_url, createdAt: message.message.created_at, durationMs: message.message.duration_ms, messageType, isPrivate });
+        });
+
+        if (conversationType === 'directMessage') {
+          let maxN = 0;
+          for (let id in creatorsObject) {
+            if (creatorsObject[id].n > maxN) {
+              conversationImageUrl = creatorsObject[id].creatorImageUrl;
+              maxN = creatorsObject[id].n;
+            }
+          }
+        }
+
+        const uniqueCreatorsArray = Array.from(uniqueCreators);
+        const creatorName = uniqueCreatorsArray.length === 1 ? 'Creator: ' + uniqueCreatorsArray[0] : 'Creators: ' + uniqueCreatorsArray.join(', ');
+
+        // if (aiResultName === 'Inspiring Interest in Marcel Proust (3)') {
+        //   throw new Error('test error');
+        // }
+        aiResultTextAndSourceMessages.push({ success: true, aiResultName, aiResultJson, messages, createdAt: el.ai_response.created_at, durationMs, conversationType, conversationName, conversationImageUrl, workspaceName, workspaceImageUrl, groupType, creatorName });
       }
-    } else {
-      messageName = el.ai_response.responses[0].json.presentation_outline[0].title + ' (' + el.messages.length + ')';
+
     }
-
-    el.messages.forEach(el => {
-      // Logger.log(message);
-      durationMs += el.message.duration_ms;
-    });
-
-    //const presoTitle = el.ai_response.responses[0].json.presentation_outline[0].title;
-    presentations.push({ aiResponseId: el.ai_response.id, name: messageName, message_id: el.messages[0].message.id, type: el.messages[0].message.type, createdAt: el.messages[0].message.created_at, creatorName: el.messages[0].creator.full_name, durationMs: durationMs });
-    const lastElNum = presentations.length - 1;
-    if (presentations[lastElNum].type === 'channel') {
-      presentations[lastElNum].workspaceName = el.messages[0].conversation.workspace_name;
-      presentations[lastElNum].workspaceImageUrl = el.messages[0].conversation.workspace_image_url;
-      presentations[lastElNum].convType = el.messages[0].conversation.type;
+    catch (error) {
+      aiResultTextAndSourceMessages.push({ success: false, errorMessage: String(error) + '; aiResponseId: ' + el?.ai_response?.id });
     }
   });
-  // Logger.log(JSON.stringify(presentations));
-  // if (presentations.length === 0){
-  //   return { hasAccess: true, presentations: presentations };
-  // }
-  return { hasAccess: true, presentations: presentations };
+
+  let publicSharedVoiceMemos = [];
+  const uniqueMessageIdsArray = Array.from(uniqueMessageIds);
+  if (uniqueMessageIdsArray.length > 0) {
+    const payload = {
+      "message_ids": uniqueMessageIdsArray
+    };
+    const resultShareableLinksByMessageId = makeCarbonVoiceRequest('POST', '/message-sharelinks/by-message-ids', payload, null);
+    if (!resultShareableLinksByMessageId.hasAccess) {
+      return resultShareableLinksByMessageId;
+    }
+
+    publicSharedVoiceMemos = resultShareableLinksByMessageId.json
+      .filter(message => message.is_public_shared)
+      .map(message => message.message_id);
+  }
+
+  return { hasAccess: true, aiResultTextAndSourceMessages, publicSharedVoiceMemos };
 }
 
-function createSlides(messageId, aiResponseId) {
+function createSlides(outlinesJson, additionalSuggestionsJson) {
   const presentation = SlidesApp.getActivePresentation();
 
   // Not empty presentation?
@@ -83,29 +168,16 @@ function createSlides(messageId, aiResponseId) {
   }
   // End. Not empty presentation?
 
-  const queryParams = {
-    message_id: messageId,
-    prompt_id: '669e61798d82b4c6baac633e'
-  };
+  const slidesArray = outlinesJson;
 
-  const result = makeCarbonVoiceRequest('GET', '/responses', null, queryParams);
-  if (!result.hasAccess) {
-    return result;
-  }
-
-  // Remove once /response will allow search by id (ai response id)
-  const jsonNum = getCorrectAiResponseNumber(result, aiResponseId);
-
-  const slidesArray = result.json[jsonNum].responses[0].json.presentation_outline;
-
-  const suggestionsSlidesArray = result.json[jsonNum].responses[0].json.additional_suggestions;
+  const suggestionsSlidesArray = additionalSuggestionsJson;
 
   return generateSlides(presentation, numSlides, slides, slidesArray, suggestionsSlidesArray);
 
 }
 
 function generateSlides(presentation, numSlides, slides, slidesArray, suggestionsSlidesArray) {
-
+  // throw new Error('test error');
   // Logger.log(suggestionsSlidesArray);
   if (suggestionsSlidesArray) {
     if (suggestionsSlidesArray.length > 0) {

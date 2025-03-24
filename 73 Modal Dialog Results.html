@@ -62,12 +62,12 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      background-color: #4330b8;
+      background-color: #5E4CCE;
       color: white;
     }
 
     .action-button:hover {
-      background-color: #261073;
+      background-color: #4330b8;
     }
 
     .cancel-button {
@@ -76,12 +76,12 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      background-color: #6f7077;
+      background-color: #A1A2AB;
       color: white;
     }
 
     .cancel-button:hover {
-      background-color: #5d5e64;
+      background-color: #80828A;
     }
 
     .message {
@@ -149,8 +149,10 @@
     }  
 
     okButton.addEventListener('click', (e) => {
-       const messageId = '<?!= messageId ?>';
-       const aiResponseId = '<?!= aiResponseId ?>';
+       const slidesArray = <?!= slidesArray ?>;
+       const suggestionsSlidesArray = <?!= suggestionsSlidesArray ?>;
+       
+
        e.stopPropagation();
 
        const progress = e.target.querySelector('.progressButton');
@@ -160,7 +162,7 @@
       google.script.run
         .withSuccessHandler(closeDialog)
         .withFailureHandler(handleError)
-        .createSlides(messageId, aiResponseId);
+        .createSlides(slidesArray, suggestionsSlidesArray);
     });      
   </script>
 </body>

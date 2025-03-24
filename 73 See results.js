@@ -13,78 +13,24 @@ function createList(htmlArray, slideOutline) {
   </li>`);
 }
 
-function getCorrectAiResponseNumber(result, aiResponseId) {
-  let jsonNum;
-  if (result.json.length > 1) {
-    for (let i = 0; i < result.json.length; i++) {
-      if (result.json[i].id === aiResponseId) {
-        jsonNum = i;
-        break;
-      }
-    }
-  } else {
-    jsonNum = 0;
-  }
-  return jsonNum;
-}
-
 function showResultsScreen(presentation, height) {
-  const queryParams = {
-    message_id: presentation.message_id,
-    prompt_id: '669e61798d82b4c6baac633e'
-  };
-  const result = makeCarbonVoiceRequest('GET', '/responses', null, queryParams);
-  // Logger.log(result);
-  if (!result.hasAccess) {
-    return result;
-  }
-
-  // Logger.log('result.json.length=' + result.json.length);
-
-  const jsonNum = getCorrectAiResponseNumber(result, presentation.aiResponseId);
-  // if (result.json.length > 1) {
-  //   for (let i = 0; i < result.json.length; i++) {
-  //     if (result.json[i].id === presentation.aiResponseId) {
-  //       jsonNum = i;
-  //       break;
-  //     }
-  //   }
-  // } else {
-  //   jsonNum = 0;
-  // }
-
-
-  const slidesArray = result.json[jsonNum].responses[0].json.presentation_outline;
-
-
+  const slidesArray = presentation.aiResultJson.presentation_outline;
   const htmlArray = [];
-  htmlArray.push(`<h1>${presentation.name}</h1>`);
-  //<p>Created: ${new Date(presentation.createdAt).toLocaleString()}</p>
-  htmlArray.push(`<p>Type: ${presentation.type}</p>
+  htmlArray.push(`<h1>${presentation.aiResultName}</h1>`);
+  htmlArray.push(`<p>Type: ${presentation.groupType}</p>
       <p>Created: ${presentation.formattedDateTime}</p>
-      <p>Creator: ${presentation.creatorName}</p>
-      ${presentation.type === 'channel' ? `<p>Workspace: ${presentation.workspaceName}</p>` : ''}
+      <p>${presentation.creatorName}</p>
+      ${presentation.groupType === 'channel' ? `<p>Workspace: ${presentation.workspaceName}</p>` : ''}
     `);
 
   htmlArray.push('<b>Presentation Outline</b>: <ul class="main-list">');
   slidesArray.forEach(slideOutline => {
     createList(htmlArray, slideOutline);
-    //   if (/[\r\n]/.test(slideOutline.content)) {
-    //     slideOutline.content = '\n' + slideOutline.content;
-    //   }
-    //   html += `<li><b>Slide Number: ${slideOutline.slide_number}</b>
-    //   <ul class="sub-list">
-    //     <li>Title: ${slideOutline.title}</li>
-    //     <li>Content: ${slideOutline.content}</li>
-    //     <li>Suggested Visuals:  ${slideOutline.visual_suggestion}</li>
-    //     <li>Other Notes:  ${slideOutline.other_notes}</li>
-    //   </ul>
-    // </li>`;
   });
   htmlArray.push('</ul>');
 
-  const suggestionsSlidesArray = result.json[0].responses[0].json.additional_suggestions;
-  // Logger.log(suggestionsSlidesArray);
+  const suggestionsSlidesArray = presentation.aiResultJson.additional_suggestions;
+
   if (suggestionsSlidesArray) {
     if (suggestionsSlidesArray.length > 0) {
       htmlArray.push('<b>Additional Suggestions</b>: <ul class="main-list">');
@@ -101,8 +47,8 @@ function showResultsScreen(presentation, height) {
   const modalDialogHeigh = height || 300;
   const template = HtmlService.createTemplateFromFile('73 Modal Dialog Results');
   template.html = htmlArray.join('');
-  template.messageId = presentation.message_id;
-  template.aiResponseId = presentation.aiResponseId;
+  template.slidesArray = JSON.stringify(slidesArray);
+  template.suggestionsSlidesArray = JSON.stringify(suggestionsSlidesArray);
   const htmlOutput = template.evaluate()
     .setWidth(500)
     .setHeight(modalDialogHeigh);

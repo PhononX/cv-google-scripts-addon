@@ -17,6 +17,7 @@
   <?!= include('70 Css Svg icons'); ?>
   <?!= include('70 Css Refresh button'); ?>
   <?!= include('72 Css Text outline'); ?>
+  <?!= include('70 Css Conv and workspace images'); ?>
 </head>
 
 <body>
@@ -29,13 +30,14 @@
   <div id="screen1" style="display: none;" class="screen1">
     <h1>Connect to Carbon Voice</h1>
     <input type="hidden" id="authUrl" value="">
-    <button id="signInButton" class="conversation">Sign in with Carbon Voice</button>
+    <button id="signInButton">Sign in with Carbon Voice</button>
     <div id="stayLoggedIn" class="stayLoggedIn">
       <label for="keep-signed-in">
         <input type="checkbox" id="keep-signed-in" name="keepSignedIn" value="yes" <?!=checkedOrNotMainSidebar(); ?>>
         Keep me signed in
       </label>
-      <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not use the add-on for 7 or more days.</p>
+      <p>If you choose not to enable the “Keep me signed in” option, you will be required to sign in again if you do not
+        use the add-on for 7 or more days.</p>
       <p>You can always modify this option by following these steps:</p>
       <ol type="a" class="ol">
         <li>Go to Extensions - “Carbon Voice” - Settings</li>
@@ -71,9 +73,12 @@
   <script>
     const starterValues = <?!= getListOfPresentationsSidebar(); ?>;
   </script>
-   <?!= include("70 Js Outlines Sidebar"); ?>
-  <?!= include("10 Js Two tabs"); ?>
+  <?!= include("10 Js Two tabs"); ?>  
+  <?!= include("13 Js Date time"); ?>
+  <?!= include("70 Js Outlines Sidebar"); ?>
   <?!= include("70 Js GSlides starter values"); ?>
-   <?!= include('72 Js Text outline'); ?>
+  <?!= include('12 Js Last update - Refresh'); ?>
+  <?!= include('72 Js Text outline'); ?>
 </body>
+
 </html>

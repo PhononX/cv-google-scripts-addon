@@ -1,0 +1,79 @@
+<script>
+  let lastUpdateTime = new Date();
+
+    function updateLastUpdateText() {
+        const now = new Date();
+        const diff = Math.floor((now - lastUpdateTime) / 1000); // difference in seconds
+
+        let timeText = '';
+        if (diff < 10) {
+            timeText = 'a few sec ago';
+        } else if (diff < 20) {
+            timeText = '10 sec ago';
+        } else if (diff < 30) {
+            timeText = '20 sec ago';
+        } else if (diff < 40) {
+            timeText = '30 sec ago';
+        } else if (diff < 50) {
+            timeText = '40 sec ago';
+        } else if (diff < 60) {
+            timeText = '50 sec ago';
+        } else {
+            const minutes = Math.floor(diff / 60);
+            if (minutes < 60) {
+                timeText = minutes === 1 ? '1 min ago' : `${minutes} min ago`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                if (hours === 1) {
+                    timeText = '1 hour ago';
+                } else if (hours < 24) {
+                    timeText = `${hours} hours ago`;
+                } else {
+                    timeText = '1 day ago';
+                }
+            }
+        }
+        document.querySelector('.last-update').textContent = `Last update: ${timeText}`;
+    }
+
+    // Update the time text every second
+    setInterval(updateLastUpdateText, 1000);
+
+    // Set initial update time when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
+    });  
+
+  function onRefreshSuccess(response) {
+    if (response.status === 'error') {
+      errorCase(response);
+    } else {
+      lastUpdateTime = new Date();
+      updateLastUpdateText();
+      populateOutlines(response.aiResultTextAndSourceMessages, response.publicSharedVoiceMemos)
+    }
+    enableAllInteractions();
+  }
+
+    function onRefreshFailure(error) {
+    showErrorModal(error);
+    enableAllInteractions();
+  }
+
+
+    const reloadBtn = document.getElementById('reload-button');
+    reloadBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      disableAllInteractions();
+
+      const icon = reloadBtn.querySelector('.svg-icon-reload');
+      icon.classList.add('spinning');
+
+      hideMessage('message-tab-1');
+      google.script.run
+        .withSuccessHandler(onRefreshSuccess)
+        .withFailureHandler(onRefreshFailure)
+        .getListOfPresentations();
+    });    
+</script>

@@ -1,8 +1,7 @@
   <script>
     // Check initial access status and show appropriate screen
     if (starterValues.hasAccess === true) {
-        // populateWorkspacesConversation(starterValues.workspaces, starterValues.items);
-        populateOutlines(starterValues.presentations);
+        populateOutlines(starterValues.aiResultTextAndSourceMessages, starterValues.publicSharedVoiceMemos);
         showScreen('screen2');
     } else {
         if (!starterValues.authUrl) {
@@ -34,7 +33,7 @@
     function onCheckAccessSuccess(response) {
         if (response.hasAccess) {
             // populateWorkspacesConversation(response.workspaces, response.items);
-            populateOutlines(response.presentations);
+            populateOutlines(response.aiResultTextAndSourceMessages, response.publicSharedVoiceMemos);
             showScreen('screen2');
         } else if (response.authUrl) {
             document.getElementById('authUrl').value = response.authUrl;
@@ -44,9 +43,9 @@
         }
     }
 
-function onCheckAccessFailure(error) {
-    showMessage('Failed to check access. Please try again later.' + error, 'error', 'messageUnexpectedError');
-    document.getElementById('signInButton').style.display = 'inline-block';
-    document.getElementById('progressText').style.display = 'none';
-}    
+// function onCheckAccessFailure(error) {
+//     showMessage('Failed to check access. Please try again later.' + error, 'error', 'messageUnexpectedError');
+//     document.getElementById('signInButton').style.display = 'inline-block';
+//     document.getElementById('progressText').style.display = 'none';
+// }    
   </script>
