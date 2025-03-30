@@ -52,7 +52,23 @@ function createVoiceMemoRunAiMagic(text) {
 
   const messageId = resultVoiceMemo.json.message_id;
 
-  const resultAiMagic = aiMagic(messageId, '669e61798d82b4c6baac633e');
+  Utilities.sleep(1000);
+
+  let languageId;
+  for (let i = 0; i < 10; i++) {
+    const resultMessage = makeCarbonVoiceRequest('GET', '/v4/messages/' + messageId, null, null);
+    if (!resultMessage.hasAccess) {
+      return resultMessage;
+    }
+    const status = resultMessage.json.status;
+    if (status === 'active') {
+      languageId = resultMessage.json.text_models[0].language_id;
+      break;
+    }
+    Utilities.sleep(3000);
+  }
+
+  const resultAiMagic = aiMagic(messageId, '669e61798d82b4c6baac633e', languageId);
   if (!resultAiMagic.hasAccess) {
     return resultAiMagic;
   }
@@ -81,10 +97,11 @@ function createVoiceMemoRunAiMagic(text) {
   return generateSlides(presentation, numSlides, slides, slidesArray, suggestionsSlidesArray);
 }
 
-function aiMagic(messageId, promptId) {
+function aiMagic(messageId, promptId, languageId) {
   const payload = {
     message_ids: [messageId],
-    prompt_id: promptId
+    prompt_id: promptId,
+    language: languageId
   };
   const result = makeCarbonVoiceRequest('POST', '/responses', payload, null);
   return result;
