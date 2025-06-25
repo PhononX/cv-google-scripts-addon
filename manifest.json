@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "Carbon Voice for Gmail",
+  "version": "1.2",
+  "description": "Chrome extension Carbon Voice",
+  "background": {
+    "service_worker": "cv-universal-background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "identity",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.carbonvoice.app/",
+    "https://mail.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Carbon Voice for Gmail"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "css": [
+        "css-cv-universal-animation.css",
+        "css-cv-universal-errors.css",
+        "css-cv-gmail-popup-layer.css",
+        "css-cv-gmail-record-control.css"
+      ],
+      "js": [
+        "cv-universal-animation.js",
+        "cv-universal-errors.js",
+        "cv-universal-observer.js",
+        "cv-universal-record-control.js",
+        "cv-gmail-01-observer.js",
+        "cv-gmail-02-popup-layer.js",
+        "cv-gmail-03-record-control.js",
+        "cv-gmail-04-insert-link.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content-icons/cv-universal-logo-button.png",
+        "content-icons/cv-gmail-delete.png",
+        "content-icons/cv-gmail-done.png",
+        "content-icons/cv-gmail-pause.png",
+        "content-icons/cv-universal-record-after-pause.png"
+      ],
+      "matches": [
+        "https://mail.google.com/*"
+      ]
+    }
+  ]
+}

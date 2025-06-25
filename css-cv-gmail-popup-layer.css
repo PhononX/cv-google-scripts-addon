@@ -1,0 +1,87 @@
+.custom-button-container {
+  display: flex;
+  align-items: center;
+  padding: 0 14px 0 0;
+  margin: 0;
+}
+
+.custom-button {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-button:hover {
+  transform: scale(1.1);
+}
+
+.custom-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.popup-layer {
+  top: -250px;
+  position: absolute;
+  width: 345px;
+  height: 115px;
+  background-color: white;
+  border: 1px solid #2610731F;
+  border-radius: 24px;
+  box-shadow: 0 2px 10px #2610731F;
+  padding: 15px;
+  z-index: 9999;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #2610731F;
+  padding: 5px;
+}
+
+.output-container {
+  font-size: 14px;
+  color: #6F7077;
+}
+
+.login-button {
+  background-color: #5E4CCE;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.login-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.login-button:hover {
+  background-color: #4330b8;
+}

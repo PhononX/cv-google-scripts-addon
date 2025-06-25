@@ -1,0 +1,40 @@
+/* Animated dots in the login button  */
+/* Animated dots after the timer display */
+#processing-text {
+    font-size: 14px;
+}
+
+.dots {
+    display: inline-block;
+    font-size: 14px;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: .2;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: .2;
+    }
+}
+
+.dot {
+    opacity: .2;
+    animation: pulse 1.4s infinite;
+    display: inline-block;
+}
+
+.dot:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: .4s;
+}
+
+

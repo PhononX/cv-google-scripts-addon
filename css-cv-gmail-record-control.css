@@ -1,0 +1,76 @@
+.buttons-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.action-button:not(:disabled):hover {
+  transform: scale(1.1);
+}
+
+.action-button img {
+  width: 44px;
+  height: 44px;
+}
+
+.big img {
+  width: 64px;
+  height: 64px;
+}
+
+.timer-container {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #5E4CCE;
+}
+
+#timer-display {
+  width: 100px;
+}
+
+.red-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #B01F42;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
