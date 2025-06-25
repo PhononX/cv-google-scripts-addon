@@ -1,0 +1,96 @@
+.flight-button-container {
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  pointer-events: auto;
+  max-width: 32px;
+  max-height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.flight-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  width: 32px;
+  height: 32px;
+}
+
+.flight-button:hover {
+  transform: scale(1.1);
+}
+
+.flight-button img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  pointer-events: none;
+}
+
+/* Ensure contenteditable fields have left-aligned text */
+[contenteditable="true"].docos-input-textarea {
+  text-align: left !important;
+  padding-right: 40px !important;
+}
+
+/* Flight panel styling to match textarea */
+.flight-panel {
+  position: absolute;
+  background-color: white;
+  border-radius: 20px;
+  border: 1px solid #56595f;
+  z-index: 10000;
+  overflow: hidden;
+  font-family: 'Google Sans', Arial, sans-serif;
+  padding: 0px;
+  box-sizing: border-box;
+  margin: 0;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Animation for panel appearance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* Sign in with... */
+
+.login-button {
+  background-color: #5E4CCE;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.login-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.login-button:not(:disabled):hover {
+  background-color: #4330b8;
+}

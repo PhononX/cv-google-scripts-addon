@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Carbon Voice for GDocs",
+  "version": "1.2",
+  "description": "Chrome extension Carbon Voice",
+  "background": {
+    "service_worker": "cv-universal-background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/button-icon3.png",
+    "48": "icons/button-icon3.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "identity",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.carbonvoice.app/",
+    "https://docs.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Carbon Voice for GDocs"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://docs.google.com/*"
+      ],
+      "css": [
+        "css-cv-universal-animation.css",
+        "css-cv-universal-errors.css",
+        "css-cv-doc-record-control.css",
+        "css-cv-doc-record-panel.css"
+      ],
+      "js": [
+        "cv-universal-animation.js",
+        "cv-universal-errors.js",
+        "cv-universal-observer.js",
+        "cv-universal-record-control.js",
+        "cv-doc-01-observer.js",
+        "cv-doc-02-find-comments.js",
+        "cv-doc-03-record-panel.js",
+        "cv-doc-04-login.js",
+        "cv-doc-05-record-control.js",
+        "cv-doc-06-enable-disable-original-buttons.js",
+        "cv-doc-07-send-comment.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content-icons/cv-universal-logo-button.png",
+        "content-icons/cv-doc-done.png",
+        "content-icons/cv-doc-close.png",
+        "content-icons/cv-doc-pause.png",
+        "content-icons/cv-universal-record-after-pause.png"
+      ],
+      "matches": [
+        "https://docs.google.com/*"
+      ]
+    }
+  ]
+}
