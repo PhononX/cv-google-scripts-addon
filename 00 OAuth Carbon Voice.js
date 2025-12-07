@@ -10,7 +10,7 @@ function getCarbonVoiceService() {
     .setParam('access_type', 'offline')
     // Consent prompt is required to ensure a refresh token is always
     // returned when requesting offline access.
-    .setParam('prompt', 'consent');
+    // .setParam('prompt', 'consent');
 }
 
 function authCallback(request) {
