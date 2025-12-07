@@ -7,7 +7,7 @@ function getCarbonVoiceService() {
     .setCallbackFunction('authCallback')
     .setPropertyStore(PropertiesService.getUserProperties())
     .setParam('access_type', 'offline')
-    .setParam('prompt', 'consent');
+    // .setParam('prompt', 'consent');
 }
 
 function authCallback(request) {
