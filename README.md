@@ -1,9 +1,9 @@
-# Google Workspace Add-ons
+# gmail-addon 
+
+The Gmail add-on is outdated and currently unlisted from the Marketplace. Please use gmail-gcalendar-link-preview instead.
 
 ```
-git checkout gsheets-conversation-export
-git checkout gslides-outline
-git checkout gmail-addon
+git checkout gmail-gcalendar-link-preview
 ```
 
 00 CLIENT SECRET ID.js
