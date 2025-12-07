@@ -224,8 +224,7 @@ async function initiateLogin() {
         '?client_id=' + clientId +
         '&redirect_uri=' + encodeURIComponent(redirectUri) +
         '&response_type=code' +
-        '&access_type=offline' +
-        '&prompt=consent';
+        '&access_type=offline';
 
     return new Promise((resolve, reject) => {
         chrome.identity.launchWebAuthFlow({
