@@ -9,9 +9,15 @@ function extractUniqueEmails(inputString) {
 }
 
 function asyncMeetingCardContextSidebar(e) {
-  const message = getCurrentMessage(e);
+  const hostApp = e?.commonEventObject?.hostApp;
 
+  const threadId = e?.gmail?.threadId;
+  const existingAsyncMeeting = userPropertiesServiceJson(threadId);
+  let carbonVoiceAsyncMeetingId = existingAsyncMeeting.id;
+
+  const message = getCurrentMessage(e);
   const thread = message.getThread();
+
   const threadMessages = thread.getMessages();
   const subject = threadMessages[0].getSubject();
   const startDateThread = threadMessages[0].getDate();
@@ -29,14 +35,33 @@ function asyncMeetingCardContextSidebar(e) {
   const emails = extractUniqueEmails(fromToString);
   const selectedEmails = [...emails];
 
-
   let whenToTalk = e.parameters?.whenToTalk;
   // const dateTime = e.formInput.dateTime.msSinceEpoch;
 
-  const conversationTitleValue = subject;
+  let conversationTitleValue = subject;
   const conversationFirstMessageValue = "We started to discuss this in Gmail on " + formattedStartDateThread + " (" + userTimeZone + "). Let's proceed with this async Carbon Voice conversation.";
 
-  return asyncMeetingCard(conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk);
+  return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp);
+}
+
+function existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadOrEventId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp) {
+  if (carbonVoiceAsyncMeetingId != null) {
+    const resultCheckExistingAsyncMeeting = checkExistingAsyncMeeting(carbonVoiceAsyncMeetingId);
+    if (resultCheckExistingAsyncMeeting.hasAccess === false) {
+      return buildAuthorizationCard(resultCheckExistingAsyncMeeting.authUrl);
+    }
+    if (resultCheckExistingAsyncMeeting.existingAsyncMeeting === true) {
+      conversationTitleValue = resultCheckExistingAsyncMeeting.name;
+    } else {
+      userPropertiesServiceRemoveValue(threadOrEventId);
+      carbonVoiceAsyncMeetingId = null;
+    }
+  }
+  if (carbonVoiceAsyncMeetingId == null) {
+    return asyncMeetingCard(conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk);
+  } else {
+    return confirmAsyncMeetingCard('https://carbonvoice.app/c/' + carbonVoiceAsyncMeetingId, conversationTitleValue, emails, false, hostApp, null, null, true);
+  }
 }
 
 function asyncMeetingCard(conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, dateTimeValue) {

@@ -13,7 +13,11 @@ function createEventCard(e) {
   // Get the calendar event
   let calendarEvent = null;
 
-  // try {
+  try {
+    const hostApp = e?.commonEventObject?.hostApp;
+    const existingAsyncMeeting = userPropertiesServiceJson(e.calendar.id);
+
+    const carbonVoiceAsyncMeetingId = existingAsyncMeeting.id;
 
     const emails = [];
 
@@ -49,11 +53,12 @@ function createEventCard(e) {
     const conversationTitleValue = calendarEvent.getTitle();
     const whenToTalk = null;
 
-    return asyncMeetingCard(conversationTitleValue, eventDescription, emails, emails, whenToTalk);
-  // } catch (error) {
-  //   console.error('Error getting calendar event:', error);
-  //   return createInfoCard(error);
-  // }
+
+    return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, e.calendar.id, conversationTitleValue, eventDescription, emails, emails, whenToTalk, hostApp);
+  } catch (error) {
+    console.error('Error getting calendar event:', error);
+    return createInfoCard(error);
+  }
 }
 
 // Create a card when no event is selected

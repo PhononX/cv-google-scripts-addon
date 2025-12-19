@@ -30,3 +30,16 @@ function createStoredMessage(text) {
   const result = makeCarbonVoiceRequest('POST', '/v3/messages/stored/start', payload, null);
   return result;
 }
+
+function checkExistingAsyncMeeting(id) {
+  try {
+    const result = makeCarbonVoiceRequest('GET', '/simplified/conversations/' + id, null, null);
+    if (!result.hasAccess) {
+      return result;
+    }
+    return { hasAccess: true, existingAsyncMeeting: true, name: result.json.name};
+  }
+  catch (e) {
+    return { hasAccess: true, existingAsyncMeeting: false };
+  }
+}

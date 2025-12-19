@@ -18,10 +18,19 @@ function getFixedFooterCreateAsyncMeeting(emailsArrayLength) {
 
 function createAsyncMeetingButtonAction(e) {
   try {
+    const storageSize = userPropertiesStorageSizeKB();
+    if (storageSize > 450) {
+      return createStorageWarningCard();
+    }
+
     const hostApp = e?.commonEventObject?.hostApp;
+
+    const threadId = e?.gmail?.threadId;
 
     const calendarId = e?.calendar?.calendarId;
     const eventId = e?.calendar?.id;
+
+    const asyncMeetingKeyGasStorage = hostApp === 'GMAIL' ? threadId : eventId;
 
     const emailsArrayLength = e.parameters.emailsArrayLength;
 
@@ -75,12 +84,15 @@ function createAsyncMeetingButtonAction(e) {
       return buildAuthorizationCard(resultNewAsyncMeeting.authUrl);
     }
 
+    userPropertiesServiceRecordJson(asyncMeetingKeyGasStorage, { "id": resultNewAsyncMeeting.json.channel_guid, "ms": new Date().getTime() });
+
     const userEmail = Session.getActiveUser().getEmail();
     const index = emailsArray.indexOf(userEmail);
     if (index > -1) {
       emailsArray.splice(index, 1);
     }
-    const card = confirmAsyncMeetingCard('https://carbonvoice.app/c/' + resultNewAsyncMeeting.json.channel_guid, resultNewAsyncMeeting.json.channel_name, emailsArray, false, hostApp, calendarId, eventId);
+    const card = confirmAsyncMeetingCard('https://carbonvoice.app/c/' + resultNewAsyncMeeting.json.channel_guid, resultNewAsyncMeeting.json.channel_name, emailsArray, false, hostApp, calendarId, eventId, false);
+
     return CardService.newActionResponseBuilder()
       .setNavigation(
         CardService.newNavigation().updateCard(card)
