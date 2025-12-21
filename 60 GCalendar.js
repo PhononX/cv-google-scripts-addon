@@ -54,7 +54,7 @@ function createEventCard(e) {
     const whenToTalk = null;
 
 
-    return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, e.calendar.id, conversationTitleValue, eventDescription, emails, emails, whenToTalk, hostApp);
+    return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, e.calendar.id, conversationTitleValue, eventDescription, emails, emails, whenToTalk, hostApp, userTimeZone);
   } catch (error) {
     console.error('Error getting calendar event:', error);
     return createInfoCard(error);

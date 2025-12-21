@@ -1,4 +1,10 @@
 function formatDateTime(userTimeZone, dateString) {
+
+  const validation = isValidDateTime(dateString);
+  if (validation.status === false){
+    return validation.message;
+  }
+
   const date = new Date(dateString);
   //const formattedDate1 = Utilities.formatDate(date, userTimeZone, 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'',);
   const now = new Date();
@@ -108,4 +114,125 @@ function getFriday2000() {
   const daysUntilFriday = (5 + 7 - dayNumberOfWeek) % 7;
   const fridayMs = now.getTime() + daysUntilFriday * 60 * 60 * 24 * 1000;
   return Utilities.formatDate(new Date(fridayMs), timezone, "yyyy-MM-dd") + "T20:00:00.000" + getTimezoneOffset2()
+}
+
+
+function isValidDateTime(dateTime) {
+  
+  // Check for null/undefined
+  if (dateTime == null) {
+    return {status: false, message: 'Error. Invalid timestamp ' + dateTime};
+  }
+  
+  // Handle Date objects
+  if (dateTime instanceof Date) {
+    if (isNaN(dateTime.getTime())) {
+      return {status: false, message: 'Error. Invalid timestamp (Invalid Date object)'};
+    }
+    return {status: true, message: 'Valid'};
+  }
+  
+  // Handle strings
+  if (typeof dateTime === 'string') {
+    // Check for empty or whitespace-only strings
+    if (dateTime.trim() === '') {
+      return {status: false, message: 'Error. Invalid timestamp (empty string)'};
+    }
+    
+    // Try to parse the date string
+    const date = new Date(dateTime);
+    
+    // If parsing fails, it's invalid
+    if (isNaN(date.getTime())) {
+      return {status: false, message: 'Error. Invalid timestamp ' + dateTime};
+    }
+    
+    return {status: true, message: 'Valid'};
+  }
+  
+  return {status: false, message: 'Error. Invalid timestamp (wrong type)'};
+}
+
+// Test array with input and expected output
+const testArrayDateTime = [
+  // Valid cases
+  { input: new Date('2025-12-14'), expected: true, description: 'Valid Date object' },
+  { input: '2025-12-14', expected: true, description: 'Valid YYYY-MM-DD format' },
+  { input: '2025-12-14T10:30:00Z', expected: true, description: 'Valid ISO format' },
+  { input: 'Thu Jan 01 04:00:00 GMT+04:00 1970', expected: true, description: 'Valid toString format' },
+  { input: '12/14/2025', expected: true, description: 'Valid US date format' },
+  
+  // Invalid Date object
+  { input: new Date('invalid'), expected: false, description: 'Invalid Date object' },
+  
+  // Invalid date values
+  { input: '2025-99-99', expected: false, description: 'Invalid date values (month/day)' },
+  { input: '2025-12-14garbage', expected: false, description: 'Date with extra characters' },
+  { input: 'not-a-date', expected: false, description: 'Random string' },
+  
+  // Null/undefined
+  { input: null, expected: false, description: 'Null value' },
+  { input: undefined, expected: false, description: 'Undefined value' },
+  
+  // Empty/whitespace strings
+  { input: '', expected: false, description: 'Empty string' },
+  { input: ' ', expected: false, description: 'Single space' },
+  { input: '   ', expected: false, description: 'Multiple spaces' },
+  { input: '\t', expected: false, description: 'Tab character' },
+  { input: '\n', expected: false, description: 'Newline character' },
+  { input: ' \t\n ', expected: false, description: 'Mixed whitespace' },
+  
+  // Wrong type
+  { input: 123, expected: false, description: 'Number type' },
+  { input: {}, expected: false, description: 'Plain object' },
+  { input: [], expected: false, description: 'Array' }
+];
+
+function runTestingValidateDateTime() {
+  Logger.log('=== Running DateTime Validation Tests ===\n');
+  
+  let passed = 0;
+  let failed = 0;
+  const failures = [];
+  
+  testArrayDateTime.forEach((test, index) => {
+    const result = isValidDateTime(test.input);
+    const actualStatus = result.status;
+    const testPassed = actualStatus === test.expected;
+    
+    if (testPassed) {
+      passed++;
+      Logger.log(`✓ Test ${index + 1}: ${test.description} - PASSED`);
+    } else {
+      failed++;
+      Logger.log(`✗ Test ${index + 1}: ${test.description} - FAILED`);
+      Logger.log(`  Expected: ${test.expected}, Got: ${actualStatus}`);
+      Logger.log(`  Message: ${result.message}`);
+      failures.push({
+        test: index + 1,
+        description: test.description,
+        input: test.input,
+        expected: test.expected,
+        actual: actualStatus,
+        message: result.message
+      });
+    }
+  });
+  
+  Logger.log(`\n=== Test Summary ===`);
+  Logger.log(`Total: ${testArrayDateTime.length}`);
+  Logger.log(`Passed: ${passed}`);
+  Logger.log(`Failed: ${failed}`);
+  
+  if (failures.length > 0) {
+    Logger.log(`\n=== Failed Tests Details ===`);
+    failures.forEach(f => {
+      Logger.log(`Test ${f.test}: ${f.description}`);
+      Logger.log(`  Input: ${JSON.stringify(f.input)}`);
+      Logger.log(`  Expected: ${f.expected}, Got: ${f.actual}`);
+      Logger.log(`  Message: ${f.message}\n`);
+    });
+  }
+  
+  return { passed, failed, total: testArrayDateTime.length, failures };
 }

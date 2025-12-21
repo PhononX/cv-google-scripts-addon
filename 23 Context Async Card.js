@@ -41,10 +41,11 @@ function asyncMeetingCardContextSidebar(e) {
   let conversationTitleValue = subject;
   const conversationFirstMessageValue = "We started to discuss this in Gmail on " + formattedStartDateThread + " (" + userTimeZone + "). Let's proceed with this async Carbon Voice conversation.";
 
-  return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp);
+  return existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp, userTimeZone);
 }
 
-function existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadOrEventId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp) {
+function existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadOrEventId, conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk, hostApp, userTimeZone) {
+  let meetingEndIsoDateTime;
   if (carbonVoiceAsyncMeetingId != null) {
     const resultCheckExistingAsyncMeeting = checkExistingAsyncMeeting(carbonVoiceAsyncMeetingId);
     if (resultCheckExistingAsyncMeeting.hasAccess === false) {
@@ -52,6 +53,7 @@ function existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadOrEventI
     }
     if (resultCheckExistingAsyncMeeting.existingAsyncMeeting === true) {
       conversationTitleValue = resultCheckExistingAsyncMeeting.name;
+      meetingEndIsoDateTime = resultCheckExistingAsyncMeeting.end;
     } else {
       userPropertiesServiceRemoveValue(threadOrEventId);
       carbonVoiceAsyncMeetingId = null;
@@ -60,7 +62,7 @@ function existingAsyncMeetingCondition(carbonVoiceAsyncMeetingId, threadOrEventI
   if (carbonVoiceAsyncMeetingId == null) {
     return asyncMeetingCard(conversationTitleValue, conversationFirstMessageValue, emails, selectedEmails, whenToTalk);
   } else {
-    return confirmAsyncMeetingCard('https://carbonvoice.app/c/' + carbonVoiceAsyncMeetingId, conversationTitleValue, emails, false, hostApp, null, null, true);
+    return confirmAsyncMeetingCard('https://carbonvoice.app/c/' + carbonVoiceAsyncMeetingId, conversationTitleValue, emails, false, hostApp, null, null, true, meetingEndIsoDateTime, userTimeZone);
   }
 }
 

@@ -33,11 +33,11 @@ function createStoredMessage(text) {
 
 function checkExistingAsyncMeeting(id) {
   try {
-    const result = makeCarbonVoiceRequest('GET', '/simplified/conversations/' + id, null, null);
+    const result = makeCarbonVoiceRequest('GET', '/v2/channel/' + id, null, null);
     if (!result.hasAccess) {
       return result;
     }
-    return { hasAccess: true, existingAsyncMeeting: true, name: result.json.name};
+    return { hasAccess: true, existingAsyncMeeting: true, name: result.json?.channel_name, end: result.json?.channel_spans?.[0]?.end};
   }
   catch (e) {
     return { hasAccess: true, existingAsyncMeeting: false };

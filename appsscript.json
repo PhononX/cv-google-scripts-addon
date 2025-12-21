@@ -39,8 +39,8 @@
           "runFunction": "showSettingsCard"
         }
       ],
-      "name": "Carbon Voice",
-      "logoUrl": "https://pxassets.s3.us-east-2.amazonaws.com/images/google-addons/cv-logo-48-purple.png",
+      "name": "TEST Carbon Voice",
+      "logoUrl": "https://drive.google.com/uc?export=view&id=19ud-iqFGf_1LmEJa6KpMkjVPCLdbV-nf",
       "layoutProperties": {
         "primaryColor": "#f2efff",
         "secondaryColor": "#5E4CCE"

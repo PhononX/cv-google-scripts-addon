@@ -23,6 +23,8 @@ function createAsyncMeetingButtonAction(e) {
       return createStorageWarningCard();
     }
 
+    const userTimeZone = getTimeZoneValue(e);
+
     const hostApp = e?.commonEventObject?.hostApp;
 
     const threadId = e?.gmail?.threadId;
@@ -91,7 +93,7 @@ function createAsyncMeetingButtonAction(e) {
     if (index > -1) {
       emailsArray.splice(index, 1);
     }
-    const card = confirmAsyncMeetingCard('https://carbonvoice.app/c/' + resultNewAsyncMeeting.json.channel_guid, resultNewAsyncMeeting.json.channel_name, emailsArray, false, hostApp, calendarId, eventId, false);
+    const card = confirmAsyncMeetingCard('https://carbonvoice.app/c/' + resultNewAsyncMeeting.json.channel_guid, resultNewAsyncMeeting.json.channel_name, emailsArray, false, hostApp, calendarId, eventId, false, isoDateTime, userTimeZone);
 
     return CardService.newActionResponseBuilder()
       .setNavigation(

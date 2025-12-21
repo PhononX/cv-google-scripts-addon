@@ -1,4 +1,7 @@
-function confirmAsyncMeetingCard(channelUrl, channelName, emails, draftNotification, hostApp, calendarId, eventId, existingAsyncMeeting) {
+function confirmAsyncMeetingCard(channelUrl, channelName, emails, draftNotification, hostApp, calendarId, eventId, existingAsyncMeeting, meetingEndIsoDateTime, userTimeZone) {
+  
+  const meetingEndStatus = getMeetingEndStatus(userTimeZone, meetingEndIsoDateTime);
+
   const card = CardService.newCardBuilder();
 
   const buttonRecordMessage = CardService.newTextButton()
@@ -8,7 +11,7 @@ function confirmAsyncMeetingCard(channelUrl, channelName, emails, draftNotificat
     .setOpenLink(CardService.newOpenLink().setOpenAs(CardService.OpenAs.OVERLAY).setOnClose(CardService.OnClose.NOTHING).setUrl(channelUrl));
 
   const successfullyCreatedText = existingAsyncMeeting ? '' : ' succesfully created';
-  const text = CardService.newTextParagraph().setText('Async meeting <a href=' + channelUrl + '>' + channelName + '</a>' + successfullyCreatedText + '.');
+  const text = CardService.newTextParagraph().setText('Async meeting <a href=' + channelUrl + '>' + channelName + '</a>' + successfullyCreatedText + '.<br>' + meetingEndStatus);
 
   const section = CardService.newCardSection()
     .addWidget(text)
@@ -16,7 +19,7 @@ function confirmAsyncMeetingCard(channelUrl, channelName, emails, draftNotificat
 
   if (hostApp === 'GMAIL') {
     let emailsString = draftNotification ? emails : emails.join();
-    if (emailsString == null){
+    if (emailsString == null) {
       emailsString = '';
     }
 
@@ -75,4 +78,42 @@ function composeEmailCallback(e) {
       .setGmailDraft(draft)
       .build();
   }
+}
+
+function getMeetingEndStatus(userTimeZone, end) {
+
+  const validation = isValidDateTime(end);
+  if (validation.status === false) {
+    return validation.message;
+  }
+
+  const endDate = new Date(end);
+  const now = new Date();
+  const diffMs = endDate - now;
+
+  const formattedEndDate = formatDateTime(userTimeZone, endDate);
+
+  // Check if the meeting has ended (past date)
+  if (diffMs < 0) {
+    return `Meeting ended ${formattedEndDate}`;
+  }
+
+  // Meeting is in the future - calculate time remaining
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const days = Math.floor(diffSeconds / (24 * 60 * 60));
+  const hours = Math.floor((diffSeconds % (24 * 60 * 60)) / (60 * 60));
+  const minutes = Math.floor((diffSeconds % (60 * 60)) / 60);
+
+  // Build the time remaining string
+  let timeRemaining = [];
+  if (days > 0) timeRemaining.push(`${days} d`);
+  if (hours > 0) timeRemaining.push(`${hours} h`);
+  if (minutes > 0) timeRemaining.push(`${minutes} min`);
+
+  // Handle edge case where meeting ends in less than a minute
+  if (timeRemaining.length === 0) {
+    timeRemaining.push('less than 1 min');
+  }
+
+  return `Meeting is about to end in<br>${timeRemaining.join(' ')}, ${formattedEndDate}`;
 }

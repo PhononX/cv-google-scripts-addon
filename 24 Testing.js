@@ -62,8 +62,9 @@ function testDetectVisibleItems() {
     }
     console.log('-------------------');
   });
-
-  console.error(errStr);
+  if (errStr.length > 0) {
+    console.error(errStr);
+  }
 }
 
 function detectVisibleItems(folderId, pageNumber, maxItemsPerCard, folders, messageIds) {
